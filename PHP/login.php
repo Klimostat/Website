@@ -1,33 +1,51 @@
 <?php
 require "session.php";
 
-if (isset($_POST["logout"])) {
-    logout();
-} else {
-    verifySession();
-    if ($user["Username"] === null) {
-        login($_POST["user"], $_POST["pass"]);
-        verifySession();
+$action = "error";
+
+if ($session === null) {
+    if (isset($_POST["user"]) && isset($_POST["password"])) {
+        $username = $_POST["user"];
+        $password = $_POST["password"];
+
+        $getPasswd = $conn -> prepare("
+select PasswordHash, pk_userId from User
+where Username = :user");
+        $getPasswd -> bindParam(":user", $username);
+        $getPasswd -> execute();
+        if ($getPasswd -> rowCount() > 0) {
+            $getPasswd = $getPasswd -> fetch(PDO::FETCH_ASSOC);
+            $passwdHash = $getPasswd["PasswordHash"];
+            $userID = $getPasswd["pk_userId"];
+
+            if ($passwdHash === $password) {
+                $sessionID = hash("sha3-512", openssl_random_pseudo_bytes(2056));
+                $createSession = $conn -> prepare("
+insert into Session (pk_sessionId, fk_userId)
+values (:sessionID, :user)");
+                $createSession -> bindParam(":sessionID", $sessionID);
+                $createSession -> bindParam(":user", $userID);
+                $createSession -> execute();
+                setcookie("sessionID", $sessionID, time() + 3600, "/");
+
+                $action = "login";
+
+            } else {
+
+                $action = "invalid_user";
+
+            }
+        } else {
+
+            $action = "invalid_user";
+
+        }
+    } else {
+
+        $action = "invalid_user";
+
     }
+} else {
+    $action = "already_logged_in";
 }
-
-?>
-
-<!DOCTYPE html>
-<html lang = "en">
-    <head>
-        <meta charset = "UTF-8">
-        <title> Login </title>
-    </head>
-    <body>
-        <p>
-            Logged in with user <?=$user["Username"]?>
-        </p>
-        <form action = "login.php" method = "post">
-            <input type = "text" name = "user">
-            <input type = "text" name = "pass">
-            <input type = "submit" value = "login">
-            <input type = "submit" name = "logout" value = "logout">
-        </form>
-    </body>
-</html>
+header("Location: .?action=$action");
