@@ -1,8 +1,6 @@
 <?php
 require "session.php";
 
-$action = "error";
-
 if ($session === null) {
     if (isset($_POST["user"]) && isset($_POST["password"])) {
         $username = $_POST["user"];
@@ -28,24 +26,24 @@ values (:sessionID, :user)");
                 $createSession -> execute();
                 setcookie("sessionID", $sessionID, time() + 3600, "/");
 
-                $action = "login";
+                landingPage("login");
 
             } else {
-
-                $action = "invalid_user";
+                landingPage("invalid_user");
 
             }
         } else {
 
-            $action = "invalid_user";
+            landingPage("invalid_user");
 
         }
     } else {
 
-        $action = "invalid_user";
+        landingPage("invalid_user");
 
     }
 } else {
-    $action = "already_logged_in";
+
+    landingPage("already_logged_in");
+
 }
-header("Location: .?action=$action");

@@ -11,11 +11,10 @@ where pk_sessionId = :session");
     $clearSession -> execute();
     $user = null;
 
-    $action = "logout";
+    landingPage($action = "logout");
 
 } else {
 
-    $action = "not_logged_in";
+    landingPage("not_logged_in");
 
 }
-header("Location: .?action=$action");

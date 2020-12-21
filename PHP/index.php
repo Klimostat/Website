@@ -2,30 +2,35 @@
 require "session.php";
 $loggedIn = verifySession();
 
-switch ($_GET["action"]) {
-    case "logout":
-        $note = "An error occurred... You weren't logged out!";
-        if (!$loggedIn) {
-            $note = "You successfully logged out!";
-        }
-        break;
-    case "not_logged_in":
-        $note = "You aren't logged in. Log in to log out!";
-        break;
-    case "login":
-        $note = "An error occurred... You weren't logged in!";
-        if ($loggedIn) {
-            $note = "You successfully logged in!";
-        }
-        break;
-    case "invalid_user":
-        $note = "Invalid username or password!";
-        break;
-    case "already_logged_in":
-        $note = "You are already logged in. Log out to log in again!";
-        break;
-    default:
-        $note = "Something other is the case";
+if (isset($_GET["action"])) {
+    switch ($_GET["action"]) {
+        case "logout":
+            $note = "An error occurred... You weren't logged out!";
+            if (!$loggedIn) {
+                $note = "You successfully logged out!";
+            }
+            break;
+        case "not_logged_in":
+            $note = "You aren't logged in. Log in to log out!";
+            break;
+        case "login":
+            $note = "An error occurred... You weren't logged in!";
+            if ($loggedIn) {
+                $note = "You successfully logged in!";
+            }
+            break;
+        case "invalid_user":
+            $note = "Invalid username or password!";
+            break;
+        case "already_logged_in":
+            $note = "You are already logged in. Log out to log in again!";
+            break;
+        case "session_expired":
+            $note = "Your session expired";
+            break;
+        default:
+            $note = "Something other is the case";
+    }
 }
 
 if ($session !== null) {
