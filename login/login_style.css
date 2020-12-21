@@ -10,3 +10,14 @@ body {
     margin:0;
     padding: 0;
 }
+
+#loginbox{
+    align-self: center;
+    width: 200px;
+    color:black;
+    opacity: 0.7;
+    border:  2px solid black;
+    border-radius: 0 1em 1em 1em;
+    margin:  20px auto;
+    padding: 2em;
+}
