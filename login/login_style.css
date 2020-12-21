@@ -1,0 +1,12 @@
+* {
+    font-family: 'Karla', serif;
+}
+
+body {
+    height: 100vh;
+    width: 100vw;
+    background-image: url("../res/pexels-stefan-stefancik-91228.jpg");
+    background-size: cover;
+    margin:0;
+    padding: 0;
+}
