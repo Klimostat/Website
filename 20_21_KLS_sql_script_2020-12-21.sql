@@ -5,7 +5,7 @@ drop database if exists Klimostat;
 create database if not exists Klimostat;
 use Klimostat;
 
-drop table if exists Raspberry;
+drop table if exists RaspberryPi;
 create table if not exists RaspberryPi (
     pk_RaspberryPiId int primary key,
     Standortbeschreibung text not null
