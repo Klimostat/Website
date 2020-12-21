@@ -15,42 +15,52 @@
 <body>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid navbar-inner">
-        <nav class="navbar navbar-light bg-light">
-            <div class="container">
-                <a class="navbar-brand-override" href="#">
-                    <img src="res/Logo.png" class="logo" alt="">
-                </a>
-            </div>
-        </nav>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
                 aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="#">Home</a>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-                       data-bs-toggle="dropdown" aria-expanded="false">
-                        Interval
+            <nav class="navbar navbar-light bg-light">
+                <div class="container">
+                    <a class="navbar-brand-override" href="#">
+                        <img src="res/Logo.png" class="logo" alt="">
                     </a>
-                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="#">Live</a></li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
-                        <li><a class="dropdown-item" href="#">Last Hour</a></li>
-                        <li><a class="dropdown-item" href="#">Last Day</a></li>
-                        <li><a class="dropdown-item" href="#">Last Week</a></li>
-                        <li><a class="dropdown-item" href="#">Last Month</a></li>
-                        <li><a class="dropdown-item" href="#">Last 3 Months</a></li>
-                        <li><a class="dropdown-item" href="#">Last 6 Months</a></li>
-                        <li><a class="dropdown-item" href="#">Last Year</a></li>
-                        <li><a class="dropdown-item" href="#">All Time</a></li>
-                    </ul>
+                </div>
+            </nav>
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0 navlist">
+                <li>
+                    <nav class="navbar navbar-light bg-light">
+                        <div class="container-fluid">
+                            <form class="form">
+                                <div class="form-group">
+                                    <select class="form-control" id="interval">
+                                        <option class="font">Live</option>
+                                        <option class="font">Last Hour</option>
+                                        <option class="font">Last Day</option>
+                                        <option class="font">Last Week</option>
+                                        <option class="font">Last Month</option>
+                                        <option class="font">Last 3 Months</option>
+                                        <option class="font">Last 6 Months</option>
+                                        <option class="font">Last Year</option>
+                                        <option class="font">All Time</option>
+                                    </select>
+                                </div>
+                            </form>
+                        </div>
+                    </nav>
                 </li>
+            </ul>
+            <ul class="navbar-nav navbar-right">
+                <div>
+                    <p class="navbar-text time" aria-current="page">14:20:32</p>
+                </div>
+                <div class="navbar-brand">
+                    <form class="navbar-form">
+                        <div class="container-fluid">
+                            <button class="btn btn-outline-secondary" type="submit">Logout</button>
+                        </div>
+                    </form>
+                </div>
             </ul>
         </div>
     </div>

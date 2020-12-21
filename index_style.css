@@ -37,3 +37,15 @@ body {
 .logo {
     height: 100%;
 }
+
+.font {
+    font-family: 'Karla', serif;
+}
+
+.time {
+    margin-right: 2vw;
+}
+
+.navlist {
+    margin-left: 2vw;
+}
