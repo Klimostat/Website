@@ -8,7 +8,7 @@ $MAX_SESSION_AGE = 3600*24;
 
 
 function verifySession() {
-    global $conn, $MAX_SESSION_AGE, $action;
+    global $conn, $MAX_SESSION_AGE;
     if (isset($_COOKIE["sessionID"])) {
         $sessionID = $_COOKIE["sessionID"];
 
