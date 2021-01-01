@@ -16,7 +16,7 @@ where Username = :user");
             $passwdHash = $getPasswd["PasswordHash"];
             $userID = $getPasswd["pk_userId"];
 
-            if ($passwdHash === $password) {
+            if (password_verify($password, $passwdHash)) {
                 $sessionID = hash("sha3-512", openssl_random_pseudo_bytes(2056));
                 $createSession = $conn -> prepare("
 insert into Session (pk_sessionId, fk_userId)
