@@ -12,28 +12,21 @@
           integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
 </head>
 <body>
-    <div id="loginbox">
-        <div id="infobox">
-            <img src="../res/Logo.png" alt="" width="40px" height="40px" class="d-inline-block align-center">
-            <p>
-            Unser Projekt Klimostat ist ein
-            System, mit
-            dessen Hilfe die wichtigsten Daten –
-            CO2,
-            Temperatur, Luftfeuchtigkeit und
-            Wassereinbruch
-            - unseres Server-Raumes -  von
-            einem Raspberry Pi gemessen
-            werden können.
+    <div id="box" class="row; position-absolute top-50 start-50 translate-middle">
+        <div id="infobox" class="col-md-4">
+            <img src="../res/Logo.png" alt="Klimostat Logo" width="150px" height="150px" class="rounded mx-auto d-block">
+            <p class="text-center">
+                Unser Projekt Klimostat ist ein System, mit dessen Hilfe die wichtigsten Daten – CO2, Temperatur,
+                Luftfeuchtigkeit und Wassereinbruch - unseres Server-Raumes -  von einem Raspberry Pi gemessen werden können.
             </p>
         </div>
-        <form action="/action_page.php">
-            <input type="text" id="username" class="login" name="username" value="Username"><br>
-            <input type="password" id="passwort" class="login" name="passwort" value="*************"><br><br>
-            <input type="submit" id="loginbutton" class="login" value="Login">
-            <input type="checkbox" class="login" checked="" name="merken"> <p id="merken">Anmeldedaten merken? </p>
-        </form>
-
+        <div id="loginbox" class="col-md-8">
+            <form action="../PHP/login.php" class="position-absolute top-50 start-50 translate-middle">
+                <input type="text" id="username" class="login" name="username" value="Username"><br>
+                <input type="password" id="passwort" class="login" name="passwort" value="*************"><br><br>
+                <input type="submit" id="loginbutton" class="login" value="Login">
+            </form>
+        </div>
     </div>
 </body>
 </html>
