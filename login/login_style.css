@@ -28,15 +28,13 @@ body {
     height: 50vh;
 }
 
-
 #username{
-    background-color: darkgray;
+    background-color: #606060;
     border: 1px solid black;
-
 }
 
 #passwort{
-    background-color: darkgray;
+    background-color: #606060;
     border: 1px solid black;
 }
 
