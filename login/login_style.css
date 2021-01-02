@@ -10,14 +10,46 @@ body {
     margin:0;
     padding: 0;
 }
-
-#loginbox{
-    align-self: center;
+#loginbox {
+    display: flex;
+    flex-display: column;
     width: 200px;
-    color:black;
-    opacity: 0.7;
-    border:  2px solid black;
-    border-radius: 0 1em 1em 1em;
-    margin:  20px auto;
-    padding: 2em;
+    border: 1px solid black;
+    background-color: black;
+    margin: auto;
+}
+
+#infobox{
+    background-color: #1C2D1B;
+    color: white;
+    margin: ;
+}
+
+
+#username{
+    background-color: darkgray;
+    border: 1px solid black;
+
+}
+
+#passwort{
+    background-color: darkgray;
+
+    border: 1px solid black;
+}
+
+#loginbutton{
+    background-color: #1C2D1B;
+    color: white;
+    border: 1px solid white;
+    padding: 1vh 2vw;
+    font-size: 20px;
+}
+
+#merken{
+    color: white;
+}
+.login{
+    margin: 10px;
+    padding: 10px;
 }
