@@ -7,41 +7,39 @@ body {
     width: 100vw;
     background-image: url("../res/pexels-stefan-stefancik-91228.jpg");
     background-size: cover;
-    margin:0;
-    padding: 0;
 }
 
 #box{
     border: 1px solid black;
+    height: 60vh;
+    width: 60vw
 }
 
 #infobox{
     background-color: #172815;
     color: white;
-    font-size: 15px;
+    font-size: 17px;
     padding: 1vw 1vh;
 }
 
 #loginbox {
     background-color: black;
-    width: 50vw;
-    height: 50vh;
 }
 
 #username{
-    background-color:gray;
+    background-color: #e0e0e0;
     border: 1px solid black;
 }
 
 #passwort{
-    background-color: gray;
+    background-color: #e0e0e0;
     border: 1px solid black;
 }
 
 #loginbutton{
     background-color: #172815;
     color: white;
-    border: 0.5px solid white;
+    border: 0.5px solid #e0e0e0;
     padding: 1vh 2vw;
     font-size: 20px;
 }
