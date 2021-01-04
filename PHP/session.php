@@ -7,6 +7,10 @@ $MAX_SESSION_AGE = 3600*24;
 
 
 
+/**
+ * Überprüft, ob eine Session am laufen ist
+ * @return mixed|null je nach dem, ob eine Session läuft oder nicht, einen AssocArray mit Sessionvariablen oder null
+ */
 function verifySession() {
     global $conn, $MAX_SESSION_AGE;
     if (isset($_COOKIE["sessionID"])) {
@@ -36,6 +40,10 @@ where pk_sessionId = :sessionID");
     return null;
 }
 
+/**
+ * Lädt die Landing-page mit einer Statusmeldung
+ * @param $action string die Bezeichnung der Statusmeldung
+ */
 function landingPage($action) {
     header("Location: .?action=$action");
 }
