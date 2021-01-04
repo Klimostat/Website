@@ -1,5 +1,5 @@
 var ctx = document.getElementById('chart-temperatur');
-var myChart = new Chart(ctx, {
+var chart_temp_var = new Chart(ctx, {
     type: 'line',
     data: {
         labels: ['Red', 'Red', 'Red', 'Red', 'Red', 'Red'],
@@ -19,6 +19,12 @@ var myChart = new Chart(ctx, {
         }]
     },
     options: {
+        legend: {
+            labels: {
+                fontColor: 'black',
+                defaultFontColor: 'black'
+            }
+        },
         scales: {
             yAxes: [{
                 ticks: {
@@ -27,5 +33,4 @@ var myChart = new Chart(ctx, {
             }]
         }
     },
-
 });

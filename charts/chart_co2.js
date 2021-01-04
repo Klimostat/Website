@@ -1,5 +1,5 @@
 var ctx = document.getElementById('chart-co2');
-var myChart = new Chart(ctx, {
+var chart_co2_var = new Chart(ctx, {
     type: 'line',
     data: {
         labels: ['Blue', 'Blue', 'Blue', 'Blue', 'Blue', 'Blue'],
@@ -19,6 +19,12 @@ var myChart = new Chart(ctx, {
         }]
     },
     options: {
+        legend: {
+            labels: {
+                fontColor: 'black',
+                defaultFontColor: 'black'
+            }
+        },
         scales: {
             yAxes: [{
                 ticks: {
@@ -28,3 +34,4 @@ var myChart = new Chart(ctx, {
         }
     }
 });
+
