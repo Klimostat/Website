@@ -29,12 +29,12 @@ body {
 }
 
 #username{
-    background-color: #606060;
+    background-color:gray;
     border: 1px solid black;
 }
 
 #passwort{
-    background-color: #606060;
+    background-color: gray;
     border: 1px solid black;
 }
 
