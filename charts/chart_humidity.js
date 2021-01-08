@@ -1,5 +1,5 @@
 var ctx = document.getElementById('chart-humidity');
-var myChart = new Chart(ctx, {
+var chart_humidity_var = new Chart(ctx, {
     type: 'line',
     data: {
         labels: ['Purple', 'Purple', 'Purple', 'Purple', 'Purple', 'Purple'],
@@ -19,6 +19,12 @@ var myChart = new Chart(ctx, {
         }]
     },
     options: {
+        legend: {
+            labels: {
+                fontColor: 'black',
+                defaultFontColor: 'black'
+            }
+        },
         scales: {
             yAxes: [{
                 ticks: {
