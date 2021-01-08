@@ -29,6 +29,7 @@ values (:sessionID, :user)");
                 landingPage("login");
 
             } else {
+
                 landingPage("invalid_user");
 
             }
