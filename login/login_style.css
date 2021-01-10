@@ -19,6 +19,11 @@ body {
     font-size: 18.5px;
 }
 
+#infotext {
+    color: white;
+    font-size: 18.5px;
+}
+
 #loginbox {
     background-color: rgba(0, 0, 0, 0.75);
 }

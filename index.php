@@ -1,3 +1,8 @@
+<?php
+require "PHP/session.php";
+verifySession();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -43,8 +48,9 @@
                                 </select>
                             </li>
                         </ul>
-                        <form class="d-flex">
-                            <button class="btn btn-outline-secondary logout bg-light text-dark" type="button" onclick="chart_update()">Logout</button>
+                        <button class="btn btn-outline-secondary logout bg-light text-dark" type="button" onclick="chart_update()">Update</button>
+                        <form class="d-flex" method = "post" action = "PHP/logout.php">
+                            <button class="btn btn-outline-secondary logout bg-light text-dark" type="submit">Logout</button>
                         </form>
                     </div>
                 </div>

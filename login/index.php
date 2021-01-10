@@ -1,3 +1,31 @@
+<?php
+require "../PHP/session.php";
+verifyNoSession();
+
+if (isset($_GET["action"]) && $_GET["action"] !== "") {
+    switch ($_GET["action"]) {
+        case "logout":
+            $note = "An error occurred... You weren't logged out correctly!";
+            if ($session === null) {
+                $note = "You successfully logged out!";
+            }
+            break;
+        case "not_logged_in":
+            $note = "You aren't logged in. Log in to log out!";
+            break;
+        case "invalid_user":
+            $note = "Invalid username or password!";
+            break;
+        case "session_expired":
+            $note = "Your session expired";
+            break;
+        default:
+            $note = "Something other is the case: {$_GET["action"]}";
+    }
+}
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -16,17 +44,18 @@
         <div id="infobox" class="col-4 p-4 top-0 start-50">
             <img src="../res/Logo.png" alt="Klimostat Logo" width=150px height=150px class="position-relative  mx-auto d-block">
             <p class="text-center position-relative align-center">
-                Mit Hilfe von Klimostat
+Mit Hilfe von Klimostat
                 können Sie ganz einfach
                 die wichtigsten Daten
                 unseres Server-Raumes
                 auf einem Blick abrufen
-            </p>
+</p>
         </div>
         <div id="loginbox" class="col-8">
-            <form action="../PHP/login.php" class=" text-center position-relative top-50 start-50 translate-middle">
+            <form action="../PHP/login.php" class=" text-center position-relative top-50 start-50 translate-middle" method = "post">
+                <p id = "infotext"> <?=$note?> </p>
                 <input type="text" id="username" class="login border border-light border-1 rounded-1"  name="username" placeholder="Username"><br>
-                <input type="password" id="passwort" class="login border border-light border-1 rounded-1" name="passwort" placeholder="· · · · · · · · · · · ·"><br><br>
+                <input type="password" id="passwort" class="login border border-light border-1 rounded-1" name="password" placeholder="· · · · · · · · · · · ·"><br><br>
                 <button type="submit" id="loginbutton" class="btn btn-primary active border border-light border-1 rounded-1" data-bs-toggle="button" aria-pressed="true">Login</button>
             </form>
         </div>
