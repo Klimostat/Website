@@ -12,19 +12,18 @@
           integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
 </head>
 <body>
-    <div id="box" class="row position-absolute top-50 start-50 translate-middle border border-dark border-3 rounded-1">
-        <div id="infobox" class="col-md-4">
-            <img src="../res/Logo.png" alt="Klimostat Logo" width="150px" height="150px" class="mx-auto d-block">
-            <p class="text-center position-relative m-5">
-                Unser Projekt Klimostat ist ein System,
-                mit dessen Hilfe die wichtigsten Daten
-                – CO2, Temperatur, Luftfeuchtigkeit
-                und Wassereinbruch -
-                unseres Server-Raumes von einem
-                Raspberry Pi gemessen werden können.
+    <div id="box" class="row position-absolute top-50 start-50 translate-middle ">
+        <div id="infobox" class="col-4 p-4 top-0 start-50">
+            <img src="../res/Logo.png" alt="Klimostat Logo" width=150px height=150px class="position-relative  mx-auto d-block">
+            <p class="text-center position-relative align-center">
+                Mit Hilfe von Klimostat
+                können Sie ganz einfach
+                die wichtigsten Daten
+                unseres Server-Raumes
+                auf einem Blick abrufen
             </p>
         </div>
-        <div id="loginbox" class="col-md-8">
+        <div id="loginbox" class="col-8">
             <form action="../PHP/login.php" class=" text-center position-relative top-50 start-50 translate-middle">
                 <input type="text" id="username" class="login border border-light border-1 rounded-1"  name="username" placeholder="Username"><br>
                 <input type="password" id="passwort" class="login border border-light border-1 rounded-1" name="passwort" placeholder="· · · · · · · · · · · ·"><br><br>
