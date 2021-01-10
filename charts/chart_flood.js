@@ -4,7 +4,7 @@ var chart_wateringress_var = new Chart(ctx, {
     data: {
         labels: ['Green', 'Green', 'Green', 'Green', 'Green', 'Green'],
         datasets: [{
-            label: 'bar',
+            label: 'Wassersensor',
             data: [0, 0, 0, 1, 0, 0],
             backgroundColor: 'rgba(75, 192, 192, 0.7)',
             borderColor: [
