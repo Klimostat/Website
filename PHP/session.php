@@ -1,6 +1,6 @@
 <?php
 // für debugging:
-// error_reporting(0);
+error_reporting(0);
 
 // Daten Systemspezifisch angeben:
 $rootDomain = "/klimostat";
@@ -52,8 +52,8 @@ where current_timestamp() - lastupdatetime > :maxAge");
         $sessClear -> execute();
 
         $user = $conn -> prepare("
-select U.username username, U.pk_userId userID, S.pk_sessionId sessionID from session S
-join user U on S.fk_userId = U.pk_userId
+select u.username username, u.pk_userId userID, s.pk_sessionId sessionID from session s
+join user u on s.fk_userId = u.pk_userId
 where pk_sessionId = :sessionID");
         $user -> bindParam(":sessionID", $sessionID);
         $user -> execute();
@@ -144,7 +144,7 @@ where username = :user");
             $getPasswd -> execute();
             if ($getPasswd -> rowCount() > 0) {
                 $getPasswd = $getPasswd -> fetch(PDO::FETCH_ASSOC);
-                $passwdHash = $getPasswd["PasswordHash"];
+                $passwdHash = $getPasswd["passwordHash"];
                 $userID = $getPasswd["pk_userId"];
 
                 if (password_verify($password, $passwdHash)) {
