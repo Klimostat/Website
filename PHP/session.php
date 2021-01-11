@@ -1,15 +1,14 @@
 <?php
-// für debugging:
-error_reporting(0);
-
-// Daten Systemspezifisch angeben:
+// IMPORTANT: adapt those lines
+// ----------------------------
 $rootDomain = "/klimostat";
 $conn = new PDO("mysql:host=localhost;dbname=klimostat", "root", "passwd");
 $MAX_SESSION_AGE = 3600*24;
 
 
-getSession();
 
+
+getSession();
 
 /**
  * Überprüft, ob eine Session am laufen ist, ist keine am laufen leitet sie auf die login-Seite weiter.
