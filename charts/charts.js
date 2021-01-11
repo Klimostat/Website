@@ -1,9 +1,9 @@
-requestChart(setCO2Chart, '2');
-requestChart(setFloodChart, '2');
+requestChart(setTemperatureChart, '1');
 requestChart(setHumidityChart, '2');
-requestChart(setTemperatureChart, '2');
+requestChart(setCO2Chart, '3');
+requestChart(setFloodChart, '4');
 
-function requestChart(fn_toUpdate, sensorId) {
+function requestChart(fn_toUpdate, sensorId, from = "2000-01-01 00:00:00", to = "2100-01-01 00:00:00") {
     let xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
         if (this.readyState === 4 && this.status === 200) {
@@ -15,6 +15,8 @@ function requestChart(fn_toUpdate, sensorId) {
     xhttp.open("POST", "PHP/getData.php", true);
     let data = new FormData();
     data.append('sensorId', sensorId);
+    data.append('from', from);
+    data.append('to', to);
     xhttp.send(data);
 }
 

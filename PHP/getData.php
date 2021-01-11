@@ -2,8 +2,8 @@
 require "session.php";
 verifySession();
 
-$from = '2021-01-11 00:00:00';
-$to = '2021-01-11 16:00:00';
+$from = $_POST["from"];
+$to = $_POST["to"];
 $sensorId = $_POST["sensorId"];
 
 $data = $conn -> prepare("

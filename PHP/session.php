@@ -3,6 +3,8 @@
 // ----------------------------
 $rootDomain = "https://kls.letusflow.xyz";
 $conn = new PDO("mysql:host=localhost;dbname=klimostat", "root", "");
+//$rootDomain = "/klimostat";
+//$conn = new PDO("mysql:host=localhost;dbname=klimostat", "root", "passwd");
 $MAX_SESSION_AGE = 3600*24;
 
 
@@ -58,6 +60,12 @@ where pk_sessionId = :sessionID");
         $user -> execute();
         if ($user -> rowCount() > 0) {
             $session = $user -> fetch(PDO::FETCH_ASSOC);
+            $updateTimer = $conn -> prepare("
+update session
+set lastupdatetime = current_timestamp()
+where pk_sessionId = :sessionID");
+            $updateTimer -> bindParam(":sessionID", $sessionID);
+            $updateTimer -> execute();
         } else {
             $session = null;
             logOutAndForward(true);
