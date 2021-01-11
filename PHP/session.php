@@ -4,7 +4,7 @@
 
 // Daten Systemspezifisch angeben:
 $rootDomain = "/klimostat";
-$conn = new PDO("mysql:host=localhost;dbname=Klimostat", "root", "passwd");
+$conn = new PDO("mysql:host=localhost;dbname=klimostat", "root", "passwd");
 $MAX_SESSION_AGE = 3600*24;
 
 
@@ -46,14 +46,14 @@ function getSession() {
         $sessionID = $_COOKIE["sessionID"];
 
         $sessClear = $conn -> prepare("
-delete from Session
+delete from session
 where current_timestamp() - lastupdatetime > :maxAge");
         $sessClear -> bindParam(":maxAge", $MAX_SESSION_AGE);
         $sessClear -> execute();
 
         $user = $conn -> prepare("
-select U.Username username, U.pk_userId userID, S.pk_sessionId sessionID from Session S
-join User U on S.fk_userId = U.pk_userId
+select U.username username, U.pk_userId userID, S.pk_sessionId sessionID from session S
+join user U on S.fk_userId = U.pk_userId
 where pk_sessionId = :sessionID");
         $user -> bindParam(":sessionID", $sessionID);
         $user -> execute();
@@ -106,7 +106,7 @@ function logOutAndForward($sessionExpired = false) {
     if ($session !== null) {
 
         $clearSession = $conn -> prepare("
-delete from Session
+delete from session
 where pk_sessionId = :session");
         $clearSession -> bindParam(":session", $session["sessionID"]);
         $clearSession -> execute();
@@ -138,8 +138,8 @@ function logInAndForward() {
             $password = $_POST["password"];
 
             $getPasswd = $conn -> prepare("
-select PasswordHash, pk_userId from User
-where Username = :user");
+select passwordHash, pk_userId from user
+where username = :user");
             $getPasswd -> bindParam(":user", $username);
             $getPasswd -> execute();
             if ($getPasswd -> rowCount() > 0) {
@@ -150,7 +150,7 @@ where Username = :user");
                 if (password_verify($password, $passwdHash)) {
                     $sessionID = hash("sha3-512", openssl_random_pseudo_bytes(2056));
                     $createSession = $conn -> prepare("
-insert into Session (pk_sessionId, fk_userId)
+insert into session (pk_sessionId, fk_userId)
 values (:sessionID, :user)");
                     $createSession -> bindParam(":sessionID", $sessionID);
                     $createSession -> bindParam(":user", $userID);
