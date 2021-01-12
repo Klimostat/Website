@@ -58,19 +58,19 @@ verifySession();
 
             <div class="container-fluid charts px-5 mt-5">
                 <div class="row">
-                    <div class="chart-container col-5 offset-md-1 bg-light px-3 my-2 me-2 shadow rounded">
+                    <div class="chart-container col-lg-5 offset-lg-1 bg-light px-3 my-2 me-2 shadow rounded">
                         <canvas id="chart-temperatur"></canvas>
                     </div>
-                    <div class="chart-container col-5 bg-light m-2 shadow rounded">
+                    <div class="chart-container col-lg-5 bg-light m-lg-2 shadow rounded">
                         <canvas id="chart-humidity"></canvas>
                     </div>
                 </div>
 
                 <div class="row">
-                    <div class="chart-container col-5 offset-md-1 bg-light my-2 me-2 shadow rounded">
+                    <div class="chart-container col-lg-5 offset-lg-1 bg-light my-2 me-2 shadow rounded">
                         <canvas id="chart-co2"></canvas>
                     </div>
-                    <div class="chart-container col-5 bg-light m-2 shadow rounded">
+                    <div class="chart-container col-lg-5 bg-light m-lg-2 shadow rounded">
                         <canvas id="chart-flood"></canvas>
                     </div>
                 </div>
