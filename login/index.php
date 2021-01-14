@@ -42,7 +42,7 @@ if (isset($_GET["action"]) && $_GET["action"] !== "") {
     </head>
     <body>
         <div id="box" class="row position-absolute top-50 start-50 translate-middle ">
-            <div id="infobox" class="col-4 p-4 top-0 start-50">
+            <div id="infobox" class="col-md-4 p-4 top-0 start-50">
                 <img src="../res/Logo.png" alt="Klimostat Logo" width=150px height=150px
                      class="position-relative  mx-auto d-block">
                 <p class="text-center position-relative align-center">
@@ -53,7 +53,7 @@ if (isset($_GET["action"]) && $_GET["action"] !== "") {
                     auf einem Blick abrufen
                 </p>
             </div>
-            <div id="loginbox" class="col-8">
+            <div id="loginbox" class="col-md-8">
                 <form action="../PHP/login.php" class=" text-center position-relative top-50 start-50 translate-middle"
                       method="post">
                     <p id="infotext"> <?= $note ?> </p>
