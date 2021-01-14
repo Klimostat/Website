@@ -48,7 +48,10 @@ verifySession();
                                 </select>
                             </li>
                         </ul>
-                        <button class="btn btn-outline-secondary logout bg-light text-dark" type="button" onclick="liveUpdate()">Update</button>
+                        <div>
+                            Stand: <span id = "lastUpdated">noch nicht gelanden</span>, nächstes Update in <span id = "nextUpdateIn">0</span> Sekunden.
+                            <button class="btn btn-outline-secondary logout bg-light text-dark" type="button" onclick="nextUpdateIn = 0; updateCountdown()">Update</button>
+                        </div>
                         <form class="d-flex" method = "post" action = "PHP/logout.php">
                             <button class="btn btn-outline-secondary logout bg-light text-dark" type="submit">Logout</button>
                         </form>

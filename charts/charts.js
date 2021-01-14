@@ -1,3 +1,5 @@
+const UPDATE_INTERVAL = 10;
+
 let temperatureChart = new Chart(document.getElementById('chart-temperatur'), {
     type: 'line',
     data: {
@@ -96,11 +98,24 @@ let floodChart = new Chart(document.getElementById('chart-flood'), {
         }
     }
 });
-let lastUpdate = new Date();
-updateCharts(false);
+let lastUpdate = new Date(0);
+let nextUpdateIn = 0;
 
-function liveUpdate() {
+let updateInterval = setInterval(updateCountdown, 1000);
+
+function updateToBeLive() {
     updateCharts(true, jsToUTCMySQLDate(lastUpdate), jsToUTCMySQLDate(lastUpdate = new Date()));
+    document.getElementById("lastUpdated").innerHTML = jsToLocalReadableString(lastUpdate);
+}
+
+function updateCountdown() {
+    if (nextUpdateIn <= 1) {
+        updateToBeLive();
+        nextUpdateIn = UPDATE_INTERVAL;
+    } else {
+        nextUpdateIn--;
+    }
+    document.getElementById("nextUpdateIn").innerHTML = nextUpdateIn;
 }
 
 function jsToUTCMySQLDate(dateObj) {
