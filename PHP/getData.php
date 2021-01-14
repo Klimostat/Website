@@ -8,7 +8,7 @@ $sensorId = $_POST["sensorId"];
 
 $data = $conn -> prepare("
 select m.messzeitpunkt zeit, m.messdaten daten from messung m
-where m.messzeitpunkt >= :from
+where m.messzeitpunkt > :from
 and m.messzeitpunkt <= :to
 and m.fk_sensorId = :sensorId
 ");
@@ -17,15 +17,15 @@ $data -> bindParam(":to", $to);
 $data -> bindParam(":sensorId", $sensorId);
 $data -> execute();
 
-$labels = "[";
-$values = "[";
+$outString = "[";
 
-while ($tupel = $data -> fetch(PDO::FETCH_ASSOC)) {
-    $labels .= "\"{$tupel['zeit']}\",";
-    $values .= "\"{$tupel['daten']}\",";
+if ($data -> rowCount() > 0) {
+    while ($tupel = $data -> fetch(PDO::FETCH_ASSOC)) {
+        $outString .= "{\"time\":\"{$tupel['zeit']}\",\"value\":{$tupel['daten']}},";
+    }
+    $outString = substr($outString, 0, strlen($outString) - 1);
 }
 
-$labels = substr($labels, 0, strlen($labels) - 1) . "]";
-$values = substr($values, 0, strlen($values) - 1) . "]";
 
-echo "{\"labels\": $labels, \"values\": $values}";
+
+echo $outString . "]";
