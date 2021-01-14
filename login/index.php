@@ -43,8 +43,7 @@ if (isset($_GET["action"]) && $_GET["action"] !== "") {
     <body>
         <div id="box" class="row position-absolute top-50 start-50 translate-middle ">
             <div id="infobox" class="col-md-4 p-4 top-0 start-50">
-                <img src="../res/Logo.png" alt="Klimostat Logo" width=150px height=150px
-                     class="position-relative  mx-auto d-block">
+                <img src="../res/Logo.png" alt="Klimostat Logo" class="position-relative mx-auto d-block img-fluid">
                 <p class="text-center position-relative align-center">
                     Mit Hilfe von Klimostat
                     können Sie ganz einfach
@@ -54,7 +53,7 @@ if (isset($_GET["action"]) && $_GET["action"] !== "") {
                 </p>
             </div>
             <div id="loginbox" class="col-md-8">
-                <form action="../PHP/login.php" class=" text-center position-relative top-50 start-50 translate-middle"
+                <form action="../PHP/login.php" class="text-center position-relative top-50 start-50 translate-middle"
                       method="post">
                     <p id="infotext"> <?= $note ?> </p>
                     <input type="text" id="username" class="login border border-light border-1 rounded-1"
@@ -62,7 +61,7 @@ if (isset($_GET["action"]) && $_GET["action"] !== "") {
                     <input type="password" id="passwort" class="login border border-light border-1 rounded-1"
                            name="password" placeholder="· · · · · · · · · · · ·"><br><br>
                     <button type="submit" id="loginbutton"
-                            class="btn btn-primary active border border-light border-1 rounded-1"
+                            class="btn btn-primary active border border-light border-1 rounded-1 mb-3"
                             data-bs-toggle="button" aria-pressed="true">Login
                     </button>
                 </form>
