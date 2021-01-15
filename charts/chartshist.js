@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", init, false);
+document.getElementById("interval").addEventListener("change", updateSummaryChartsTrigger)
 let temperatureChart, humidityChart, cO2Chart, floodChart;
 
 /**
@@ -217,4 +218,51 @@ function jsToLocalReadableString(dateObj) {
         ('00' + dateObj.getHours()).slice(-2) + ':' +
         ('00' + dateObj.getMinutes()).slice(-2) + ':' +
         ('00' + dateObj.getSeconds()).slice(-2);
+}
+
+function updateSummaryChartsTrigger () {
+    let index = document.getElementById("interval").value;
+    switch (index) {
+        case 0:
+            location.assign(".");
+            break;
+        case 1: // last hour
+            var myDate = new Date();
+            myDate.setHours(myDate.getHours() -1);
+            updateSummaryCharts("min", myDate, new Date());
+            break;
+        case 2: // last day
+            var myDate = new Date();
+            myDate.setHours(myDate.getHours() -24);
+            updateSummaryCharts("10min", myDate, new Date());
+            break;
+        case 3: // last week
+            var myDate = new Date();
+            myDate.setHours(myDate.getHours() - (24 * 7));
+            updateSummaryCharts("hr", myDate, new Date());
+            break;
+        case 4: // last month
+            var myDate = new Date();
+            myDate.setMonth(myDate.getMonth() - 1);
+            updateSummaryCharts("day", myDate, new Date());
+            break;
+        case 5:
+            var myDate = new Date();
+            myDate.setMonth(myDate.getMonth() - 3);
+            updateSummaryCharts("day", myDate, new Date());
+            break;
+        case 6:
+            var myDate = new Date();
+            myDate.setMonth(myDate.getMonth() - 6);
+            updateSummaryCharts("day", myDate, new Date());
+            break;
+        case 7:
+            var myDate = new Date();
+            myDate.setFullYear(myDate.getFullYear() - 1);
+            updateSummaryCharts("day", myDate, new Date());
+            break;
+        case 8:
+            updateSummaryCharts("day");
+            break;
+    }
 }
