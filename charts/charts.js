@@ -5,7 +5,13 @@ let temperatureChart = new Chart(document.getElementById('chart-temperatur'), {
     data: {
         labels: [],
         datasets: [{
-            label: 'Temperatur',
+            label: 'Temperatur min',
+            data: [],
+            backgroundColor: 'rgba(255, 99, 132, 0.7)',
+            borderColor: 'rgba(255, 99, 132, 0.7)',
+            borderWidth: 1
+        }, {
+            label: 'Temperatur max',
             data: [],
             backgroundColor: 'rgba(255, 99, 132, 0.7)',
             borderColor: 'rgba(255, 99, 132, 0.7)',
@@ -101,7 +107,7 @@ let floodChart = new Chart(document.getElementById('chart-flood'), {
 let lastUpdate = new Date(0);
 let nextUpdateIn = 0;
 
-let updateInterval = setInterval(updateCountdown, 1000);
+// let updateInterval = setInterval(updateCountdown, 1000);
 
 function updateToBeLive() {
     updateCharts(true, jsToUTCMySQLDate(lastUpdate), jsToUTCMySQLDate(lastUpdate = new Date()));
@@ -142,7 +148,7 @@ function mySQLToUTCJSDate(mysqlDateStr) {
 
 
 function updateCharts(append, from = "2000-01-01 00:00:00", to = "2100-01-01 00:00:00") {
-    updateChartWithValuesFromDB(temperatureChart, '1', from, to, append);
+    updateSummaryChartWithValuesFromDB(temperatureChart, '1', from, to, "hr", append);
     updateChartWithValuesFromDB(humidityChart, '2', from, to, append);
     updateChartWithValuesFromDB(cO2Chart, '3', from, to, append);
     updateChartWithValuesFromDB(floodChart, '4', from, to, append);
@@ -164,6 +170,23 @@ function updateChartWithValuesFromDB(chart, sensorId, from, to, append = false) 
     xhttp.send(data);
 }
 
+function updateSummaryChartWithValuesFromDB(chart, sensorId, from, to, timewise, append = false) {
+    let xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (this.readyState === 4 && this.status === 200) {
+            console.log(this.responseText);
+            setValuesOfSummaryChart(chart, JSON.parse(this.responseText), append);
+        }
+    };
+    xhttp.open("POST", "PHP/getDataTimewise.php", true);
+    let data = new FormData();
+    data.append('sensorId', sensorId);
+    data.append('from', from);
+    data.append('to', to);
+    data.append('timewise', timewise);
+    xhttp.send(data);
+}
+
 /**
  *
  * @param chart {Chart}
@@ -178,6 +201,26 @@ function setValuesOfChart(chart, dataset, append = false) {
     for (const entry of dataset) {
         chart.data.labels.push(jsToLocalReadableString(mySQLToUTCJSDate(entry.time)));
         chart.data.datasets[0].data.push(entry.value);
+    }
+    chart.update();
+}
+
+/**
+ *
+ * @param chart {Chart}
+ * @param dataset {Object}
+ * @param append boolean
+ */
+function setValuesOfSummaryChart(chart, dataset, append = false) {
+    if (append !== true) {
+        chart.data.labels = [];
+        chart.data.datasets[0].data = [];
+        chart.data.datasets[1].data = [];
+    }
+    for (const entry of dataset) {
+        chart.data.labels.push(jsToLocalReadableString(mySQLToUTCJSDate(entry.time)));
+        chart.data.datasets[0].data.push(entry.min);
+        chart.data.datasets[1].data.push(entry.max);
     }
     chart.update();
 }
