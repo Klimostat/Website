@@ -152,7 +152,7 @@ function updateSummaryChartWithValuesFromDB(chart, sensorId, from, to, interval)
     let xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
         if (this.readyState === 4 && this.status === 200) {
-            // console.log(this.responseText);
+            console.log(this.responseText);
             setValuesOfSummaryChart(chart, JSON.parse(this.responseText));
         }
     };
@@ -221,48 +221,45 @@ function jsToLocalReadableString(dateObj) {
 }
 
 function updateSummaryChartsTrigger () {
+    console.log("works")
     let index = document.getElementById("interval").value;
+    let myDate = new Date();
     switch (index) {
-        case 0:
+        case "0":
             location.assign(".");
             break;
-        case 1: // last hour
-            var myDate = new Date();
+        case "1": // last hour
             myDate.setHours(myDate.getHours() -1);
-            updateSummaryCharts("min", myDate, new Date());
+            updateSummaryCharts("min", myDate);
             break;
-        case 2: // last day
-            var myDate = new Date();
+        case "2": // last day
             myDate.setHours(myDate.getHours() -24);
-            updateSummaryCharts("10min", myDate, new Date());
+            updateSummaryCharts("10min", myDate);
             break;
-        case 3: // last week
-            var myDate = new Date();
+        case "3": // last week
             myDate.setHours(myDate.getHours() - (24 * 7));
-            updateSummaryCharts("hr", myDate, new Date());
+            updateSummaryCharts("hr", myDate);
             break;
-        case 4: // last month
-            var myDate = new Date();
+        case "4": // last month
             myDate.setMonth(myDate.getMonth() - 1);
-            updateSummaryCharts("day", myDate, new Date());
+            updateSummaryCharts("day", myDate);
             break;
-        case 5:
-            var myDate = new Date();
+        case "5":
             myDate.setMonth(myDate.getMonth() - 3);
-            updateSummaryCharts("day", myDate, new Date());
+            updateSummaryCharts("day", myDate);
             break;
-        case 6:
-            var myDate = new Date();
+        case "6":
             myDate.setMonth(myDate.getMonth() - 6);
-            updateSummaryCharts("day", myDate, new Date());
+            updateSummaryCharts("day", myDate);
             break;
-        case 7:
-            var myDate = new Date();
+        case "7":
             myDate.setFullYear(myDate.getFullYear() - 1);
-            updateSummaryCharts("day", myDate, new Date());
+            updateSummaryCharts("day", myDate);
             break;
-        case 8:
+        case "8":
             updateSummaryCharts("day");
             break;
+        default:
+            console.log(index);
     }
 }
