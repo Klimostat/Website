@@ -48,7 +48,7 @@ function getSession() {
 
         $sessClear = $conn -> prepare("
 delete from session
-where current_timestamp() - lastupdatetime > :maxAge");
+where utc_timestamp() - lastupdatetime > :maxAge");
         $sessClear -> bindParam(":maxAge", $MAX_SESSION_AGE);
         $sessClear -> execute();
 
@@ -62,7 +62,7 @@ where pk_sessionId = :sessionID");
             $session = $user -> fetch(PDO::FETCH_ASSOC);
             $updateTimer = $conn -> prepare("
 update session
-set lastupdatetime = current_timestamp()
+set lastupdatetime = utc_timestamp()
 where pk_sessionId = :sessionID");
             $updateTimer -> bindParam(":sessionID", $sessionID);
             $updateTimer -> execute();

@@ -2,19 +2,22 @@
 require "session.php";
 verifySession();
 
-$from = $_POST["from"];
-$to = $_POST["to"];
-$sensorId = $_POST["sensorId"];
-
-$data = $conn -> prepare("
+if (isset($_POST["from"])) {
+    $data = $conn -> prepare("
 select m.messzeitpunkt zeit, m.messdaten daten from messung m
 where m.messzeitpunkt > :from
-and m.messzeitpunkt <= :to
 and m.fk_sensorId = :sensorId
 ");
-$data -> bindParam(":from", $from);
-$data -> bindParam(":to", $to);
-$data -> bindParam(":sensorId", $sensorId);
+    $data -> bindParam(":from", $_POST["from"]);
+} else {
+    $data = $conn -> prepare("
+select m.messzeitpunkt zeit, m.messdaten daten from messung m
+where m.messzeitpunkt > subtime(utc_timestamp, '00:10:00')
+and m.fk_sensorId = :sensorId
+");
+}
+
+$data -> bindParam(":sensorId", $_POST["sensorId"]);
 $data -> execute();
 
 $outString = "[";

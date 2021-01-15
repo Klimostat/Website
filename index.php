@@ -1,6 +1,13 @@
 <?php
 require "PHP/session.php";
 verifySession();
+
+$scriptname = "chartslive.js";
+
+if (isset($_GET["live"]) && $_GET["live"] === "false") {
+    $scriptname = "chartshist.js";
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -35,7 +42,7 @@ verifySession();
                     <div class="collapse navbar-collapse" id="navbarSupportedContent">
                         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                             <li class="nav-item interval-select">
-                                <select class="form-control bg-light text-dark" id="interval" onchange="setCharts()">
+                                <select class="form-control bg-light text-dark" id="interval">
                                     <option class="font">Live</option>
                                     <option class="font">Last Hour</option>
                                     <option class="font">Last Day</option>
@@ -48,10 +55,7 @@ verifySession();
                                 </select>
                             </li>
                         </ul>
-                        <div>
-                            Stand: <span id = "lastUpdated">noch nicht gelanden</span>, nächstes Update in <span id = "nextUpdateIn">0</span> Sekunden.
-                            <button class="btn btn-outline-secondary logout bg-light text-dark" type="button" onclick="nextUpdateIn = 0; updateCountdown()">Update</button>
-                        </div>
+                        <div id = "timing"></div>
                         <form class="d-flex" method = "post" action = "PHP/logout.php">
                             <button class="btn btn-outline-secondary logout bg-light text-dark" type="submit">Logout</button>
                         </form>
@@ -87,6 +91,6 @@ verifySession();
                 integrity="sha512-hZf9Qhp3rlDJBvAKvmiG+goaaKRZA6LKUO35oK6EsM0/kjPK32Yw7URqrq3Q+Nvbbt8Usss+IekL7CRn83dYmw=="
                 src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js">
         </script>
-        <script src="charts/charts.js"></script>
+        <script src="charts/<?=$scriptname?>"></script>
     </body>
 </html>
