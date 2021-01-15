@@ -40,7 +40,7 @@ if (isset($_GET["action"]) && $_GET["action"] !== "") {
               crossorigin="anonymous">
     </head>
     <body>
-        <div id="box" class="row position-absolute top-50 start-50 translate-middle ">
+        <div class="row position-absolute top-50 start-50 translate-middle ">
             <div id="infobox" class="col-md-4 p-4 top-0 start-50">
                 <img src="../res/Logo.png" alt="Klimostat Logo" class="position-relative mx-auto d-block img-fluid">
                 <p class="text-center position-relative align-center">
