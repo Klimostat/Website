@@ -123,20 +123,20 @@ function init() {
         }
     });
 
-    updateSummaryCharts("min");
+    updateSummaryCharts("hr");
 }
 
 /**
  * updates the charts
- * @param timewise {string} the interval in which the data should be summarized, options are "min", "10min", "hr", "day"
+ * @param interval {string} the interval in which the data should be summarized, options are "min", "10min", "hr", "day"
  * @param from {Date} the date since when the data should be loaded
  * @param to {Date} the date until when the data should be loaded
  */
-function updateSummaryCharts(timewise, from = new Date(2000, 1, 1), to = new Date()) {
-    updateSummaryChartWithValuesFromDB(temperatureChart, 1, from, to, timewise);
-    updateSummaryChartWithValuesFromDB(humidityChart, 2, from, to, timewise);
-    updateSummaryChartWithValuesFromDB(cO2Chart, 3, from, to, timewise);
-    updateSummaryChartWithValuesFromDB(floodChart, 4, from, to, timewise);
+function updateSummaryCharts(interval, from = new Date(2000, 1, 1), to = new Date()) {
+    updateSummaryChartWithValuesFromDB(temperatureChart, 1, from, to, interval);
+    updateSummaryChartWithValuesFromDB(humidityChart, 2, from, to, interval);
+    updateSummaryChartWithValuesFromDB(cO2Chart, 3, from, to, interval);
+    updateSummaryChartWithValuesFromDB(floodChart, 4, from, to, interval);
 }
 
 /**
@@ -145,9 +145,9 @@ function updateSummaryCharts(timewise, from = new Date(2000, 1, 1), to = new Dat
  * @param sensorId {number} the id of the sensor
  * @param from {Date} the date since when the data should be loaded
  * @param to {Date} the date until when the data should be loaded
- * @param timewise {string} the interval in which the data should be summarized, options are "min", "10min", "hr", "day"
+ * @param interval {string} the interval in which the data should be summarized, options are "min", "10min", "hr", "day"
  */
-function updateSummaryChartWithValuesFromDB(chart, sensorId, from, to, timewise) {
+function updateSummaryChartWithValuesFromDB(chart, sensorId, from, to, interval) {
     let xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
         if (this.readyState === 4 && this.status === 200) {
@@ -160,7 +160,7 @@ function updateSummaryChartWithValuesFromDB(chart, sensorId, from, to, timewise)
     data.append('sensorId', sensorId);
     data.append('from', jsToUTCMySQLDate(from));
     data.append('to', jsToUTCMySQLDate(to));
-    data.append('timewise', timewise);
+    data.append('timewise', interval);
     xhttp.send(data);
 }
 
