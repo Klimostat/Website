@@ -1,10 +1,15 @@
 <?php
-// IMPORTANT: adapt those lines
-// ----------------------------
-$rootDomain = "https://kls.letusflow.xyz";
-$conn = new PDO("mysql:host=localhost;dbname=klimostat", "root", "");
-//$rootDomain = "/klimostat";
-//$conn = new PDO("mysql:host=localhost;dbname=klimostat", "root", "passwd");
+/**
+ * Kontrolliert die Session, wird bei jeder Seite verwendet und bietet Funktionen, die auf den unterschiedlichsten Seiten benötigt werden.
+ * IMPORTANT: Die folgenden drei Variablen sind zur Konfiguration notwendig:
+ * $rootDomain ist die Root-Domain des Webservers, sie wird zur Weiterleitung verwendet, z.B. bei erfolgreichem Login
+ * $conn ist die Datenbankverbindung, je nach Datenbank muss diese adaptiert werden
+ * $MAX_SESSION_AGE ist das maximale Alter, das eine Session erreichen darf
+*/
+//$rootDomain = "https://kls.letusflow.xyz";
+//$conn = new PDO("mysql:host=localhost;dbname=klimostat", "root", "");
+$rootDomain = "/klimostat";
+$conn = new PDO("mysql:host=localhost;dbname=klimostat", "root", "passwd");
 $MAX_SESSION_AGE = 3600*24;
 
 
@@ -103,7 +108,7 @@ function mainPage($action = "") {
 }
 
 /**
- * Meldet den Benutzer ab und leitet auf die login-Page weiter.
+ * Meldet den Benutzer ab, löscht die Session in der Datenbank und leitet auf die login-Page weiter.
  * @param bool $sessionExpired gibt an, ob auf der login-Page die Session-Expired-Meldung angezeigt werden soll.
  */
 function logOutAndForward($sessionExpired = false) {
@@ -135,7 +140,12 @@ where pk_sessionId = :session");
 }
 
 /**
- * Meldet den Benutzer anhand der POST-Variablen username und password an und leitet je nach Erfolg auf die Main-Seite weiter oder nicht.
+ * Meldet einen User an, indem es ihn mittels Benutzername und Passwort authentifiziert und
+ * erstellt bei erfolgreicher Authentifizierung eine Session in der Datenbank.
+ * Leitet automatisch auf die Login-Seite /login/index.php weiter und gibt eine entsprechende Statusmeldung aus.
+ * POST-Attribute:
+ * 1. username: der angegebene Benutzername
+ * 2. password: das angegebene Passwort
  */
 function logInAndForward() {
     global $session, $conn, $MAX_SESSION_AGE;

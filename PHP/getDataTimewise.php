@@ -1,16 +1,30 @@
 <?php
+/**
+ * Liefert alle Messwerte eines Sensors aus der Datenbank von einem Zeitpunkt bis zu einem anderen Zeitpunkt an.
+ * Die Datensätze werden in Intervallen zu min/max-Werten im JSON-Format [{"time":"", "min":"", "max":""},...] zusammengefasst.
+ * POST-Attribute:
+ * 1. from: ein timestamp in SQL-Schreibweise
+ * 2. to: ein timestamp in SQL-Schreibweise
+ * 3. sensorId: die id des Sensors in der Datenbank
+ * 4. interval: das Interval, in dem Datensätze zusammengefasst werden sollen, mögliche Optionen sind "min", "10min", "hr" und "day"
+ */
+
+
+
+
+
 require "session.php";
 verifySession();
 
 $from = $_POST["from"];
 $to = $_POST["to"];
 $sensorId = $_POST["sensorId"];
-$timewise = $_POST["timewise"];
+$interval = $_POST["interval"];
 
 $timeStrLen = 19;
 $timeAppend = "";
 
-switch ($timewise) {
+switch ($interval) {
     case "min":
         $timeStrLen = 16;
         $timeAppend = ":00";

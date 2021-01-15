@@ -1,9 +1,15 @@
-DATEIEN:
-======
+KONFIGURATION:
+==============
 
-index.php
----------
-Die Landing-page mit Login-Funktion
+Beim Aufsetzen muss man die Datenbank-Zugriffsdaten und die Root-Domain für die korrekte Weiterleitung angeben.
+Diese Variablen sind in den ersten Zeilen von session.php gesetzt. 
+
+DATEIEN:
+========
+/login/index.php
+---------------
+Die Login-Seite. 
+Bei erfolgreicher Authentifizierung wird man auf die Hauptseite /index.php weitergeleitet.
 
 GET-Attribute: 
 
@@ -16,25 +22,8 @@ GET-Attribute:
     invalid_user,
     already_logged_in,
     session_expired,
-    
-login.php
----------
-Meldet einen User an indem es ihn mittels Benutzername und  Passwort authentifiziert und 
-erstellt bei erfolgreicher Authentifizierung eine Session in der Datenbank.
-Leitet automatisch auf die Landing-Page weiter und gibt eine entsprechende Statusmeldung aus.
-
-POST-Attribute:
-
-1. user: der angegebene Benutzername
-2. password: das angegebene Passwort
-
-logout.php
+   
+/index.php
 ----------
-Meldet den angemeldeten User wieder ab und löscht seine Session.
-Leitet automatisch auf die Landing-Page weiter und gibt eine entsprechende Statusmeldung aus.
-
-session.php
------------
-Kontrolliert die Sessions, wird bei jeder Seite verwendet und bietet Funktionen, die auf den Seiten benötigt werden.
-Für Funktionsinfomrationen siehe PHPDoc auf der Seite.
-
+Die Hauptseite.
+//TODO
