@@ -90,6 +90,6 @@ if (isset($_GET["live"]) && $_GET["live"] === "false") {
                 integrity="sha512-hZf9Qhp3rlDJBvAKvmiG+goaaKRZA6LKUO35oK6EsM0/kjPK32Yw7URqrq3Q+Nvbbt8Usss+IekL7CRn83dYmw=="
                 src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js">
         </script>
-        <script src="charts/"<?=$scriptname?>></script>
+        <script src="charts/<?=$scriptname?>"></script>
     </body>
 </html>
