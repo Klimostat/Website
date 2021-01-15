@@ -25,7 +25,6 @@ if (isset($_GET["action"]) && $_GET["action"] !== "") {
 }
 ?>
 
-
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -55,7 +54,7 @@ if (isset($_GET["action"]) && $_GET["action"] !== "") {
             <div id="loginbox" class="col-md-8">
                 <form action="../PHP/login.php" class="text-center position-relative top-50 start-50 translate-middle"
                       method="post">
-                    <p id="infotext"> <?= $note ?> </p>
+                    <p id="infotext">  <?= $note ?> </p>
                     <input type="text" id="username" class="login border border-light border-1 rounded-1"
                            name="username" placeholder="Username"><br>
                     <input type="password" id="passwort" class="login border border-light border-1 rounded-1"

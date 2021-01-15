@@ -6,6 +6,9 @@ body {
     background-image: url("../res/pexels-stefan-stefancik-91228.jpg");
     background-size: cover;
     background-color: rgba(0, 0, 0, 0.60);
+    background-position: bottom center;
+    background-repeat: no-repeat;
+    background-attachment:fixed;
 }
 
 #box {
