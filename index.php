@@ -42,7 +42,7 @@ if (isset($_GET["live"]) && $_GET["live"] === "false") {
                     <div class="collapse navbar-collapse" id="navbarSupportedContent">
                         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                             <li class="nav-item interval-select">
-                                <select class="form-control bg-light text-dark" id="interval" onchange="setCharts()">
+                                <select class="form-control bg-light text-dark" id="interval">
                                     <option class="font">Live</option>
                                     <option class="font">Last Hour</option>
                                     <option class="font">Last Day</option>
@@ -55,9 +55,7 @@ if (isset($_GET["live"]) && $_GET["live"] === "false") {
                                 </select>
                             </li>
                         </ul>
-                        <div id = "timing">
-
-                        </div>
+                        <div id = "timing"></div>
                         <form class="d-flex" method = "post" action = "PHP/logout.php">
                             <button class="btn btn-outline-secondary logout bg-light text-dark" type="submit">Logout</button>
                         </form>

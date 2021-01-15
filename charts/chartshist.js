@@ -1,6 +1,9 @@
 document.addEventListener("DOMContentLoaded", init, false);
 let temperatureChart, humidityChart, cO2Chart, floodChart;
 
+/**
+ * initializes live charts and sets interval
+ */
 function init() {
     document.getElementById("timing").innerHTML = "";
 
@@ -120,10 +123,79 @@ function init() {
         }
     });
 
-    updateSummaryCharts(false, "min");
+    updateSummaryCharts("min");
 }
 
+/**
+ * updates the charts
+ * @param timewise {string} the interval in which the data should be summarized, options are "min", "10min", "hr", "day"
+ * @param from {Date} the date since when the data should be loaded
+ * @param to {Date} the date until when the data should be loaded
+ */
+function updateSummaryCharts(timewise, from = new Date(2000, 1, 1), to = new Date()) {
+    updateSummaryChartWithValuesFromDB(temperatureChart, 1, from, to, timewise);
+    updateSummaryChartWithValuesFromDB(humidityChart, 2, from, to, timewise);
+    updateSummaryChartWithValuesFromDB(cO2Chart, 3, from, to, timewise);
+    updateSummaryChartWithValuesFromDB(floodChart, 4, from, to, timewise);
+}
 
+/**
+ * updates a chart by requesting data from the server
+ * @param chart {chart} the chart to be filled
+ * @param sensorId {number} the id of the sensor
+ * @param from {Date} the date since when the data should be loaded
+ * @param to {Date} the date until when the data should be loaded
+ * @param timewise {string} the interval in which the data should be summarized, options are "min", "10min", "hr", "day"
+ */
+function updateSummaryChartWithValuesFromDB(chart, sensorId, from, to, timewise) {
+    let xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (this.readyState === 4 && this.status === 200) {
+            console.log(this.responseText);
+            setValuesOfSummaryChart(chart, JSON.parse(this.responseText));
+        }
+    };
+    xhttp.open("POST", "PHP/getDataTimewise.php", true);
+    let data = new FormData();
+    data.append('sensorId', sensorId);
+    data.append('from', jsToUTCMySQLDate(from));
+    data.append('to', jsToUTCMySQLDate(to));
+    data.append('timewise', timewise);
+    xhttp.send(data);
+}
+
+/**
+ * sets the values of a chart
+ * @param chart {Chart} the chart
+ * @param dataset {Object[]} an array that has entries of {time:,min:,max:} objects
+ */
+function setValuesOfSummaryChart(chart, dataset) {
+    chart.data.labels = [];
+    chart.data.datasets[0].data = [];
+    chart.data.datasets[1].data = [];
+
+    for (const entry of dataset) {
+        chart.data.labels.push(jsToLocalReadableString(mySQLToUTCJSDate(entry.time)));
+        chart.data.datasets[0].data.push(entry.min);
+        chart.data.datasets[1].data.push(entry.max);
+    }
+    chart.update();
+}
+
+/**
+ * convert a mySQL datetime string to a Date object
+ * @param mysqlDatetimeStr the mySQL datetime string
+ * @return {Date}
+ */
+function mySQLToUTCJSDate(mysqlDatetimeStr) {
+    return new Date(mysqlDatetimeStr.replace(" ", "T") + "Z")
+}
+
+/**
+ * converts a Date object to a mySQL datetime string
+ * @param dateObj {Date} the Date
+ * @return {string} the mySQL datetime string
+ */
 function jsToUTCMySQLDate(dateObj) {
     return dateObj.getUTCFullYear() + '-' +
         ('00' + (dateObj.getUTCMonth()+1)).slice(-2) + '-' +
@@ -133,60 +205,16 @@ function jsToUTCMySQLDate(dateObj) {
         ('00' + dateObj.getUTCSeconds()).slice(-2);
 }
 
+/**
+ * converts a Date object to a local user readable string
+ * @param dateObj {Date} the Date
+ * @return {string} the string
+ */
 function jsToLocalReadableString(dateObj) {
     return dateObj.getDate() + '.' +
-    ('00' + (dateObj.getMonth()+1)).slice(-2) + '.' +
-    ('00' + dateObj.getFullYear()).slice(-2) + ' ' +
-    ('00' + dateObj.getHours()).slice(-2) + ':' +
-    ('00' + dateObj.getMinutes()).slice(-2) + ':' +
-    ('00' + dateObj.getSeconds()).slice(-2);
-}
-
-function mySQLToUTCJSDate(mysqlDateStr) {
-    return new Date(mysqlDateStr.replace(" ", "T") + "Z")
-}
-
-
-function updateSummaryCharts(append, timewise, from = "2000-01-01 00:00:00", to = "2100-01-01 00:00:00") {
-    updateSummaryChartWithValuesFromDB(temperatureChart, '1', from, to, timewise, append);
-    updateSummaryChartWithValuesFromDB(humidityChart, '2', from, to, timewise, append);
-    updateSummaryChartWithValuesFromDB(cO2Chart, '3', from, to, timewise, append);
-    updateSummaryChartWithValuesFromDB(floodChart, '4', from, to, timewise, append);
-}
-
-function updateSummaryChartWithValuesFromDB(chart, sensorId, from, to, timewise, append = false) {
-    let xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function() {
-        if (this.readyState === 4 && this.status === 200) {
-            console.log(this.responseText);
-            setValuesOfSummaryChart(chart, JSON.parse(this.responseText), append);
-        }
-    };
-    xhttp.open("POST", "PHP/getDataTimewise.php", true);
-    let data = new FormData();
-    data.append('sensorId', sensorId);
-    data.append('from', from);
-    data.append('to', to);
-    data.append('timewise', timewise);
-    xhttp.send(data);
-}
-
-/**
- *
- * @param chart {Chart}
- * @param dataset {Object}
- * @param append boolean
- */
-function setValuesOfSummaryChart(chart, dataset, append = false) {
-    if (append !== true) {
-        chart.data.labels = [];
-        chart.data.datasets[0].data = [];
-        chart.data.datasets[1].data = [];
-    }
-    for (const entry of dataset) {
-        chart.data.labels.push(jsToLocalReadableString(mySQLToUTCJSDate(entry.time)));
-        chart.data.datasets[0].data.push(entry.min);
-        chart.data.datasets[1].data.push(entry.max);
-    }
-    chart.update();
+        ('00' + (dateObj.getMonth()+1)).slice(-2) + '.' +
+        ('00' + dateObj.getFullYear()).slice(-2) + ' ' +
+        ('00' + dateObj.getHours()).slice(-2) + ':' +
+        ('00' + dateObj.getMinutes()).slice(-2) + ':' +
+        ('00' + dateObj.getSeconds()).slice(-2);
 }
