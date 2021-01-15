@@ -161,7 +161,7 @@ function updateSummaryChartWithValuesFromDB(chart, sensorId, from, to, interval)
     data.append('sensorId', sensorId);
     data.append('from', jsToUTCMySQLDate(from));
     data.append('to', jsToUTCMySQLDate(to));
-    data.append('timewise', interval);
+    data.append('interval', interval);
     xhttp.send(data);
 }
 
