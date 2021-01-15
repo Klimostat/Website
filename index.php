@@ -1,6 +1,13 @@
 <?php
 require "PHP/session.php";
 verifySession();
+
+$scriptname = "chartslive.js";
+
+if (isset($_GET["live"]) && $_GET["live"] === "false") {
+    $scriptname = "chartshist.js";
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -48,9 +55,8 @@ verifySession();
                                 </select>
                             </li>
                         </ul>
-                        <div>
-                            Stand: <span id = "lastUpdated">noch nicht gelanden</span>, nächstes Update in <span id = "nextUpdateIn">0</span> Sekunden.
-                            <button class="btn btn-outline-secondary logout bg-light text-dark" type="button" onclick="nextUpdateIn = 0; updateCountdown()">Update</button>
+                        <div id = "timing">
+
                         </div>
                         <form class="d-flex" method = "post" action = "PHP/logout.php">
                             <button class="btn btn-outline-secondary logout bg-light text-dark" type="submit">Logout</button>
@@ -87,6 +93,6 @@ verifySession();
                 integrity="sha512-hZf9Qhp3rlDJBvAKvmiG+goaaKRZA6LKUO35oK6EsM0/kjPK32Yw7URqrq3Q+Nvbbt8Usss+IekL7CRn83dYmw=="
                 src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js">
         </script>
-        <script src="charts/charts.js"></script>
+        <script src="charts/<?=$scriptname?>"></script>
     </body>
 </html>

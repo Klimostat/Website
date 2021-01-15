@@ -15,6 +15,10 @@ switch ($timewise) {
         $timeStrLen = 16;
         $timeAppend = ":00";
         break;
+    case "10min":
+        $timeStrLen = 15;
+        $timeAppend = "0:00";
+        break;
     case "hr":
         $timeStrLen = 13;
         $timeAppend = ":00:00";
