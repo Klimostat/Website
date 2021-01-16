@@ -1,4 +1,22 @@
 <?php
+/**
+ * Die Hauptseite.
+ * Bei ungültiger Session wird man auf die Login-Seite /login.php weitergeleitet.
+ *
+ * GET-Attribute:
+ *   1. hist: Wenn gesetzt werden historische Daten ausgegeben, wenn nicht, dann Live Daten. Folgende Werte ergeben folgende Zeiträume:
+ *      "1": Last Hour
+ *      "2": Last Day
+ *      "3": Last Week
+ *      "4": Last Month
+ *      "5": Last 3 Months
+ *      "6": Last 6 Months
+ *      "7": Last Year
+ *      "8": All Time
+ */
+
+
+
 require "PHP/session.php";
 verifySession();
 

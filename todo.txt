@@ -1,4 +1,6 @@
 Documentation
-Grenzwerte
+Grenzwerte - Fehler
+Server Not Reachable - Fehler
 Externe Speicherung von Pfaden, Zugangsdaten usw.
 Historie
+ARGON2ID vs ARGON2I

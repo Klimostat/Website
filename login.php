@@ -1,4 +1,19 @@
 <?php
+/**
+ * Die Login-Seite.
+ * Bei erfolgreicher Authentifizierung wird man auf die Hauptseite /index.php weitergeleitet.
+ *
+ * GET-Attribute:
+ *   1. action: Zeigt eine Statusnachricht an, folgende Werte erzeugen Nachrichten:
+ *      logout,
+ *      not_logged_in,
+ *      login,
+ *      invalid_user,
+ *      already_logged_in,
+ *      session_expired,
+ */
+
+
 require "PHP/session.php";
 verifyNoSession();
 
