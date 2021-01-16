@@ -1,3 +1,15 @@
+<?php
+require "PHP/session.php";
+verifySession();
+
+$scriptname = "chartslive.js";
+
+if (isset($_GET["hist"])) {
+    $scriptname = "chartshist.js";
+} else {
+    $_GET["hist"] = 1;
+}
+?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -80,8 +92,8 @@
                 src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js">
         </script>
         <script>
-
+            let intervalSelectIndex = <?=$_GET["hist"]?>;
         </script>
-        <script src="charts/chartshist.js"></script>
+        <script src="charts/<?=$scriptname?>"></script>
     </body>
 </html>
