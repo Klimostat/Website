@@ -1,6 +1,5 @@
 document.addEventListener("DOMContentLoaded", init, false);
-document.getElementById("interval").addEventListener("change", updateSummaryChartsTrigger)
-let temperatureChart, humidityChart, cO2Chart, floodChart;
+let temperatureChart, humidityChart, cO2Chart, floodChart, intervalSelect;
 
 /**
  * initializes live charts and sets interval
@@ -123,8 +122,15 @@ function init() {
             }
         }
     });
+    intervalSelect = document.getElementById("interval");
 
-    updateSummaryCharts("hr");
+    intervalSelect.addEventListener("change", updateSummaryChartsTrigger);
+
+    if (!Number.isInteger(intervalSelectIndex)) {
+        intervalSelectIndex = 1;
+    }
+    intervalSelect.selectedIndex = intervalSelectIndex;
+    updateSummaryChartsTrigger(intervalSelectIndex);
 }
 
 /**
@@ -152,7 +158,7 @@ function updateSummaryChartWithValuesFromDB(chart, sensorId, from, to, interval)
     let xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
         if (this.readyState === 4 && this.status === 200) {
-            console.log(this.responseText);
+            // console.log(this.responseText);
             setValuesOfSummaryChart(chart, JSON.parse(this.responseText));
         }
     };
@@ -221,45 +227,45 @@ function jsToLocalReadableString(dateObj) {
 }
 
 function updateSummaryChartsTrigger () {
-    console.log("works")
-    let index = document.getElementById("interval").value;
+    // console.log("works")
+    let index = intervalSelect.selectedIndex;
     let myDate = new Date();
     switch (index) {
-        case "0":
+        case 0:
             location.assign(".");
             break;
-        case "1": // last hour
+        case 1: // last hour
             myDate.setHours(myDate.getHours() -1);
             updateSummaryCharts("min", myDate);
             break;
-        case "2": // last day
+        case 2: // last day
             myDate.setHours(myDate.getHours() -24);
             updateSummaryCharts("10min", myDate);
             break;
-        case "3": // last week
+        case 3: // last week
             myDate.setHours(myDate.getHours() - (24 * 7));
             updateSummaryCharts("hr", myDate);
             break;
-        case "4": // last month
+        case 4: // last month
             myDate.setMonth(myDate.getMonth() - 1);
             updateSummaryCharts("day", myDate);
             break;
-        case "5":
+        case 5:
             myDate.setMonth(myDate.getMonth() - 3);
             updateSummaryCharts("day", myDate);
             break;
-        case "6":
+        case 6:
             myDate.setMonth(myDate.getMonth() - 6);
             updateSummaryCharts("day", myDate);
             break;
-        case "7":
+        case 7:
             myDate.setFullYear(myDate.getFullYear() - 1);
             updateSummaryCharts("day", myDate);
             break;
-        case "8":
+        case 8:
             updateSummaryCharts("day");
             break;
         default:
-            console.log(index);
+            // console.log(index);
     }
 }

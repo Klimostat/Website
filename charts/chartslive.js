@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", init, false);
 const UPDATE_INTERVAL = 10;
-let temperatureChart, humidityChart, cO2Chart, floodChart, lastUpdate, nextUpdateIn;
+let temperatureChart, humidityChart, cO2Chart, floodChart, lastUpdate, nextUpdateIn, intervalSelect;
 
 /**
  * initializes live charts and sets interval
@@ -108,9 +108,11 @@ function init() {
             }
         }
     });
+    intervalSelect = document.getElementById("interval");
     lastUpdate = null;
     nextUpdateIn = 0;
 
+    intervalSelect.addEventListener("change", updateSummaryChartsTrigger);
     setInterval(updateCountdown, 1000);
 }
 
@@ -210,4 +212,16 @@ function jsToLocalReadableString(dateObj) {
         ('00' + dateObj.getHours()).slice(-2) + ':' +
         ('00' + dateObj.getMinutes()).slice(-2) + ':' +
         ('00' + dateObj.getSeconds()).slice(-2);
+}
+
+function updateSummaryChartsTrigger () {
+    console.log("works")
+    let index = intervalSelect.selectedIndex;
+    switch (index) {
+        case "0":
+            location.assign(".");
+            break;
+        default:
+            location.assign(".?hist=" + index);
+    }
 }

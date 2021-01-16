@@ -4,8 +4,10 @@ verifySession();
 
 $scriptname = "chartslive.js";
 
-if (isset($_GET["live"]) && $_GET["live"] === "false") {
+if (isset($_GET["hist"])) {
     $scriptname = "chartshist.js";
+} else {
+    $_GET["hist"] = 1;
 }
 ?>
 
@@ -41,15 +43,15 @@ if (isset($_GET["live"]) && $_GET["live"] === "false") {
                         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                             <li class="nav-item interval-select">
                                 <select class="form-control bg-light text-dark" id="interval">
-                                    <option class="font" value="0">Live</option>
-                                    <option class="font" value="1">Last Hour</option>
-                                    <option class="font" value="2">Last Day</option>
-                                    <option class="font" value="3">Last Week</option>
-                                    <option class="font" value="4">Last Month</option>
-                                    <option class="font" value="5">Last 3 Months</option>
-                                    <option class="font" value="6">Last 6 Months</option>
-                                    <option class="font" value="7">Last Year</option>
-                                    <option class="font" value="8">All Time</option>
+                                    <option class="font">Live</option>
+                                    <option class="font">Last Hour</option>
+                                    <option class="font">Last Day</option>
+                                    <option class="font">Last Week</option>
+                                    <option class="font">Last Month</option>
+                                    <option class="font">Last 3 Months</option>
+                                    <option class="font">Last 6 Months</option>
+                                    <option class="font">Last Year</option>
+                                    <option class="font">All Time</option>
                                 </select>
                             </li>
                         </ul>
@@ -88,6 +90,9 @@ if (isset($_GET["live"]) && $_GET["live"] === "false") {
         <script crossorigin="anonymous"
                 integrity="sha512-hZf9Qhp3rlDJBvAKvmiG+goaaKRZA6LKUO35oK6EsM0/kjPK32Yw7URqrq3Q+Nvbbt8Usss+IekL7CRn83dYmw=="
                 src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js">
+        </script>
+        <script>
+            let intervalSelectIndex = <?=$_GET["hist"]?>;
         </script>
         <script src="charts/<?=$scriptname?>"></script>
     </body>
