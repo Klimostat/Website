@@ -1,4 +1,5 @@
 const UPDATE_INTERVAL = 10;
+const MAX_ENTRIES = 100;
 let temperatureChart, humidityChart, cO2Chart, floodChart, lastUpdate, nextUpdateIn;
 
 /**
@@ -165,6 +166,10 @@ function appendValuesToChart(chart, dataset) {
     for (const entry of dataset) {
         chart.data.labels.push(jsToLocalReadableString(mySQLToUTCJSDate(entry.time)));
         chart.data.datasets[0].data.push(entry.value);
+        if (chart.data.datasets[0].data.length > MAX_ENTRIES) {
+            chart.data.labels.shift();
+            chart.data.datasets[0].data.shift();
+        }
     }
     chart.update();
 }
