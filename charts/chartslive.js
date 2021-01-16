@@ -1,5 +1,5 @@
 const UPDATE_INTERVAL = 10;
-const MAX_ENTRIES = 100;
+const MAX_ENTRIES = 60;
 let temperatureChart, humidityChart, cO2Chart, floodChart, lastUpdate, nextUpdateIn;
 
 /**
@@ -15,7 +15,7 @@ function initCharts() {
         data: {
             labels: [],
             datasets: [{
-                label: sensors[0].function + ' in ' + sensors[0].unit,
+                label: sensors[0].funktionalitaet + ' in ' + sensors[0].messeinheit,
                 data: [],
                 backgroundColor: 'rgba(255, 99, 132, 0.7)',
                 borderColor: 'rgba(255, 99, 132, 0.7)',
@@ -36,7 +36,7 @@ function initCharts() {
         data: {
             labels: [],
             datasets: [{
-                label: sensors[1].function + ' in ' + sensors[1].unit,
+                label: sensors[1].funktionalitaet + ' in ' + sensors[1].messeinheit,
                 data: [],
                 backgroundColor: 'rgba(153, 102, 255, 0.7)',
                 borderColor: 'rgba(153, 102, 255, 1)',
@@ -57,7 +57,7 @@ function initCharts() {
         data: {
             labels: [],
             datasets: [{
-                label: sensors[2].function + ' in ' + sensors[2].unit,
+                label: sensors[2].funktionalitaet + ' in ' + sensors[2].messeinheit,
                 data: [],
                 backgroundColor: 'rgba(54, 162, 235, 0.7)',
                 borderColor: 'rgba(54, 162, 235, 1)',
@@ -78,7 +78,7 @@ function initCharts() {
         data: {
             labels: [],
             datasets: [{
-                label: sensors[3].function + ' in ' + sensors[3].unit,
+                label: sensors[3].funktionalitaet + ' in ' + sensors[3].messeinheit,
                 data: [],
                 backgroundColor: 'rgba(75, 192, 192, 0.7)',
                 borderColor: 'rgba(75, 192, 192, 1)',
