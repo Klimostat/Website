@@ -1,22 +1,9 @@
-document.addEventListener("DOMContentLoaded", getSensors, false);
-let temperatureChart, humidityChart, cO2Chart, floodChart, intervalSelect, sensors;
-
-function getSensors() {
-    let xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function() {
-        if (this.readyState === 4 && this.status === 200) {
-            sensors = JSON.parse(this.responseText);
-            init();
-        }
-    };
-    xhttp.open("POST", "PHP/getSensors.php", true);
-    xhttp.send();
-}
+let temperatureChart, humidityChart, cO2Chart, floodChart;
 
 /**
  * initializes live charts and sets interval
  */
-function init() {
+function initCharts() {
     document.getElementById("timing").innerHTML = "";
 
     temperatureChart = new Chart(document.getElementById('chart-temperatur'), {
@@ -24,13 +11,13 @@ function init() {
         data: {
             labels: [],
             datasets: [{
-                label: 'Minimum der ' + sensors[0].function + ' in ' + sensors[0].unit,
+                label: 'Maximum der ' + sensors[0].function + ' in ' + sensors[0].unit,
                 data: [],
                 backgroundColor: 'rgba(255, 99, 132, 0.7)',
                 borderColor: 'rgba(255, 99, 132, 0.7)',
                 borderWidth: 1
             }, {
-                label: 'Maximum der ' + sensors[0].function + ' in ' + sensors[0].unit,
+                label: 'Minimum der ' + sensors[0].function + ' in ' + sensors[0].unit,
                 data: [],
                 backgroundColor: 'rgba(255, 99, 132, 0.7)',
                 borderColor: 'rgba(255, 99, 132, 0.7)',
@@ -51,13 +38,13 @@ function init() {
         data: {
             labels: [],
             datasets: [{
-                label: 'Minimum der ' + sensors[1].function + ' in ' + sensors[1].unit,
+                label: 'Maximum der ' + sensors[1].function + ' in ' + sensors[1].unit,
                 data: [],
                 backgroundColor: 'rgba(153, 102, 255, 0.7)',
                 borderColor: 'rgba(153, 102, 255, 1)',
                 borderWidth: 1
             }, {
-                label: 'Maximum der ' + sensors[1].function + ' in ' + sensors[1].unit,
+                label: 'Minimum der ' + sensors[1].function + ' in ' + sensors[1].unit,
                 data: [],
                 backgroundColor: 'rgba(153, 102, 255, 0.7)',
                 borderColor: 'rgba(153, 102, 255, 1)',
@@ -78,13 +65,13 @@ function init() {
         data: {
             labels: [],
             datasets: [{
-                label: 'Minimum der ' + sensors[2].function + ' in ' + sensors[2].unit,
+                label: 'Maximum der ' + sensors[2].function + ' in ' + sensors[2].unit,
                 data: [],
                 backgroundColor: 'rgba(54, 162, 235, 0.7)',
                 borderColor: 'rgba(54, 162, 235, 1)',
                 borderWidth: 1
             }, {
-                label: 'Maximum der ' + sensors[2].function + ' in ' + sensors[2].unit,
+                label: 'Minimum der ' + sensors[2].function + ' in ' + sensors[2].unit,
                 data: [],
                 backgroundColor: 'rgba(54, 162, 235, 0.7)',
                 borderColor: 'rgba(54, 162, 235, 1)',
@@ -128,7 +115,6 @@ function init() {
             }
         }
     });
-    intervalSelect = document.getElementById("interval");
 
     intervalSelect.addEventListener("change", updateSummaryChartsTrigger);
 
@@ -185,51 +171,18 @@ function updateSummaryChartWithValuesFromDB(chart, sensorId, from, to, interval)
 function setValuesOfSummaryChart(chart, dataset) {
     chart.data.labels = [];
     chart.data.datasets[0].data = [];
-    chart.data.datasets[1].data = [];
+    if (chart.data.datasets.length > 1) {
+        chart.data.datasets[1].data = [];
+    }
 
     for (const entry of dataset) {
         chart.data.labels.push(jsToLocalReadableString(mySQLToUTCJSDate(entry.time)));
-        chart.data.datasets[0].data.push(entry.min);
-        chart.data.datasets[1].data.push(entry.max);
+        chart.data.datasets[0].data.push(entry.max);
+        if (chart.data.datasets.length > 1) {
+            chart.data.datasets[1].data.push(entry.min);
+        }
     }
     chart.update();
-}
-
-/**
- * convert a mySQL datetime string to a Date object
- * @param mysqlDatetimeStr the mySQL datetime string
- * @return {Date}
- */
-function mySQLToUTCJSDate(mysqlDatetimeStr) {
-    return new Date(mysqlDatetimeStr.replace(" ", "T") + "Z")
-}
-
-/**
- * converts a Date object to a mySQL datetime string
- * @param dateObj {Date} the Date
- * @return {string} the mySQL datetime string
- */
-function jsToUTCMySQLDate(dateObj) {
-    return dateObj.getUTCFullYear() + '-' +
-        ('00' + (dateObj.getUTCMonth()+1)).slice(-2) + '-' +
-        ('00' + dateObj.getUTCDate()).slice(-2) + ' ' +
-        ('00' + dateObj.getUTCHours()).slice(-2) + ':' +
-        ('00' + dateObj.getUTCMinutes()).slice(-2) + ':' +
-        ('00' + dateObj.getUTCSeconds()).slice(-2);
-}
-
-/**
- * converts a Date object to a local user readable string
- * @param dateObj {Date} the Date
- * @return {string} the string
- */
-function jsToLocalReadableString(dateObj) {
-    return dateObj.getDate() + '.' +
-        ('00' + (dateObj.getMonth()+1)).slice(-2) + '.' +
-        ('00' + dateObj.getFullYear()).slice(-2) + ' ' +
-        ('00' + dateObj.getHours()).slice(-2) + ':' +
-        ('00' + dateObj.getMinutes()).slice(-2) + ':' +
-        ('00' + dateObj.getSeconds()).slice(-2);
 }
 
 function updateSummaryChartsTrigger () {

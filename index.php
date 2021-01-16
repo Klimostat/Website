@@ -94,6 +94,7 @@ if (isset($_GET["hist"])) {
         <script>
             let intervalSelectIndex = <?=$_GET["hist"]?>;
         </script>
+        <script src="charts/charts.js"></script>
         <script src="charts/<?=$scriptname?>"></script>
     </body>
 </html>
