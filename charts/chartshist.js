@@ -105,13 +105,7 @@ function init() {
         data: {
             labels: [],
             datasets: [{
-                label: 'Minimum der ' + sensors[3].function + ' in ' + sensors[3].unit,
-                data: [],
-                backgroundColor: 'rgba(75, 192, 192, 0.7)',
-                borderColor: 'rgba(75, 192, 192, 1)',
-                borderWidth: 1
-            }, {
-                label: 'Maximum der ' + sensors[3].function + ' in ' + sensors[3].unit,
+                label: sensors[3].function + ' in ' + sensors[3].unit,
                 data: [],
                 backgroundColor: 'rgba(75, 192, 192, 0.7)',
                 borderColor: 'rgba(75, 192, 192, 1)',
