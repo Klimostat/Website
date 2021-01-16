@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", init, false);
+document.getElementById("interval").addEventListener("change", updateSummaryChartsTrigger)
 let temperatureChart, humidityChart, cO2Chart, floodChart;
 
 /**
@@ -160,7 +161,7 @@ function updateSummaryChartWithValuesFromDB(chart, sensorId, from, to, interval)
     data.append('sensorId', sensorId);
     data.append('from', jsToUTCMySQLDate(from));
     data.append('to', jsToUTCMySQLDate(to));
-    data.append('timewise', interval);
+    data.append('interval', interval);
     xhttp.send(data);
 }
 
@@ -217,4 +218,48 @@ function jsToLocalReadableString(dateObj) {
         ('00' + dateObj.getHours()).slice(-2) + ':' +
         ('00' + dateObj.getMinutes()).slice(-2) + ':' +
         ('00' + dateObj.getSeconds()).slice(-2);
+}
+
+function updateSummaryChartsTrigger () {
+    console.log("works")
+    let index = document.getElementById("interval").value;
+    let myDate = new Date();
+    switch (index) {
+        case "0":
+            location.assign(".");
+            break;
+        case "1": // last hour
+            myDate.setHours(myDate.getHours() -1);
+            updateSummaryCharts("min", myDate);
+            break;
+        case "2": // last day
+            myDate.setHours(myDate.getHours() -24);
+            updateSummaryCharts("10min", myDate);
+            break;
+        case "3": // last week
+            myDate.setHours(myDate.getHours() - (24 * 7));
+            updateSummaryCharts("hr", myDate);
+            break;
+        case "4": // last month
+            myDate.setMonth(myDate.getMonth() - 1);
+            updateSummaryCharts("day", myDate);
+            break;
+        case "5":
+            myDate.setMonth(myDate.getMonth() - 3);
+            updateSummaryCharts("day", myDate);
+            break;
+        case "6":
+            myDate.setMonth(myDate.getMonth() - 6);
+            updateSummaryCharts("day", myDate);
+            break;
+        case "7":
+            myDate.setFullYear(myDate.getFullYear() - 1);
+            updateSummaryCharts("day", myDate);
+            break;
+        case "8":
+            updateSummaryCharts("day");
+            break;
+        default:
+            console.log(index);
+    }
 }

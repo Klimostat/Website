@@ -131,10 +131,10 @@ function updateCountdown() {
  * updates the charts, the "last updated" message and variables
  */
 function updateCharts() {
-    updateChartWithValuesFromDB(temperatureChart, '1', lastUpdate);
-    updateChartWithValuesFromDB(humidityChart, '2', lastUpdate);
-    updateChartWithValuesFromDB(cO2Chart, '3', lastUpdate);
-    updateChartWithValuesFromDB(floodChart, '4', lastUpdate);
+    updateChartWithValuesFromDB(temperatureChart, 1, lastUpdate);
+    updateChartWithValuesFromDB(humidityChart, 2, lastUpdate);
+    updateChartWithValuesFromDB(cO2Chart, 3, lastUpdate);
+    updateChartWithValuesFromDB(floodChart, 4, lastUpdate);
     lastUpdate = new Date();
     document.getElementById("lastUpdated").innerHTML = jsToLocalReadableString(lastUpdate);
 }

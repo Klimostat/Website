@@ -1,4 +1,15 @@
 <?php
+/**
+ * Prüft die Session und liefert bei erfolgreicher Verifizierung alle Messwerte
+ * eines Sensors aus der Datenbank von einem Zeitpunkt an im JSON-Format [{"time":"", "value":""}, ...].
+ * POST-Attribute:
+ * 1. from: ein timestamp in SQL-Schreibweise. Ist dieser nicht gegeben, so wird der Zeitpunkt vor 10 Minuten genommen
+ * 2. sensorId: die id des Sensors in der Datenbank
+ */
+
+
+
+
 require "session.php";
 verifySession();
 
