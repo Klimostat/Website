@@ -45,10 +45,9 @@ if (isset($_GET["action"]) && $_GET["action"] !== "") {
                 <img src="../res/Logo.png" alt="Klimostat Logo" class="position-relative mx-auto d-block img-fluid">
                 <p class="text-center position-relative align-center">
                     Mit Hilfe von Klimostat
-                    können Sie ganz einfach
-                    die wichtigsten Daten
-                    unseres Server-Raumes
-                    auf einem Blick abrufen
+                    können ganz einfach
+                    die wichtigsten Umweldaten
+                    abgerufen werden
                 </p>
             </div>
             <div id="loginbox" class="col-md-8">
