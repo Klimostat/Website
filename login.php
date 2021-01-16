@@ -1,5 +1,5 @@
 <?php
-require "../PHP/session.php";
+require "PHP/session.php";
 verifyNoSession();
 
 if (isset($_GET["action"]) && $_GET["action"] !== "") {
@@ -42,7 +42,7 @@ if (isset($_GET["action"]) && $_GET["action"] !== "") {
     <body>
         <div class="row position-absolute top-50 start-50 translate-middle ">
             <div id="infobox" class="col-md-4 p-4 top-0 start-50">
-                <img src="../res/Logo.png" alt="Klimostat Logo" class="position-relative mx-auto d-block img-fluid">
+                <img src="res/Logo.png" alt="Klimostat Logo" class="position-relative mx-auto d-block img-fluid">
                 <p class="text-center position-relative align-center">
                     Mit Hilfe von Klimostat
                     können ganz einfach
@@ -51,7 +51,7 @@ if (isset($_GET["action"]) && $_GET["action"] !== "") {
                 </p>
             </div>
             <div id="loginbox" class="col-md-8">
-                <form action="../PHP/login.php" class="text-center position-relative top-50 start-50 translate-middle"
+                <form action="PHP/login.php" class="text-center position-relative top-50 start-50 translate-middle"
                       method="post">
                     <p id="infotext">  <?= $note ?> </p>
                     <input type="text" id="username" class="login border border-light border-1 rounded-1"

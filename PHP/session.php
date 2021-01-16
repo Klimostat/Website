@@ -90,7 +90,7 @@ function loginPage($action = "") {
     } else {
         $action = "";
     }
-    header("Location: $rootDomain/login/$action");
+    header("Location: $rootDomain/login.php$action");
 }
 
 /**
@@ -142,7 +142,7 @@ where pk_sessionId = :session");
 /**
  * Meldet einen User an, indem es ihn mittels Benutzername und Passwort authentifiziert und
  * erstellt bei erfolgreicher Authentifizierung eine Session in der Datenbank.
- * Leitet automatisch auf die Login-Seite /login/index.php weiter und gibt eine entsprechende Statusmeldung aus.
+ * Leitet automatisch auf die Login-Seite /login.php weiter und gibt eine entsprechende Statusmeldung aus.
  * POST-Attribute:
  * 1. username: der angegebene Benutzername
  * 2. password: das angegebene Passwort
