@@ -1,6 +1,18 @@
-document.addEventListener("DOMContentLoaded", init, false);
+document.addEventListener("DOMContentLoaded", getSensors, false);
 const UPDATE_INTERVAL = 10;
-let temperatureChart, humidityChart, cO2Chart, floodChart, lastUpdate, nextUpdateIn, intervalSelect;
+let temperatureChart, humidityChart, cO2Chart, floodChart, lastUpdate, nextUpdateIn, intervalSelect, sensors;
+
+function getSensors() {
+    let xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (this.readyState === 4 && this.status === 200) {
+            sensors = JSON.parse(this.responseText);
+            init();
+        }
+    };
+    xhttp.open("POST", "PHP/getSensors.php", true);
+    xhttp.send();
+}
 
 /**
  * initializes live charts and sets interval
@@ -15,7 +27,7 @@ function init() {
         data: {
             labels: [],
             datasets: [{
-                label: 'Temperatur',
+                label: sensors[0].function + ' in ' + sensors[0].unit,
                 data: [],
                 backgroundColor: 'rgba(255, 99, 132, 0.7)',
                 borderColor: 'rgba(255, 99, 132, 0.7)',
@@ -36,7 +48,7 @@ function init() {
         data: {
             labels: [],
             datasets: [{
-                label: 'Luftfeuchtigkeit',
+                label: sensors[1].function + ' in ' + sensors[1].unit,
                 data: [],
                 backgroundColor: 'rgba(153, 102, 255, 0.7)',
                 borderColor: 'rgba(153, 102, 255, 1)',
@@ -57,7 +69,7 @@ function init() {
         data: {
             labels: [],
             datasets: [{
-                label: 'Co2',
+                label: sensors[2].function + ' in ' + sensors[2].unit,
                 data: [],
                 backgroundColor: 'rgba(54, 162, 235, 0.7)',
                 borderColor: 'rgba(54, 162, 235, 1)',
@@ -78,17 +90,10 @@ function init() {
         data: {
             labels: [],
             datasets: [{
-                label: 'Wassersensor',
+                label: sensors[0].function + ' in ' + sensors[0].unit,
                 data: [],
                 backgroundColor: 'rgba(75, 192, 192, 0.7)',
-                borderColor: [
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(75, 192, 192, 1)'
-                ],
+                borderColor: 'rgba(75, 192, 192, 1)',
                 borderWidth: 1
             }]
         },

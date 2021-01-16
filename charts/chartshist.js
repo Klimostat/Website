@@ -1,5 +1,17 @@
-document.addEventListener("DOMContentLoaded", init, false);
-let temperatureChart, humidityChart, cO2Chart, floodChart, intervalSelect;
+document.addEventListener("DOMContentLoaded", getSensors, false);
+let temperatureChart, humidityChart, cO2Chart, floodChart, intervalSelect, sensors;
+
+function getSensors() {
+    let xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (this.readyState === 4 && this.status === 200) {
+            sensors = JSON.parse(this.responseText);
+            init();
+        }
+    };
+    xhttp.open("POST", "PHP/getSensors.php", true);
+    xhttp.send();
+}
 
 /**
  * initializes live charts and sets interval
@@ -12,13 +24,13 @@ function init() {
         data: {
             labels: [],
             datasets: [{
-                label: 'Temperatur min',
+                label: 'Minimum der ' + sensors[0].function + ' in ' + sensors[0].unit,
                 data: [],
                 backgroundColor: 'rgba(255, 99, 132, 0.7)',
                 borderColor: 'rgba(255, 99, 132, 0.7)',
                 borderWidth: 1
             }, {
-                label: 'Temperatur max',
+                label: 'Maximum der ' + sensors[0].function + ' in ' + sensors[0].unit,
                 data: [],
                 backgroundColor: 'rgba(255, 99, 132, 0.7)',
                 borderColor: 'rgba(255, 99, 132, 0.7)',
@@ -39,13 +51,13 @@ function init() {
         data: {
             labels: [],
             datasets: [{
-                label: 'Luftfeuchtigkeit min',
+                label: 'Minimum der ' + sensors[1].function + ' in ' + sensors[1].unit,
                 data: [],
                 backgroundColor: 'rgba(153, 102, 255, 0.7)',
                 borderColor: 'rgba(153, 102, 255, 1)',
                 borderWidth: 1
             }, {
-                label: 'Luftfeuchtigkeit max',
+                label: 'Maximum der ' + sensors[1].function + ' in ' + sensors[1].unit,
                 data: [],
                 backgroundColor: 'rgba(153, 102, 255, 0.7)',
                 borderColor: 'rgba(153, 102, 255, 1)',
@@ -66,13 +78,13 @@ function init() {
         data: {
             labels: [],
             datasets: [{
-                label: 'Co2 min',
+                label: 'Minimum der ' + sensors[2].function + ' in ' + sensors[2].unit,
                 data: [],
                 backgroundColor: 'rgba(54, 162, 235, 0.7)',
                 borderColor: 'rgba(54, 162, 235, 1)',
                 borderWidth: 1
             }, {
-                label: 'Co2 max',
+                label: 'Maximum der ' + sensors[2].function + ' in ' + sensors[2].unit,
                 data: [],
                 backgroundColor: 'rgba(54, 162, 235, 0.7)',
                 borderColor: 'rgba(54, 162, 235, 1)',
@@ -93,13 +105,13 @@ function init() {
         data: {
             labels: [],
             datasets: [{
-                label: 'Wassersensor min',
+                label: 'Minimum der ' + sensors[3].function + ' in ' + sensors[3].unit,
                 data: [],
                 backgroundColor: 'rgba(75, 192, 192, 0.7)',
                 borderColor: 'rgba(75, 192, 192, 1)',
                 borderWidth: 1
             }, {
-                label: 'Wassersensor max',
+                label: 'Maximum der ' + sensors[3].function + ' in ' + sensors[3].unit,
                 data: [],
                 backgroundColor: 'rgba(75, 192, 192, 0.7)',
                 borderColor: 'rgba(75, 192, 192, 1)',
@@ -227,7 +239,6 @@ function jsToLocalReadableString(dateObj) {
 }
 
 function updateSummaryChartsTrigger () {
-    // console.log("works")
     let index = intervalSelect.selectedIndex;
     let myDate = new Date();
     switch (index) {
