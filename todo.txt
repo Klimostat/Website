@@ -1,5 +1,0 @@
-Documentation
-Grenzwerte - Fehler
-Server Not Reachable - Fehler
-Externe Speicherung von Pfaden, Zugangsdaten usw.
-Historie
