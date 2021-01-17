@@ -1,6 +1,6 @@
 const UPDATE_INTERVAL = 10;
 const MAX_ENTRIES = 60;
-let temperatureChart, humidityChart, cO2Chart, floodChart, lastUpdate, nextUpdateIn;
+let lastUpdate, nextUpdateIn, charts;
 
 /**
  * initializes live charts and sets interval
@@ -10,7 +10,8 @@ function initCharts() {
         "                           Stand: <span id = \"lastUpdated\">noch nicht gelanden</span>, nächstes Update in <span id = \"nextUpdateIn\">0</span> Sekunden.\n" +
         "                           <button class=\"btn btn-outline-secondary logout bg-light text-dark\" type=\"button\" onclick=\"nextUpdateIn = 0; updateCountdown()\">Update</button>"
 
-    temperatureChart = new Chart(document.getElementById('chart-temperatur'), {
+    charts = [
+        new Chart(document.getElementById('chart-temperatur'), {
         type: 'line',
         data: {
             labels: [],
@@ -30,8 +31,8 @@ function initCharts() {
                 }
             },
         },
-    });
-    humidityChart = new Chart(document.getElementById('chart-humidity'), {
+    }),
+        new Chart(document.getElementById('chart-humidity'), {
         type: 'line',
         data: {
             labels: [],
@@ -51,8 +52,8 @@ function initCharts() {
                 }
             },
         }
-    });
-    cO2Chart = new Chart(document.getElementById('chart-co2'), {
+    }),
+        new Chart(document.getElementById('chart-co2'), {
         type: 'line',
         data: {
             labels: [],
@@ -72,8 +73,8 @@ function initCharts() {
                 }
             }
         }
-    });
-    floodChart = new Chart(document.getElementById('chart-flood'), {
+    }),
+        new Chart(document.getElementById('chart-flood'), {
         type: 'bar',
         data: {
             labels: [],
@@ -100,10 +101,13 @@ function initCharts() {
                 }]
             }
         }
-    });
+    })
+    ];
 
     lastUpdate = null;
     nextUpdateIn = 0;
+
+    Notification.requestPermission();
 
     intervalSelect.addEventListener("change", updateSummaryChartsTrigger);
     setInterval(updateCountdown, 1000);
@@ -126,31 +130,29 @@ function updateCountdown() {
  * updates the charts, the "last updated" message and variables
  */
 function updateCharts() {
-    updateChartWithValuesFromDB(temperatureChart, 1, lastUpdate);
-    updateChartWithValuesFromDB(humidityChart, 2, lastUpdate);
-    updateChartWithValuesFromDB(cO2Chart, 3, lastUpdate);
-    updateChartWithValuesFromDB(floodChart, 4, lastUpdate);
+    for (let i = 0; i < 4; i++) {
+        updateChartWithValuesFromDB(i, lastUpdate);
+    }
     lastUpdate = new Date();
     document.getElementById("lastUpdated").innerHTML = jsToLocalReadableString(lastUpdate);
 }
 
 /**
  * updates a chart by requesting data from the server
- * @param chart {chart} the chart to be filled
- * @param sensorId {number} the id of the sensor
+ * @param id {number} the id of the sensor and chart
  * @param from {Date|null} the date from when the data should be loaded, not requested on null but 10 mins by default
  */
-function updateChartWithValuesFromDB(chart, sensorId, from) {
+function updateChartWithValuesFromDB(id, from) {
     let xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
         if (this.readyState === 4 && this.status === 200) {
             // console.log(this.responseText);
-            appendValuesToChart(chart, JSON.parse(this.responseText));
+            appendValuesToChart(id, JSON.parse(this.responseText));
         }
     };
     xhttp.open("POST", "PHP/getDataLive.php", true);
     let data = new FormData();
-    data.append('sensorId', sensorId);
+    data.append('sensorId', "" + (id + 1));
     if (from !== null) {
         data.append('from', jsToUTCMySQLDate(from));
     }
@@ -159,19 +161,26 @@ function updateChartWithValuesFromDB(chart, sensorId, from) {
 
 /**
  * appends values to a chart
- * @param chart {Chart} the chart
+ * @param id {number} the id of the chart
  * @param dataset {Object[]} an array that has entries of {time:,value:} objects
  */
-function appendValuesToChart(chart, dataset) {
+function appendValuesToChart(id, dataset) {
+    let alert = false;
     for (const entry of dataset) {
-        chart.data.labels.push(jsToLocalReadableString(mySQLToUTCJSDate(entry.time)));
-        chart.data.datasets[0].data.push(entry.value);
-        if (chart.data.datasets[0].data.length > MAX_ENTRIES) {
-            chart.data.labels.shift();
-            chart.data.datasets[0].data.shift();
+        if (entry.value > sensors[id].grenzwert) {
+            alert = true;
+        }
+        charts[id].data.labels.push(jsToLocalReadableString(mySQLToUTCJSDate(entry.time)));
+        charts[id].data.datasets[0].data.push(entry.value);
+        if (charts[id].data.datasets[0].data.length > MAX_ENTRIES) {
+            charts[id].data.labels.shift();
+            charts[id].data.datasets[0].data.shift();
         }
     }
-    chart.update();
+    if (alert) {
+        new Notification("ALERT");
+    }
+    charts[id].update();
 }
 
 function updateSummaryChartsTrigger () {
