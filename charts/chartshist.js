@@ -1,4 +1,4 @@
-let temperatureChart, humidityChart, cO2Chart, floodChart;
+let charts;
 
 /**
  * initializes live charts and sets interval
@@ -6,7 +6,8 @@ let temperatureChart, humidityChart, cO2Chart, floodChart;
 function initCharts() {
     document.getElementById("timing").innerHTML = "";
 
-    temperatureChart = new Chart(document.getElementById('chart-temperatur'), {
+    charts = [
+        new Chart(document.getElementById('chart-temperatur'), {
         type: 'line',
         data: {
             labels: [],
@@ -32,8 +33,8 @@ function initCharts() {
                 }
             },
         },
-    });
-    humidityChart = new Chart(document.getElementById('chart-humidity'), {
+    }),
+        new Chart(document.getElementById('chart-humidity'), {
         type: 'line',
         data: {
             labels: [],
@@ -59,8 +60,8 @@ function initCharts() {
                 }
             },
         }
-    });
-    cO2Chart = new Chart(document.getElementById('chart-co2'), {
+    }),
+        new Chart(document.getElementById('chart-co2'), {
         type: 'line',
         data: {
             labels: [],
@@ -86,8 +87,8 @@ function initCharts() {
                 }
             }
         }
-    });
-    floodChart = new Chart(document.getElementById('chart-flood'), {
+    }),
+        new Chart(document.getElementById('chart-flood'), {
         type: 'bar',
         data: {
             labels: [],
@@ -114,7 +115,8 @@ function initCharts() {
                 }]
             }
         }
-    });
+    })
+    ]
 
     intervalSelect.addEventListener("change", updateSummaryChartsTrigger);
 
@@ -132,31 +134,29 @@ function initCharts() {
  * @param to {Date} the date until when the data should be loaded
  */
 function updateSummaryCharts(interval, from = new Date(2000, 1, 1), to = new Date()) {
-    updateSummaryChartWithValuesFromDB(temperatureChart, 1, from, to, interval);
-    updateSummaryChartWithValuesFromDB(humidityChart, 2, from, to, interval);
-    updateSummaryChartWithValuesFromDB(cO2Chart, 3, from, to, interval);
-    updateSummaryChartWithValuesFromDB(floodChart, 4, from, to, interval);
+    for (let i = 0; i < 4; i++) {
+        updateSummaryChartWithValuesFromDB(i, from, to, interval);
+    }
 }
 
 /**
  * updates a chart by requesting data from the server
- * @param chart {chart} the chart to be filled
- * @param sensorId {number} the id of the sensor
+ * @param id {number} the id of the sensor and chart
  * @param from {Date} the date since when the data should be loaded
  * @param to {Date} the date until when the data should be loaded
  * @param interval {string} the interval in which the data should be summarized, options are "min", "10min", "hr", "day"
  */
-function updateSummaryChartWithValuesFromDB(chart, sensorId, from, to, interval) {
+function updateSummaryChartWithValuesFromDB(id, from, to, interval) {
     let xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
         if (this.readyState === 4 && this.status === 200) {
             // console.log(this.responseText);
-            setValuesOfSummaryChart(chart, JSON.parse(this.responseText));
+            setValuesOfSummaryChart(id, JSON.parse(this.responseText));
         }
     };
     xhttp.open("POST", "PHP/getDataTimewise.php", true);
     let data = new FormData();
-    data.append('sensorId', sensorId);
+    data.append('sensorId', "" + (id + 1));
     data.append('from', jsToUTCMySQLDate(from));
     data.append('to', jsToUTCMySQLDate(to));
     data.append('interval', interval);
@@ -165,24 +165,24 @@ function updateSummaryChartWithValuesFromDB(chart, sensorId, from, to, interval)
 
 /**
  * sets the values of a chart
- * @param chart {Chart} the chart
+ * @param id {number} the id of the chart
  * @param dataset {Object[]} an array that has entries of {time:,min:,max:} objects
  */
-function setValuesOfSummaryChart(chart, dataset) {
-    chart.data.labels = [];
-    chart.data.datasets[0].data = [];
-    if (chart.data.datasets.length > 1) {
-        chart.data.datasets[1].data = [];
+function setValuesOfSummaryChart(id, dataset) {
+    charts[id].data.labels = [];
+    charts[id].data.datasets[0].data = [];
+    if (charts[id].data.datasets.length > 1) {
+        charts[id].data.datasets[1].data = [];
     }
 
     for (const entry of dataset) {
-        chart.data.labels.push(jsToLocalReadableString(mySQLToUTCJSDate(entry.time)));
-        chart.data.datasets[0].data.push(entry.max);
-        if (chart.data.datasets.length > 1) {
-            chart.data.datasets[1].data.push(entry.min);
+        charts[id].data.labels.push(jsToLocalReadableString(mySQLToUTCJSDate(entry.time)));
+        charts[id].data.datasets[0].data.push(entry.max);
+        if (charts[id].data.datasets.length > 1) {
+            charts[id].data.datasets[1].data.push(entry.min);
         }
     }
-    chart.update();
+    charts[id].update();
 }
 
 function updateSummaryChartsTrigger () {

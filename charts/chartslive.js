@@ -177,10 +177,10 @@ function appendValuesToChart(id, dataset) {
             charts[id].data.datasets[0].data.shift();
         }
     }
-    if (alert) {
-        sendAlert("Grenzwertüberschreitung!", "Achtung ein Grenzwert wurde überschritten!")
-    }
     charts[id].update();
+    if (alert) {
+        sendAlert("Klimostat: Grenzwertüberschreitung! Achtung ein Grenzwert wurde überschritten!")
+    }
 }
 
 function updateSummaryChartsTrigger () {
@@ -196,16 +196,9 @@ function updateSummaryChartsTrigger () {
 }
 
 
-function sendAlert(title, message) {
-    if (!("Notification" in window)) {
-        alert(title + "\n" + message);
-    }
-    else if (Notification.permission === "granted") {
-        new Notification(title, message);
-        alert(title + "\n" + message);
-    }
-    else if (Notification.permission !== 'denied') {
-        Notification.requestPermission(function (permission) {
-        });
+function sendAlert(message) {
+    if (Notification.permission === "granted") {
+        new Notification(message);
+        // alert(title + "\n" + message);
     }
 }
