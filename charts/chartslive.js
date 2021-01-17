@@ -167,7 +167,7 @@ function updateChartWithValuesFromDB(id, from) {
 function appendValuesToChart(id, dataset) {
     let alert = false;
     for (const entry of dataset) {
-        if (entry.value > sensors[id].grenzwert) {
+        if (entry.value >= sensors[id].grenzwert) {
             alert = true;
         }
         charts[id].data.labels.push(jsToLocalReadableString(mySQLToUTCJSDate(entry.time)));
