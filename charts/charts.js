@@ -1,5 +1,24 @@
-let sensors, intervalSelect;
 document.addEventListener("DOMContentLoaded", init, false);
+
+/**
+ * Array of all sensors with all parameters as they are in the database.
+ * Is initialized with the init() call.
+ * ATTENTION!! The index is not equivalent to the sensor id.
+ * @type {Object[]}
+ */
+let sensors = [];
+
+/**
+ * Array of all ChartJS charts, initialized with the init() call.
+ * @type {Chart[]}
+ */
+let charts = [];
+
+
+/**
+ * The HTML-select-element used for selecting the time interval, initialized with the init() call.
+ */
+let intervalSelect;
 
 /**
  * initializes environment at the start

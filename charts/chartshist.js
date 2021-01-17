@@ -1,5 +1,3 @@
-let charts;
-
 /**
  * initializes live charts and sets interval
  */
@@ -156,7 +154,7 @@ function updateSummaryChartWithValuesFromDB(id, from, to, interval) {
     };
     xhttp.open("POST", "PHP/getDataTimewise.php", true);
     let data = new FormData();
-    data.append('sensorId', "" + (id + 1));
+    data.append('sensorId', sensors[id].pk_SensorId);
     data.append('from', jsToUTCMySQLDate(from));
     data.append('to', jsToUTCMySQLDate(to));
     data.append('interval', interval);
@@ -185,6 +183,9 @@ function setValuesOfSummaryChart(id, dataset) {
     charts[id].update();
 }
 
+/**
+ * updates the time interval that should be displayed.
+ */
 function updateSummaryChartsTrigger () {
     let index = intervalSelect.selectedIndex;
     let myDate = new Date();

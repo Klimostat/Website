@@ -1,6 +1,26 @@
+/**
+ * The interval in seconds in which the data should be updated.
+ * @type {number}
+ */
 const UPDATE_INTERVAL = 10;
+
+/**
+ * The maximum number of values per chart.
+ * @type {number}
+ */
 const MAX_ENTRIES = 60;
-let lastUpdate, nextUpdateIn, charts;
+
+/**
+ * Controls the data-updates
+ * @type {Date}
+ */
+let lastUpdate
+
+/**
+ * Controls the data-updates
+ * @type {number}
+ */
+let nextUpdateIn;
 
 /**
  * initializes live charts and sets interval
@@ -152,7 +172,7 @@ function updateChartWithValuesFromDB(id, from) {
     };
     xhttp.open("POST", "PHP/getDataLive.php", true);
     let data = new FormData();
-    data.append('sensorId', "" + (id + 1));
+    data.append('sensorId', sensors[id].pk_SensorId);
     if (from !== null) {
         data.append('from', jsToUTCMySQLDate(from));
     }
@@ -183,6 +203,9 @@ function appendValuesToChart(id, dataset) {
     }
 }
 
+/**
+ * updates the time interval that should be displayed.
+ */
 function updateSummaryChartsTrigger () {
     console.log("works")
     let index = intervalSelect.selectedIndex;
@@ -195,11 +218,12 @@ function updateSummaryChartsTrigger () {
     }
 }
 
-
+/**
+ * sends an alert via notifications and displays a red bar
+ */
 function sendAlert() {
     if (Notification.permission === "granted") {
-        document.getElementById("alert").style.display = "block";
-        //new Notification(message);
-        // alert(title + "\n" + message);
+        new Notification("Achtung! Ein Grenzwert wurde überschritten!");
     }
+    document.getElementById("alert").style.display = "block";
 }
