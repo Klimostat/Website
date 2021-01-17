@@ -178,7 +178,7 @@ function appendValuesToChart(id, dataset) {
         }
     }
     if (alert) {
-        new Notification("ALERT");
+        sendAlert("Grenzwertüberschreitung!", "Achtung ein Grenzwert wurde überschritten!")
     }
     charts[id].update();
 }
@@ -192,5 +192,20 @@ function updateSummaryChartsTrigger () {
             break;
         default:
             location.assign(".?hist=" + index);
+    }
+}
+
+
+function sendAlert(title, message) {
+    if (!("Notification" in window)) {
+        alert(title + "\n" + message);
+    }
+    else if (Notification.permission === "granted") {
+        new Notification(title, message);
+        alert(title + "\n" + message);
+    }
+    else if (Notification.permission !== 'denied') {
+        Notification.requestPermission(function (permission) {
+        });
     }
 }
