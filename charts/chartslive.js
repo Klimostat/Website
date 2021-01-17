@@ -196,9 +196,10 @@ function updateSummaryChartsTrigger () {
 }
 
 
-function sendAlert(message) {
+function sendAlert() {
     if (Notification.permission === "granted") {
-        new Notification(message);
+        document.getElementById("alert").style.display = "block";
+        //new Notification(message);
         // alert(title + "\n" + message);
     }
 }

@@ -80,6 +80,10 @@ if (isset($_GET["hist"])) {
                     </div>
                 </div>
             </nav>
+            <div class="alert" id="alert">
+                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+                <strong>Achtung!</strong> Ein Grenzwert wurde überschritten!
+            </div>
 
             <div class="container-fluid charts px-5 mt-5">
                 <div class="row">
