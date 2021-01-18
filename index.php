@@ -73,7 +73,7 @@ if (isset($_GET["hist"])) {
                                 </select>
                             </li>
                         </ul>
-                        <div id = "timing"></div>
+                        <div id = "timing" class = "text-light"></div>
                         <form class="d-flex" method = "post" action = "PHP/logout.php">
                             <button class="btn btn-outline-secondary logout bg-light text-dark" type="submit">Logout</button>
                         </form>
