@@ -70,7 +70,7 @@ if (isset($_GET["action"]) && $_GET["action"] !== "") {
                       method="post">
                     <p id="infotext">  <?= $note ?> </p>
                     <input type="text" id="username" class="login border border-light border-1 rounded-1"
-                           name="username" placeholder="Username"><br>
+                           name="username" placeholder="Username" autofocus><br>
                     <input type="password" id="passwort" class="login border border-light border-1 rounded-1"
                            name="password" placeholder="· · · · · · · · · · · ·"><br><br>
                     <button type="submit" id="loginbutton"
