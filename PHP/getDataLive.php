@@ -15,15 +15,15 @@ verifySession();
 
 if (isset($_POST["from"])) {
     $data = $conn -> prepare("
-select m.messzeitpunkt zeit, m.messdaten daten from messung m
-where m.messzeitpunkt > :from
+select m.measuring_time time, m.measuring_data data from measurement m
+where m.measuring_time > :from
 and m.fk_sensorId = :sensorId
 ");
     $data -> bindParam(":from", $_POST["from"]);
 } else {
     $data = $conn -> prepare("
-select m.messzeitpunkt zeit, m.messdaten daten from messung m
-where m.messzeitpunkt > subtime(utc_timestamp, '00:10:00')
+select m.measuring_time time, m.measuring_data data from measurement m
+where m.measuring_time > subtime(utc_timestamp, '00:10:00')
 and m.fk_sensorId = :sensorId
 ");
 }
@@ -35,7 +35,7 @@ $outString = "[";
 
 if ($data -> rowCount() > 0) {
     while ($tupel = $data -> fetch(PDO::FETCH_ASSOC)) {
-        $outString .= "{\"time\":\"{$tupel['zeit']}\",\"value\":{$tupel['daten']}},";
+        $outString .= "{\"time\":\"{$tupel['time']}\",\"value\":{$tupel['data']}},";
     }
     $outString = substr($outString, 0, strlen($outString) - 1);
 }

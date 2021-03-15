@@ -36,7 +36,7 @@ function initCharts() {
         data: {
             labels: [],
             datasets: [{
-                label: sensors[0].funktionalitaet + ' in ' + sensors[0].messeinheit,
+                label: sensors[0].functionality + ' in ' + sensors[0].measuring_unit,
                 data: [],
                 backgroundColor: 'rgba(255, 99, 132, 0.7)',
                 borderColor: 'rgba(255, 99, 132, 0.7)',
@@ -57,7 +57,7 @@ function initCharts() {
         data: {
             labels: [],
             datasets: [{
-                label: sensors[1].funktionalitaet + ' in ' + sensors[1].messeinheit,
+                label: sensors[1].functionality + ' in ' + sensors[1].measuring_unit,
                 data: [],
                 backgroundColor: 'rgba(153, 102, 255, 0.7)',
                 borderColor: 'rgba(153, 102, 255, 1)',
@@ -78,7 +78,7 @@ function initCharts() {
         data: {
             labels: [],
             datasets: [{
-                label: sensors[2].funktionalitaet + ' in ' + sensors[2].messeinheit,
+                label: sensors[2].functionality + ' in ' + sensors[2].measuring_unit,
                 data: [],
                 backgroundColor: 'rgba(54, 162, 235, 0.7)',
                 borderColor: 'rgba(54, 162, 235, 1)',
@@ -99,7 +99,7 @@ function initCharts() {
         data: {
             labels: [],
             datasets: [{
-                label: sensors[3].funktionalitaet + ' in ' + sensors[3].messeinheit,
+                label: sensors[3].functionality + ' in ' + sensors[3].measuring_unit,
                 data: [],
                 backgroundColor: 'rgba(75, 192, 192, 0.7)',
                 borderColor: 'rgba(75, 192, 192, 1)',

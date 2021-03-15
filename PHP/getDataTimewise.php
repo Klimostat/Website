@@ -44,11 +44,11 @@ switch ($interval) {
 }
 
 $data = $conn -> prepare("
-select timestamp(concat(left(m.messzeitpunkt, :timeStrLen), :timeAppend)) zeit, max(m.messdaten) max, min(m.messdaten) min from messung m
-where m.messzeitpunkt > :from
-and m.messzeitpunkt <= :to
+select timestamp(concat(left(m.measuring_time, :timeStrLen), :timeAppend)) time, max(m.measuring_data) max, min(m.measuring_data) min from measurement m
+where m.measuring_time > :from
+and m.measuring_time <= :to
 and m.fk_sensorId = :sensorId
-group by zeit;
+group by time;
 ");
 
 $data -> bindParam(":from", $from);
@@ -62,7 +62,7 @@ $outString = "[";
 
 if ($data -> rowCount() > 0) {
     while ($tupel = $data -> fetch(PDO::FETCH_ASSOC)) {
-        $outString .= "{\"time\":\"{$tupel['zeit']}\",\"min\":{$tupel['min']},\"max\":{$tupel['max']}},";
+        $outString .= "{\"time\":\"{$tupel['time']}\",\"min\":{$tupel['min']},\"max\":{$tupel['max']}},";
     }
     $outString = substr($outString, 0, strlen($outString) - 1);
 }
