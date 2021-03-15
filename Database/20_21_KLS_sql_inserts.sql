@@ -11,13 +11,14 @@ CREATE TABLE IF NOT EXISTS `sensor` (
     `sensortype` TEXT NOT NULL,
     `locationdescription` TEXT NOT NULL,
     `functionality` TEXT NOT NULL,
-    `measuring_unit` TEXT NOT NULL
+    `measuring_unit` TEXT NOT NULL,
+    `threshold` FLOAT NOT NULL
 );
 
 DROP TABLE IF EXISTS `measurement`;
 CREATE TABLE IF NOT EXISTS `measurement` (
     `pk_measurementid` INT PRIMARY KEY AUTO_INCREMENT,
-    `measuring_time` TIMESTAMP NOT NULL,
+    `measuring_time` TIMESTAMP NOT NULL DEFAULT UTC_TIMESTAMP(),
     `measuring_data` FLOAT NOT NULL,
     `fk_sensorid` INT NOT NULL,
     CONSTRAINT FOREIGN KEY `fk_measurement_sensor`(`fk_sensorId`) REFERENCES `sensor`(`pk_sensorid`)
