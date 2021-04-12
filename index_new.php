@@ -46,6 +46,11 @@ if (isset($_GET["hist"])) {
         <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">
     </head>
     <body>
+
+
+
+
+
         <!-- Main -->
         <main id = "main" class="d-flex align-items-start">
 
@@ -77,9 +82,18 @@ if (isset($_GET["hist"])) {
                     </div>
                 </div>
             </div>
-
-            <!-- Alt -->
         </main>
+
+        <!-- Footer -->
+        <footer id = "footer">
+            Hallo
+        </footer>
+
+
+
+
+
+        <!-- Alt -->
         <div style="display: none">
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
