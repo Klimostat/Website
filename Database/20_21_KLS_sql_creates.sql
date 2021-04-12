@@ -6,7 +6,8 @@ USE `klimostat`;
 
 DROP TABLE IF EXISTS `station`;
 CREATE TABLE IF NOT EXISTS `station` (
-    `pk_station_id` INT PRIMARY KEY  AUTO_INCREMENT,
+    `pk_station_id` INT PRIMARY KEY AUTO_INCREMENT,
+    `name` VARCHAR(32) NOT NULL,
     `alert_message` TEXT,
     `location` TEXT
 );
@@ -50,3 +51,16 @@ CREATE TABLE IF NOT EXISTS `session` (
         ON UPDATE CASCADE
         ON DELETE CASCADE
 );
+
+
+-- INSERTS
+
+-- user: admin
+-- password: passwd
+INSERT INTO `user` (`pk_user_id`, `username`, `passwordhash`)
+VALUES (0, 'admin', '$argon2id$v=19$m=65536,t=4,p=1$SjNLQldCS0FLTGx1YTV2Vg$nFQ9uLFlD7Bu8iyBw0sd8ai923Z2CpwPSc7s3ErjbVo');
+
+INSERT INTO `station` (`name`, `alert_message`, `location`)
+VALUES ('Virt1', 'Der virtuellen Messstation wurde es zu heiß', 'In der Datenbank'),
+        ('Virt2', 'Der virtuellen Messstation wurde es zu heiß', 'In der Datenbank'),
+        ('Virt3', 'Der virtuellen Messstation wurde es zu heiß', 'In der Datenbank');

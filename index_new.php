@@ -27,6 +27,18 @@ if (isset($_GET["hist"])) {
 } else {
     $_GET["hist"] = 1;
 }
+
+$stations = $conn -> prepare("
+select pk_station_id, name from station
+");
+$stations -> execute();
+$stationText = "";
+while ($station = $stations -> fetch(PDO::FETCH_ASSOC)) {
+    $stationText .= "
+<li>
+    {$station["name"]}
+</li>";
+}
 ?>
 
 <!DOCTYPE html>
@@ -45,14 +57,14 @@ if (isset($_GET["hist"])) {
         <link rel="preconnect" href="https://fonts.gstatic.com">
         <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">
     </head>
-    <body>
+    <body class = "w-100 min-vh-100">
 
 
 
 
 
         <!-- Main -->
-        <main id = "main" class="d-flex align-items-start">
+        <main id = "main" class="w-100">
 
             <!-- Navbar -->
             <nav id = "navbar" class="nav flex-column nav-pills">
@@ -60,33 +72,35 @@ if (isset($_GET["hist"])) {
                     <img src="res/Logo.png" alt="" width="40px" height="40px" class="d-inline-block align-center"> Klimostat
                 </a>
                 <div class="navbar-item"> Messstationen </div>
+                <ul class="list-unstyled">
+                    <?=$stationText?>
+                </ul>
             </nav>
 
             <!-- Content -->
-            <div id = "content" class="container-fluid charts">
-                <div class="row">
-                    <div class="chart-container col-lg-5 offset-lg-1 bg-light px-3 my-2 me-2 shadow rounded">
-                        <canvas id="chart-temperatur"></canvas>
-                    </div>
-                    <div class="chart-container col-lg-5 bg-light m-lg-2 shadow rounded">
-                        <canvas id="chart-humidity"></canvas>
-                    </div>
+            <div id = "content" class = "">
+                <div class="chart-container border border-1 border-dark rounded">
+                    <canvas id="chart-temperatur"></canvas>
                 </div>
-
-                <div class="row">
-                    <div class="chart-container col-lg-5 offset-lg-1 bg-light my-2 me-2 shadow rounded">
-                        <canvas id="chart-co2"></canvas>
-                    </div>
-                    <div class="chart-container col-lg-5 bg-light m-lg-2 shadow rounded">
-                        <canvas id="chart-flood"></canvas>
-                    </div>
+                <div class="chart-container border border-1 border-dark rounded">
+                    <canvas id="chart-humidity"></canvas>
+                </div>
+                <div class="chart-container border border-1 border-dark rounded">
+                    <canvas id="chart-co2"></canvas>
                 </div>
             </div>
         </main>
 
         <!-- Footer -->
-        <footer id = "footer">
+        <footer id = "footer" class = "">
             Hallo
+            <br>
+            hallo
+            <br>
+            hallo
+            <br>
+            hallo
+            <br>
         </footer>
 
 
@@ -119,10 +133,6 @@ if (isset($_GET["hist"])) {
                     <button class="btn btn-outline-secondary logout bg-light text-dark" type="submit">Logout</button>
                 </form>
             </div>
-        </div>
-        <div class="alert" id="alert">
-            <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-            <strong>Achtung!</strong> Ein Grenzwert wurde überschritten!
         </div>
 
 
