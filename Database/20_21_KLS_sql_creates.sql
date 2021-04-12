@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS `live_data` (
     `temperature` FLOAT NOT NULL,
     `fk_station_id` INT NOT NULL,
     CONSTRAINT `fk_live_data_station` FOREIGN KEY (`fk_station_id`) REFERENCES `station` (`pk_station_id`),
-    CONSTRAINT `pk_live_data` PRIMARY KEY (pk_measurement_time, fk_station_id)
+    CONSTRAINT `pk_live_data` PRIMARY KEY (`pk_measurement_time`, `fk_station_id`)
 );
 
 DROP TABLE IF EXISTS `historical_data`;
@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS `historical_data`(
     `temperature` FLOAT NOT NULL,
     `fk_station_id` INT NOT NULL,
     CONSTRAINT `fk_historical_data_station` FOREIGN KEY (`fk_station_id`) REFERENCES `station` (`pk_station_id`),
-    CONSTRAINT `pk_historical_data` PRIMARY KEY (pk_measurement_time, fk_station_id)
+    CONSTRAINT `pk_historical_data` PRIMARY KEY (`pk_measurement_time`, `fk_station_id`)
 );
 
 DROP TABLE IF EXISTS `user`;
