@@ -75,12 +75,13 @@ while ($station = $stations -> fetch(PDO::FETCH_ASSOC)) {
                 <ul class="list-unstyled">
                     <?=$stationText?>
                 </ul>
+                <div id = "timing"></div>
             </nav>
 
             <!-- Content -->
             <div id = "content" class = "">
                 <div class="chart-container border border-1 border-dark rounded">
-                    <canvas id="chart-temperatur"></canvas>
+                    <canvas id="chart-temperature"></canvas>
                 </div>
                 <div class="chart-container border border-1 border-dark rounded">
                     <canvas id="chart-humidity"></canvas>
@@ -147,6 +148,7 @@ while ($station = $stations -> fetch(PDO::FETCH_ASSOC)) {
         <script>
             let intervalSelectIndex = <?=$_GET["hist"]?>;
         </script>
+        <script src="charts/stations.js"></script>
         <script src="charts/charts.js"></script>
         <script src="charts/<?=$scriptname?>"></script>
     </body>

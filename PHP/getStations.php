@@ -8,10 +8,10 @@
 
 
 require "session.php";
-verifySession();
+//verifySession();
 
 $data = $conn -> prepare("
-select s.* from sensor s
+select s.* from station s
 ");
 $data -> execute();
 

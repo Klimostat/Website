@@ -1,42 +1,11 @@
 document.addEventListener("DOMContentLoaded", init, false);
 
-/**
- * Array of all sensors with all parameters as they are in the database.
- * Is initialized with the init() call.
- * ATTENTION!! The index is not equivalent to the sensor id.
- * @type {Object[]}
- */
-let sensors = [];
-
-/**
- * Array of all ChartJS charts, initialized with the init() call.
- * @type {Chart[]}
- */
-let charts = [];
-
 
 /**
  * The HTML-select-element used for selecting the time interval, initialized with the init() call.
  */
-let intervalSelect;
+// let intervalSelect;
 
-/**
- * initializes environment at the start
- */
-function init() {
-    intervalSelect = document.getElementById("interval");
-
-    let xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function() {
-        if (this.readyState === 4 && this.status === 200) {
-            // console.log(this.responseText);
-            sensors = JSON.parse(this.responseText);
-            initCharts();
-        }
-    };
-    xhttp.open("POST", "PHP/getSensors.php", true);
-    xhttp.send();
-}
 
 /**
  * convert a mySQL datetime string to a Date object

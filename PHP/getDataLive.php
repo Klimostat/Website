@@ -11,31 +11,31 @@
 
 
 require "session.php";
-verifySession();
+//verifySession();
 
 if (isset($_POST["from"])) {
     $data = $conn -> prepare("
-select m.measuring_time time, m.measuring_data data from measurement m
-where m.measuring_time > :from
-and m.fk_sensorId = :sensorId
+select m.pk_measurement_time time, m.co2, m.humidity, m.temperature from live_data m
+where m.pk_measurement_time > :from
+and m.fk_station_id = :station_id
 ");
     $data -> bindParam(":from", $_POST["from"]);
 } else {
     $data = $conn -> prepare("
-select m.measuring_time time, m.measuring_data data from measurement m
-where m.measuring_time > subtime(utc_timestamp, '00:10:00')
-and m.fk_sensorId = :sensorId
+select m.pk_measurement_time time, m.co2, m.humidity, m.temperature from live_data m
+where m.pk_measurement_time > subtime(utc_timestamp, '00:10:00')
+and m.fk_station_id = :station_id
 ");
 }
 
-$data -> bindParam(":sensorId", $_POST["sensorId"]);
+$data -> bindParam(":station_id", $_POST["station_id"]);
 $data -> execute();
 
 $outString = "[";
 
 if ($data -> rowCount() > 0) {
     while ($tupel = $data -> fetch(PDO::FETCH_ASSOC)) {
-        $outString .= "{\"time\":\"{$tupel['time']}\",\"value\":{$tupel['data']}},";
+        $outString .= "{\"time\":\"{$tupel['time']}\",\"humidity\":{$tupel['humidity']},\"temperature\":{$tupel['temperature']},\"co2\":{$tupel['co2']}},";
     }
     $outString = substr($outString, 0, strlen($outString) - 1);
 }

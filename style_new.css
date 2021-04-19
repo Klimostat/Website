@@ -40,8 +40,9 @@ body {
     overflow-x: auto;
 }
 
-#content > * {
+.chart-container {
     margin: 10px;
+    width: 500px;
 }
 
 #footer {
