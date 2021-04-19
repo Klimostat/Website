@@ -8,8 +8,10 @@ DROP TABLE IF EXISTS `station`;
 CREATE TABLE IF NOT EXISTS `station` (
     `pk_station_id` INT PRIMARY KEY AUTO_INCREMENT,
     `name` VARCHAR(32) NOT NULL,
-    `alert_message` TEXT,
-    `location` TEXT
+    `alert_message_humidity` TEXT NOT NULL DEFAULT 'Humidity too low.',
+    `alert_message_co2` TEXT NOT NULL DEFAULT 'CO2 concentration too high.',
+    `location` TEXT NOT NULL,
+    `token` TEXT NOT NULL
 );
 
 DROP TABLE IF EXISTS `live_data`;
@@ -38,7 +40,7 @@ DROP TABLE IF EXISTS `user`;
 CREATE TABLE IF NOT EXISTS `user` (
     `pk_user_id` INT PRIMARY KEY AUTO_INCREMENT,
     `username` VARCHAR(32) NOT NULL ,
-    `passwordHash` text NOT NULL  ,
+    `passwordHash` TEXT NOT NULL  ,
     CONSTRAINT `unique_username` UNIQUE (`username`)
 );
 
@@ -56,11 +58,10 @@ CREATE TABLE IF NOT EXISTS `session` (
 -- INSERTS
 
 -- user: admin
--- password: passwd
 INSERT INTO `user` (`pk_user_id`, `username`, `passwordhash`)
 VALUES (0, 'admin', '$argon2id$v=19$m=65536,t=4,p=1$SjNLQldCS0FLTGx1YTV2Vg$nFQ9uLFlD7Bu8iyBw0sd8ai923Z2CpwPSc7s3ErjbVo');
 
-INSERT INTO `station` (`name`, `alert_message`, `location`)
-VALUES ('Virt1', 'Der virtuellen Messstation wurde es zu heiß', 'In der Datenbank'),
-        ('Virt2', 'Der virtuellen Messstation wurde es zu heiß', 'In der Datenbank'),
-        ('Virt3', 'Der virtuellen Messstation wurde es zu heiß', 'In der Datenbank');
+INSERT INTO `station` (`name`, `alert_message_co2`, `alert_message_humidity`, `location`, `token`)
+VALUES ('Virt1', 'Der virtuellen Messstation wurde es zu verraucht', 'Der virtuellen Messstation wurde es zu trocken', 'In der Datenbank', 'token1'),
+    ('Virt2', 'Der virtuellen Messstation wurde es zu verraucht', 'Der virtuellen Messstation wurde es zu trocken', 'In der Datenbank', 'token2'),
+    ('Virt3', 'Der virtuellen Messstation wurde es zu verraucht', 'Der virtuellen Messstation wurde es zu trocken', 'In der Datenbank', 'token3');
