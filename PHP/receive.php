@@ -3,8 +3,8 @@ $data = $_POST["data"];
 $data_json = json_decode($data, true);
 
 $db = new PDO("mysql:host=localhost;dbname=klimostat", "root", "");
-$stmt = $db->prepare("SELECT token FROM station WHERE pk_station_id = {$data_json["id"]}");
-$stmt->execute();
+$stmt = $db->prepare("SELECT token FROM station WHERE pk_station_id = ?");
+$stmt->execute([$data_json["id"]]);
 $token = $stmt->fetch(PDO::FETCH_ASSOC)["token"];
 
 $insert = $db->prepare("INSERT INTO `live_data` (`co2`,`humidity`, `temperature`, `fk_station_id`) VALUES (:co2, :humidity, :temperature, :station_id)");
