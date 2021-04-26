@@ -25,7 +25,9 @@ let nextUpdateIn;
 let grenzwertCO2 = 440;
 let grenzwertHumidity = 30;
 
-/**
+let intervalObj;
+
+    /**
  * initializes live charts and sets interval
  */
 function initCharts() {
@@ -104,7 +106,8 @@ function initCharts() {
     Notification.requestPermission();
 
     // intervalSelect.addEventListener("change", updateSummaryChartsTrigger);
-    setInterval(updateCountdown, 1000);
+    clearInterval(intervalObj);
+    intervalObj = setInterval(updateCountdown, 1000);
 }
 
 /**
@@ -123,28 +126,31 @@ function updateCountdown() {
 /**
  * updates the charts, the "last updated" message and variables
  */
-function updateCharts() {
-    updateChartsWithValuesFromDB(selectedStationIndex, lastUpdate);
+function updateCharts(since = lastUpdate, clearExistingData = false) {
+    if (clearExistingData) {
+        initCharts();
+    }
+    updateChartsWithValuesFromDB(getSelectedStation(), since);
     lastUpdate = new Date();
     document.getElementById("lastUpdated").innerHTML = jsToLocalReadableString(lastUpdate);
 }
 
 /**
  * updates a chart by requesting data from the server
- * @param index {number} the index of the station in the stations array
+ * @param station_id {number} the station_id in the database
  * @param from {Date|null} the date from when the data should be loaded, not requested on null but 10 mins by default
  */
-function updateChartsWithValuesFromDB(index, from) {
+function updateChartsWithValuesFromDB(station_id, from) {
     let xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
         if (this.readyState === 4 && this.status === 200) {
             console.log(this.responseText);
-            appendValuesToCharts(index, JSON.parse(this.responseText));
+            appendValuesToCharts(station_id, JSON.parse(this.responseText));
         }
     };
     xhttp.open("POST", "PHP/getDataLive.php", true);
     let data = new FormData();
-    data.append('station_id', stations[index].pk_station_id);
+    data.append('station_id', station_id);
     if (from !== null) {
         data.append('from', jsToUTCMySQLDate(from));
     }
@@ -212,5 +218,5 @@ function sendAlert() {
     if (Notification.permission === "granted") {
         new Notification("Achtung! Ein Grenzwert wurde überschritten!");
     }
-    document.getElementById("alert").style.display = "block";
+    // document.getElementById("alert").style.display = "block";
 }

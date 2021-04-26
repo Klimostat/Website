@@ -70,13 +70,10 @@ INSERT INTO `user` (`pk_user_id`, `username`, `passwordhash`)
 VALUES (0, 'admin', '$argon2id$v=19$m=65536,t=4,p=1$SjNLQldCS0FLTGx1YTV2Vg$nFQ9uLFlD7Bu8iyBw0sd8ai923Z2CpwPSc7s3ErjbVo');
 
 INSERT INTO `station` (`name`, `alert_message_co2`, `alert_message_humidity`, `location`, `token`)
-VALUE ('test_station', '2500', '20', 'deine mama', '$argon2id$v=19$m=65536,t=4,p=1$UVVzSEdINGNIUWJpZUN4cQ$wFH1+6ztyX8xBRtOSbW7pjZ4SujcezIrVLB0v38I/Q4');
-
-select *
-from station;
-# VALUES ('Virt1', 'Der virtuellen Messstation wurde es zu verraucht', 'Der virtuellen Messstation wurde es zu trocken', 'In der Datenbank', 'token1'),
-#     ('Virt2', 'Der virtuellen Messstation wurde es zu verraucht', 'Der virtuellen Messstation wurde es zu trocken', 'In der Datenbank', 'token2'),
-#     ('Virt3', 'Der virtuellen Messstation wurde es zu verraucht', 'Der virtuellen Messstation wurde es zu trocken', 'In der Datenbank', 'token3');
+VALUE ('test_station', '2500', '20', 'deine mama', '$argon2id$v=19$m=65536,t=4,p=1$UVVzSEdINGNIUWJpZUN4cQ$wFH1+6ztyX8xBRtOSbW7pjZ4SujcezIrVLB0v38I/Q4'),
+    ('Virt1', 'Der virtuellen Messstation wurde es zu verraucht', 'Der virtuellen Messstation wurde es zu trocken', 'In der Datenbank', 'token1'),
+    ('Virt2', 'Der virtuellen Messstation wurde es zu verraucht', 'Der virtuellen Messstation wurde es zu trocken', 'In der Datenbank', 'token2'),
+    ('Virt3', 'Der virtuellen Messstation wurde es zu verraucht', 'Der virtuellen Messstation wurde es zu trocken', 'In der Datenbank', 'token3');
 
 
 

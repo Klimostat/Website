@@ -36,7 +36,9 @@ $stationText = "";
 while ($station = $stations -> fetch(PDO::FETCH_ASSOC)) {
     $stationText .= "
 <li>
-    {$station["name"]}
+    <a href=\"javascript:setSelectedStation({$station["pk_station_id"]})\">
+        {$station["name"]}
+    </a>
 </li>";
 }
 ?>
