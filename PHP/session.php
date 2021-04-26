@@ -60,18 +60,18 @@ where utc_timestamp() - lastupdatetime > :maxAge");
         $sessClear -> execute();
 
         $user = $conn -> prepare("
-select u.username username, u.pk_userId userID, s.pk_sessionId sessionID from session s
-join user u on s.fk_userId = u.pk_userId
-where pk_sessionId = :sessionID");
-        $user -> bindParam(":sessionID", $sessionID);
+select u.username username, u.pk_user_id user_id, s.pk_session_id session_id from session s
+join user u on s.fk_user_id = u.pk_user_id
+where pk_session_id = :session_id");
+        $user -> bindParam(":session_id", $sessionID);
         $user -> execute();
         if ($user -> rowCount() > 0) {
             $session = $user -> fetch(PDO::FETCH_ASSOC);
             $updateTimer = $conn -> prepare("
 update session
 set lastupdatetime = utc_timestamp()
-where pk_sessionId = :sessionID");
-            $updateTimer -> bindParam(":sessionID", $sessionID);
+where pk_session_id = :session_id");
+            $updateTimer -> bindParam(":session_id", $sessionID);
             $updateTimer -> execute();
         } else {
             $session = null;
@@ -106,7 +106,7 @@ function mainPage($action = "") {
     } else {
         $action = "";
     }
-    header("Location: $rootDomain/$action");
+    header("Location: $rootDomain/index_new.php$action");
 }
 
 /**
@@ -121,7 +121,7 @@ function logOutAndForward($sessionExpired = false) {
 
         $clearSession = $conn -> prepare("
 delete from session
-where pk_sessionId = :session");
+where pk_session_id = :session");
         $clearSession -> bindParam(":session", $session["sessionID"]);
         $clearSession -> execute();
         $session = null;
@@ -157,22 +157,22 @@ function logInAndForward() {
             $password = $_POST["password"];
 
             $getPasswd = $conn -> prepare("
-select passwordHash, pk_userId from user
+select password_hash, pk_user_id from user
 where username = :user");
             $getPasswd -> bindParam(":user", $username);
             $getPasswd -> execute();
             if ($getPasswd -> rowCount() > 0) {
                 $getPasswd = $getPasswd -> fetch(PDO::FETCH_ASSOC);
-                $passwdHash = $getPasswd["passwordHash"];
-                $userID = $getPasswd["pk_userId"];
+                $passwdHash = $getPasswd["password_hash"];
+                $userID = $getPasswd["pk_user_id"];
 
                 if (password_verify($password, $passwdHash)) {
                     $sessionID = hash("sha3-512", openssl_random_pseudo_bytes(2056));
                     $createSession = $conn -> prepare("
-insert into session (pk_sessionId, fk_userId)
-values (:sessionID, :user)");
-                    $createSession -> bindParam(":sessionID", $sessionID);
-                    $createSession -> bindParam(":user", $userID);
+insert into session (pk_session_id, fk_user_id)
+values (:session_id, :user_id)");
+                    $createSession -> bindParam(":session_id", $sessionID);
+                    $createSession -> bindParam(":user_id", $userID);
                     $createSession -> execute();
                     setcookie("sessionID", $sessionID, time() + $MAX_SESSION_AGE, "/");
 

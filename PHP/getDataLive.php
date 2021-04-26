@@ -11,7 +11,7 @@
 
 
 require "session.php";
-//verifySession();
+verifySession();
 
 if (isset($_POST["from"])) {
     $data = $conn -> prepare("

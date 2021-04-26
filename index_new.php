@@ -18,7 +18,7 @@
 
 
 require "PHP/session.php";
-//verifySession();
+verifySession();
 
 $scriptname = "chartslive.js";
 
@@ -78,6 +78,7 @@ while ($station = $stations -> fetch(PDO::FETCH_ASSOC)) {
                     <?=$stationText?>
                 </ul>
                 <div id = "timing"></div>
+                <a href = "PHP/logout.php"> Logout </a>
             </nav>
 
             <!-- Content -->
