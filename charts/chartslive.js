@@ -124,9 +124,7 @@ function updateCountdown() {
  * updates the charts, the "last updated" message and variables
  */
 function updateCharts() {
-    for (let i = 0; i < stations.length; i++) {
-        updateChartsWithValuesFromDB(i, lastUpdate);
-    }
+    updateChartsWithValuesFromDB(selectedStationIndex, lastUpdate);
     lastUpdate = new Date();
     document.getElementById("lastUpdated").innerHTML = jsToLocalReadableString(lastUpdate);
 }
