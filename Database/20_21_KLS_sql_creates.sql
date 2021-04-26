@@ -36,6 +36,14 @@ CREATE TABLE IF NOT EXISTS `historical_data`(
     CONSTRAINT `pk_historical_data` PRIMARY KEY (`pk_measurement_time`, `fk_station_id`)
 );
 
+DROP TABLE IF EXISTS `threshold`;
+CREATE TABLE IF NOT EXISTS `threshold`(
+    `pk_threshold_id` INT PRIMARY KEY AUTO_INCREMENT,
+    `co2` FLOAT NOT NULL,
+    `humidity` FLOAT NOT NULL,
+    `temperature` FLOAT NOT NULL
+);
+
 DROP TABLE IF EXISTS `user`;
 CREATE TABLE IF NOT EXISTS `user` (
     `pk_user_id` INT PRIMARY KEY AUTO_INCREMENT,
