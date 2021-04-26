@@ -6,7 +6,7 @@
  */
 let stations = [];
 
-let selectedStationIndex = 0;
+// let selectedStationIndex = 3;
 
 /**
  * Object of all ChartJS charts, initialized with the init() call.
@@ -24,8 +24,11 @@ function init() {
     let xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
         if (this.readyState === 4 && this.status === 200) {
-            // console.log(this.responseText);
-            stations = JSON.parse(this.responseText);
+            let json = JSON.parse(this.responseText);
+            for (let i = 0; i < json.length; i++) {
+                stations[json[i].pk_station_id] = json[i];
+            }
+            console.log(stations);
             initCharts();
         }
     };
@@ -33,24 +36,18 @@ function init() {
     xhttp.send();
 }
 
-function getCookie(cname) {
-    var name = cname + "=";
-    var ca = document.cookie.split(';');
-    for(var i = 0; i < ca.length; i++) {
-        var c = ca[i];
-        while (c.charAt(0) == ' ') {
-            c = c.substring(1);
-        }
-        if (c.indexOf(name) == 0) {
-            return c.substring(name.length, c.length);
-        }
+function getSelectedStation() {
+    let cookie = document.cookie.split('; ')
+        .find(cookie => cookie.startsWith("station_id="));
+    if (typeof cookie === "string" || typeof cookie === "number") {
+        console.log(cookie);
+        return cookie.split("=")[1];
+    } else {
+        return 1;
     }
-    return "";
 }
 
-function setCookie(cname, cvalue, exdays) {
-    var d = new Date();
-    d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
-    var expires = "expires="+d.toUTCString();
-    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+function setSelectedStation(id) {
+    document.cookie = "station_id=" + id + "; SameSite=None; Secure";
+    updateCharts(null, true)
 }
