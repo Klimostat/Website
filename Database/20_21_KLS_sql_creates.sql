@@ -82,5 +82,6 @@ from station;
 
 INSERT INTO `live_data` (`co2`,`humidity`, `temperature`, `fk_station_id`) VALUES (1500.0, 20, 24.0, 1);
 
-select *
-from live_data;
+INSERT INTO `threshold` (co2, humidity, temperature) VALUES (2000, 20, 30);
+
+SELECT * FROM threshold;

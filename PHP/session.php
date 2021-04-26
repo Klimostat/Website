@@ -9,6 +9,7 @@ error_reporting(E_ALL);
  * $MAX_SESSION_AGE ist das maximale Alter, das eine Session erreichen darf
 */
 $rootDomain = "https://kls.letusflow.xyz";
+//$rootDomain = "localhost";
 $conn = new PDO("mysql:host=localhost;dbname=klimostat", "root", "");
 //$rootDomain = "/klimostat";
 //$conn = new PDO("mysql:host=localhost;dbname=klimostat", "root", "passwd");

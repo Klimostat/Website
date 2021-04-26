@@ -4,7 +4,7 @@ require "session.php";
 $data = $_POST["data"];
 $data_json = json_decode($data, true);
 
-$stmt = $conn->prepare("SELECT token FROM station WHERE pk_station_id = ?");
+$stmt = $conn->prepare("SELECT `token` FROM `station` WHERE `pk_station_id` = ?");
 $stmt->execute([$data_json["id"]]);
 $token = $stmt->fetch(PDO::FETCH_ASSOC)["token"];
 
@@ -16,10 +16,7 @@ $insert->bindParam(':station_id', $data_json["id"]);
 
 if (password_verify($data_json["token"], $token)) {
     $insert->execute();
-    $select = $conn->prepare("SELECT * FROM live_data");
-    $select->execute();
-    var_dump($select->fetchAll(PDO::FETCH_ASSOC));
-}
-else {
-    print_r("Error: Something went wrong!");
+    $thresholds = $conn->prepare("SELECT `co2`, `humidity`, `temperature` FROM `threshold` WHERE `pk_threshold_id` = ?");
+    $thresholds->execute(array(1));
+    echo json_encode($thresholds->fetch(PDO::FETCH_ASSOC));
 }

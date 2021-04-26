@@ -6,7 +6,7 @@
  */
 let stations = [];
 
-let selectedStationIndex = 3;
+let selectedStationIndex = 0;
 
 /**
  * Object of all ChartJS charts, initialized with the init() call.
