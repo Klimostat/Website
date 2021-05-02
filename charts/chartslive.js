@@ -33,7 +33,16 @@ let intervalObj;
 function initCharts() {
     document.getElementById("timing").innerHTML = "" +
         "                           Stand: <span id = \"lastUpdated\">noch nicht gelanden</span>, nächstes Update in <span id = \"nextUpdateIn\">0</span> Sekunden.\n" +
-        "                           <button class=\"btn btn-outline-secondary logout bg-light text-dark\" type=\"button\" onclick=\"nextUpdateIn = 0; updateCountdown()\">Update</button>"
+        "                           <a class=\"nav-link\" href=\"javascript:nextUpdateIn = 0; updateCountdown()\">Update</a>"
+
+    let selectedStationId = getSelectedStation();
+    for (let station of stations) {
+        if (typeof station !== "object") {
+            continue;
+        }
+        console.log("station-" + station.pk_station_id);
+        document.getElementById("station-" + station.pk_station_id).classList.toggle("active", station.pk_station_id === selectedStationId);
+    }
 
     charts = {
         temperature: new Chart(document.getElementById('chart-temperature'), {

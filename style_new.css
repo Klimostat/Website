@@ -5,13 +5,12 @@
 
 * {
     font-family: 'Open Sans', sans-serif;
-    margin: 0;
-    padding: 0;
+    box-sizing: border-box;
 }
 
 a {
-    color: inherit;
-    text-decoration: none;
+    /*color: inherit;*/
+    /*text-decoration: none;*/
 }
 
 body {
@@ -19,34 +18,73 @@ body {
 
 #main {
     display: flex;
-    min-height: 80vh;
+    min-height: 90vh;
 }
 
 #navbar {
     background: var(--color1);
     color: var(--color2);
-    overflow-x: auto;
+    overflow-y: visible;
     flex: 200px 0 0;
-    object-fit: fill;
+    /*object-fit: fill;*/
+    position: relative;
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: space-between;
+}
+
+#navbar > nav {
+    overflow: inherit;
+    position: sticky;
+    top: 0;
+}
+
+#navbar > :last-child {
+    position: sticky;
+    bottom: 0;
+    flex-shrink: 0;
+    flex-grow: 0;
 }
 
 #content {
     display: flex;
-    justify-content: stretch;
     align-content: flex-start;
     flex-flow: row wrap;
     padding: 10px;
     width: 100%;
-    overflow-x: auto;
 }
 
 .chart-container {
     margin: 10px;
     width: 500px;
+    position: static;
 }
 
 #footer {
-    min-height: 20vh;
+    min-height: 10vh;
     background: var(--color1);
     color: var(--color2);
+}
+
+#footer > * {
+    text-align: center;
+}
+
+.tooltip-base {
+    position: relative;
+    overflow: visible;
+}
+
+.tooltip-base:not(:hover) > .card {
+    display: none;
+}
+
+.tooltip-base > .card {
+    color: black;
+    z-index: 10;
+    position: absolute;
+    left: 105%;
+    top: -1em;
+    min-width: 100%;
+    max-width: 70vw;
 }

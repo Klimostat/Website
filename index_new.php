@@ -29,17 +29,22 @@ if (isset($_GET["hist"])) {
 }
 
 $stations = $conn -> prepare("
-select pk_station_id, name from station
+select s.pk_station_id id, s.name, s.location from station s
 ");
 $stations -> execute();
 $stationText = "";
 while ($station = $stations -> fetch(PDO::FETCH_ASSOC)) {
     $stationText .= "
-<li>
-    <a href=\"javascript:setSelectedStation({$station["pk_station_id"]})\">
-        {$station["name"]}
+<div class = \"tooltip-base\">
+    <a id = \"station-{$station["id"]}\"
+    class = \"nav-link\" 
+    href=\"javascript:setSelectedStation({$station["id"]})\">
+    {$station["name"]}
     </a>
-</li>";
+    <div class = \"card\">
+        <div class = \"card-body\">Location: {$station["location"]}</div>
+    </div>
+</div>";
 }
 ?>
 
@@ -50,14 +55,14 @@ while ($station = $stations -> fetch(PDO::FETCH_ASSOC)) {
         <meta content="width=device-width, initial-scale=1" name="viewport">
         <title>Klimostat Home</title>
         <link href="https://fonts.gstatic.com" rel="preconnect">
-        <link href="style_new.css" rel="stylesheet">
         <link href="https://fonts.gstatic.com" rel="preconnect">
         <link href="https://fonts.googleapis.com/css2?family=Karla:ital,wght@1,700&display=swap" rel="stylesheet">
         <link crossorigin="anonymous"
               href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css"
-              integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" rel="stylesheet">
+        integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" rel="stylesheet">
         <link rel="preconnect" href="https://fonts.gstatic.com">
         <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">
+        <link href="style_new.css" rel="stylesheet">
     </head>
     <body class = "w-100 min-vh-100">
 
@@ -66,45 +71,63 @@ while ($station = $stations -> fetch(PDO::FETCH_ASSOC)) {
 
 
         <!-- Main -->
-        <main id = "main" class="w-100">
+        <main id = "main">
 
             <!-- Navbar -->
-            <nav id = "navbar" class="nav flex-column nav-pills">
-                <a class="navbar-link" href="#">
-                    <img src="res/Logo.png" alt="" width="40px" height="40px" class="d-inline-block align-center"> Klimostat
-                </a>
-                <div class="navbar-item"> Messstationen </div>
-                <ul class="list-unstyled">
-                    <?=$stationText?>
-                </ul>
-                <div id = "timing"></div>
-                <a href = "PHP/logout.php"> Logout </a>
+            <nav id = "navbar">
+                <nav class="nav nav-pills">
+                    <div class="container-fluid">
+                        <a class="navbar-brand" href="#">
+                            <img src="res/Logo.png" alt="" width="40px" height="40px" class="d-inline-block align-center">
+                            Klimostat
+                        </a>
+                    </div>
+                    <div class="container-fluid">
+                        <div class="nav-item"> Stations </div>
+                        <?=$stationText?>
+                    </div>
+                </nav>
+                <div class="container-fluid">
+                    <div class = "nav-item" id = "timing"></div>
+                    <div class="nav-item">
+                        <a class = "nav-link" href = "PHP/logout.php"> Logout </a>
+                    </div>
+                </div>
             </nav>
 
             <!-- Content -->
             <div id = "content" class = "">
-                <div class="chart-container border border-1 border-dark rounded">
+                <div class="chart-container card">
                     <canvas id="chart-temperature"></canvas>
                 </div>
-                <div class="chart-container border border-1 border-dark rounded">
+                <div class="chart-container card">
                     <canvas id="chart-humidity"></canvas>
                 </div>
-                <div class="chart-container border border-1 border-dark rounded">
+                <div class="chart-container card">
                     <canvas id="chart-co2"></canvas>
                 </div>
             </div>
         </main>
 
         <!-- Footer -->
-        <footer id = "footer" class = "">
-            Hallo
-            <br>
-            hallo
-            <br>
-            hallo
-            <br>
-            hallo
-            <br>
+        <footer id = "footer">
+            <div class="container-fluid">
+                Ein Projekt der HTL Rennweg
+            </div>
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col">
+                        Placeholder
+                    </div>
+                    <div class="col">
+                        &copy; Klimostat
+                    </div>
+                    <div class="col">
+                        <a href = "impressum.html">
+                            Impressum
+                        </a>
+                    </div>
+                </div>
         </footer>
 
 
@@ -147,9 +170,6 @@ while ($station = $stations -> fetch(PDO::FETCH_ASSOC)) {
         <script crossorigin="anonymous"
                 integrity="sha512-hZf9Qhp3rlDJBvAKvmiG+goaaKRZA6LKUO35oK6EsM0/kjPK32Yw7URqrq3Q+Nvbbt8Usss+IekL7CRn83dYmw=="
                 src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js">
-        </script>
-        <script>
-            let intervalSelectIndex = <?=$_GET["hist"]?>;
         </script>
         <script src="charts/stations.js"></script>
         <script src="charts/charts.js"></script>

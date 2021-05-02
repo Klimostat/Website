@@ -51,3 +51,8 @@ function setSelectedStation(id) {
     document.cookie = "station_id=" + id + "; SameSite=None; Secure";
     updateCharts(null, true)
 }
+
+// var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+// var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+//     return new bootstrap.Tooltip(tooltipTriggerEl)
+// })
