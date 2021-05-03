@@ -28,9 +28,12 @@ CREATE TABLE IF NOT EXISTS `live_data` (
 DROP TABLE IF EXISTS `historical_data`;
 CREATE TABLE IF NOT EXISTS `historical_data`(
     `pk_measurement_time` TIMESTAMP  DEFAULT  UTC_TIMESTAMP(),
-    `co2` FLOAT NOT NULL,
-    `humidity` FLOAT NOT NULL,
-    `temperature` FLOAT NOT NULL,
+    `min_co2` FLOAT NOT NULL,
+    `max_co2` FLOAT NOT NULL,
+    `min_humidity` FLOAT NOT NULL,
+    `max_humidity` FLOAT NOT NULL,
+    `min_temperature` FLOAT NOT NULL,
+    `max_temperature` FLOAT NOT NULL,
     `fk_station_id` INT NOT NULL,
     CONSTRAINT `fk_historical_data_station` FOREIGN KEY (`fk_station_id`) REFERENCES `station` (`pk_station_id`),
     CONSTRAINT `pk_historical_data` PRIMARY KEY (`pk_measurement_time`, `fk_station_id`)
