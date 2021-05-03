@@ -1,3 +1,8 @@
+
+/*
+    general
+*/
+
 :root {
     --color1: #172815;
     --color2: lightgreen;
@@ -21,12 +26,15 @@ body {
     min-height: 90vh;
 }
 
+/*
+    navbar (left)
+ */
+
 #navbar {
     background: var(--color1);
     color: var(--color2);
     overflow-y: visible;
     flex: 200px 0 0;
-    /*object-fit: fill;*/
     position: relative;
     display: flex;
     flex-flow: column nowrap;
@@ -46,6 +54,29 @@ body {
     flex-grow: 0;
 }
 
+#navbar .tooltip-base {
+    position: relative;
+    overflow: visible;
+}
+
+#navbar .tooltip-base:not(:hover) > .card {
+    display: none;
+}
+
+#navbar .tooltip-base > .card {
+    color: black;
+    z-index: 10;
+    position: absolute;
+    left: 105%;
+    top: -1em;
+    min-width: 100%;
+    max-width: 70vw;
+}
+
+/*
+    content (right)
+ */
+
 #content {
     display: flex;
     align-content: flex-start;
@@ -54,11 +85,15 @@ body {
     width: 100%;
 }
 
-.chart-container {
+#content .chart-container {
     margin: 10px;
     width: 500px;
     position: static;
 }
+
+/*
+    footer
+ */
 
 #footer {
     min-height: 10vh;
@@ -68,23 +103,4 @@ body {
 
 #footer > * {
     text-align: center;
-}
-
-.tooltip-base {
-    position: relative;
-    overflow: visible;
-}
-
-.tooltip-base:not(:hover) > .card {
-    display: none;
-}
-
-.tooltip-base > .card {
-    color: black;
-    z-index: 10;
-    position: absolute;
-    left: 105%;
-    top: -1em;
-    min-width: 100%;
-    max-width: 70vw;
 }
