@@ -1,6 +1,6 @@
 <?php
 error_reporting(E_ALL);
-$db = new PDO("mysql:host=localhost;dbname=klimostat", "root", "");
+$db = new PDO("mysql:host=localhost;dbname=klimostat", "root", "passwd");
 
 $live_dataset = $db -> prepare("SELECT * from live_data");
 $live_dataset -> execute();

@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS `live_data` (
 
 DROP TABLE IF EXISTS `historical_data`;
 CREATE TABLE IF NOT EXISTS `historical_data`(
-    `pk_measurement_time` TIMESTAMP  DEFAULT  UTC_TIMESTAMP(),
+    `pk_measurement_time` TIMESTAMP DEFAULT UTC_TIMESTAMP(),
     `co2` FLOAT NOT NULL,
     `humidity` FLOAT NOT NULL,
     `temperature` FLOAT NOT NULL,
