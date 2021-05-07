@@ -152,7 +152,7 @@ liveCharts.fetchAndDeliverValuesFromDB = function () {
     let xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
         if (this.readyState === 4 && this.status === 200) {
-            console.log(this.responseText);
+            console.log("db response: " + this.responseText);
             station.updateValues(JSON.parse(this.responseText));
             liveCharts.appendValuesFromStationToCharts();
         }
