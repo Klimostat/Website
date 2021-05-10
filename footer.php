@@ -1,5 +1,6 @@
 <style>
     #footer {
+        min-height: 10vh;
         background: #172815;
         color: #DBFF78;
     }
