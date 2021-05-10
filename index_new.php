@@ -73,14 +73,13 @@ while ($station = $stations -> fetch(PDO::FETCH_ASSOC)) {
             <nav id = "navbar">
                 <nav class="nav nav-pills">
                     <div class="container-fluid">
-                        <a class="navbar-brand" href="#">
+                        <a class="navbar-brand" href="javascript:setSelectedStation(null)">
                             <img src="res/Logo.png" alt="" width="40px" height="40px" class="d-inline-block align-center">
                             Klimostat
                         </a>
                     </div>
-                    <div class="container-fluid">
+                    <div class="container-fluid" id = "stations-box">
                         <div class="nav-item"> Stations </div>
-                        <?=$stationText?>
                     </div>
                 </nav>
                 <div class="container-fluid">
@@ -145,12 +144,10 @@ while ($station = $stations -> fetch(PDO::FETCH_ASSOC)) {
                 integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW"
                 src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js">
         </script>
-        <script crossorigin="anonymous"
-                integrity="sha512-hZf9Qhp3rlDJBvAKvmiG+goaaKRZA6LKUO35oK6EsM0/kjPK32Yw7URqrq3Q+Nvbbt8Usss+IekL7CRn83dYmw=="
-                src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js">
-        </script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@3.2.1/dist/chart.min.js" integrity="sha256-uVEHWRIr846/vAdLJeybWxjPNStREzOlqLMXjW/Saeo=" crossorigin="anonymous"></script>
+        <script src="charts/chartslive.js"></script>
+        <script src="charts/chartsdashboard.js"></script>
+        <script src="charts/station.js"></script>
         <script src="charts/stations.js"></script>
-        <script src="charts/charts.js"></script>
-        <script src="charts/<?=$scriptname?>"></script>
     </body>
 </html>
