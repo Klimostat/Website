@@ -11,7 +11,7 @@ error_reporting(E_ALL);
 //$rootDomain = "https://kls.letusflow.xyz";
 //$conn = new PDO("mysql:host=localhost;dbname=klimostat", "root", "");
 $rootDomain = "/klimostat";
-$conn = new PDO("mysql:host=localhost;dbname=klimostat", "root", "passwd");
+$conn = new PDO("mysql:host=localhost;dbname=klimostat", "root", "");
 $MAX_SESSION_AGE = 3600*24;
 
 

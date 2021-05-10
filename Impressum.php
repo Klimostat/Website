@@ -9,41 +9,37 @@
         <title>Impressum</title>
     </head>
     <style>
-        * {
-            font-family: 'Open Sans', sans-serif;
-        }
-        h1{
-            font-size: 35pt;
-            letter-spacing: 5px;
-        }
         li{
             margin: 40px;
-            list-style: none;
-            letter-spacing: 5px;
-            font-size: 25pt;
         }
         div{
             margin-left: 125px;
             margin-top: 150px;
         }
-        footer{
-            background-color: #172815;
-            color: #dbff78;
+        #footer {
+            min-height: 10vh;
+            background: #172815;
+            color: #DBFF78;
+        }
+
+        #footer > * {
+            text-align: center;
         }
     </style>
-    <body>
+    <body class="font-sans-serif">
         <div>
-            <h1>Impressum</h1>
+            <h1 class="fs-1" >Impressum</h1>
                 <ul class="list-unstyled">
-                    <li>Verantwortlich für Inhalte:</li>
-                    <li>Kontakt:</li>
-                    <li>Standort:</li>
-                    <li>Datenschutz:</li>
-                    <li>Zuständige Aufsichtsbehörde:</li>
+                    <li class="fs-2" >Verantwortlich für Inhalte:</li>
+                    <li class="fs-2" >Kontakt:</li>
+                    <li class="fs-2" >Standort:</li>
+                    <li class="fs-2" >Datenschutz:</li>
+                    <li class="fs-2" >Zuständige Aufsichtsbehörde:</li>
                 </ul>
         </div>
-        <footer>
-            <p>Ein Projekt der HTL Rennweg</p>
-        </footer>
+
+        <!-- Footer -->
+        <?=include "footer.php"?>
+
     </body>
 </html>
