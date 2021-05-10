@@ -1,0 +1,55 @@
+/*
+    general
+ */
+
+:root {
+    --color1: #172815;
+    --color2: lightgreen;
+}
+
+* {
+    font-family: 'Open Sans', sans-serif;
+}
+
+body {
+}
+
+#main {
+    width: 100%;
+    height: 90vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/*
+    login card
+ */
+
+#logincard {
+    width: 40vw;
+    background-color: var(--color1);
+    color: var(--color2);
+}
+
+#logincard input {
+    background-color: rgba(100, 100, 100, 0.70);
+    color: white;
+    padding: 15px;
+    margin: 15px 0;
+    font-size: 20px;
+}
+
+/*
+    footer
+ */
+
+#footer {
+    min-height: 10vh;
+    background: var(--color1);
+    color: var(--color2);
+}
+
+#footer > * {
+    text-align: center;
+}

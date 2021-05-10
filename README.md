@@ -1,7 +1,7 @@
-# Website:
+# Website
  Darstellung von gesammelten Sensorwerten aus einer Datenbank mit detaillierten Betrachtungsmöglichkeiten. 
 
-# Konfiguration:
+# Konfiguration
 
 Beim Aufsetzen muss man die Datenbank-Zugriffsdaten und die Root-Domain für die korrekte Weiterleitung angeben.
 Diese Variablen sind in den ersten Zeilen von session.php gesetzt. 

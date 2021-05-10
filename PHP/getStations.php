@@ -11,11 +11,12 @@ require "session.php";
 //verifySession();
 
 $data = $conn -> prepare("
-select s.* from station s
+select s.pk_station_id, s.name, s.alert_message_humidity, s.alert_message_co2, s.location from station s
 ");
 $data -> execute();
 
 $outString = "[";
+$outvar = [];
 
 if ($data -> rowCount() > 0) {
     while ($tupel = $data -> fetch(PDO::FETCH_ASSOC)) {

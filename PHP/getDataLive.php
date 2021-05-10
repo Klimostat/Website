@@ -11,7 +11,7 @@
 
 
 require "session.php";
-//verifySession();
+verifySession();
 
 if (isset($_POST["from"])) {
     $data = $conn -> prepare("
@@ -31,15 +31,12 @@ and m.fk_station_id = :station_id
 $data -> bindParam(":station_id", $_POST["station_id"]);
 $data -> execute();
 
-$outString = "[";
+$outObj = array();
 
 if ($data -> rowCount() > 0) {
     while ($tupel = $data -> fetch(PDO::FETCH_ASSOC)) {
-        $outString .= "{\"time\":\"{$tupel['time']}\",\"humidity\":{$tupel['humidity']},\"temperature\":{$tupel['temperature']},\"co2\":{$tupel['co2']}},";
+        array_push($outObj, array("time" => $tupel['time'], "humidity" => $tupel['humidity'], "temperature" => $tupel['temperature'], "co2" => $tupel['co2']));
     }
-    $outString = substr($outString, 0, strlen($outString) - 1);
 }
 
-
-
-echo $outString . "]";
+echo json_encode($outObj);
