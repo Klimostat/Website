@@ -8,33 +8,15 @@
               integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" rel="stylesheet">
         <title>Impressum</title>
     </head>
-    <style>
-        li{
-            margin: 40px;
-        }
-        div{
-            margin-left: 125px;
-            margin-top: 150px;
-        }
-        #footer {
-            min-height: 10vh;
-            background: #172815;
-            color: #DBFF78;
-        }
-
-        #footer > * {
-            text-align: center;
-        }
-    </style>
     <body class="font-sans-serif">
-        <div>
-            <h1 class="fs-1" >Impressum</h1>
+        <div class ="mt-5 ms-5">
+            <h1 class="fs-1 fw-bold" > Impressum </h1>
                 <ul class="list-unstyled">
-                    <li class="fs-2" >Verantwortlich für Inhalte:</li>
-                    <li class="fs-2" >Kontakt:</li>
-                    <li class="fs-2" >Standort:</li>
-                    <li class="fs-2" >Datenschutz:</li>
-                    <li class="fs-2" >Zuständige Aufsichtsbehörde:</li>
+                    <li class="fs-3 mt-5 mb-5 ms-5"> Verantwortlich für Inhalte: </li>
+                    <li class="fs-3 mt-5 mb-5 ms-5"> Kontakt: </li>
+                    <li class="fs-3 mt-5 mb-5 ms-5"> Standort: </li>
+                    <li class="fs-3 mt-5 mb-5 ms-5"> Datenschutz: </li>
+                    <li class="fs-3 mt-5 mb-5 ms-5"> Zuständige Aufsichtsbehörde: </li>
                 </ul>
         </div>
 

@@ -1,3 +1,14 @@
+<style>
+    #footer {
+        background: #172815;
+        color: #DBFF78;
+    }
+
+    #footer > * {
+        text-align: center;
+    }
+</style>
+
 <footer id = "footer">
     <div class="container-fluid">
         Ein Projekt der HTL Rennweg
