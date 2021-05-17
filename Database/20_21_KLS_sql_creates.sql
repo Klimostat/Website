@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS `station` (
     `alert_message_co2` TEXT NOT NULL DEFAULT 'CO2 concentration too high.',
     `location` TEXT NOT NULL,
     `token` TEXT NOT NULL,
-    `last_connection` TIMESTAMP
+    `last_connection` TIMESTAMP NULL
 );
 
 DROP TABLE IF EXISTS `live_data`;
