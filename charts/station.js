@@ -3,16 +3,21 @@ class Station {
     lastChartUpdate = null;
     dataPrepared = {};
     datasetChart = {
-        temperature: [],
-        co2: [],
-        humidity: []
+        minTemperature: [],
+        maxTemperature: [],
+        minCo2: [],
+        maxCo2: [],
+        minHumidity: [],
+        maxHumidity: []
     };
+    navNode = null;
 
     /**
      *
      * @param dbFetch {object}
+     * @param selected {boolean}
      */
-    constructor(dbFetch) {
+    constructor(dbFetch, selected=false) {
         this.id = dbFetch.pk_station_id;
         this.name = dbFetch.name;
         this.alertMessageHumidity = dbFetch.alert_message_humidity;
@@ -21,9 +26,10 @@ class Station {
 
         document.getElementById("stations-box").innerHTML +=
             "<div class = \"tooltip-base\">" +
-            "   <a id = \"station-" + this.id + "\" class = \"nav-link\" href=\"javascript:setSelectedStation(" + this.id + ")\">" +
+            "   <label class=\"list-group-item\">" +
+            "       <input  id = \"station-" + this.id + "\" type=\"checkbox\" onchange=\"toggleDisplayedStation(" + this.id + ")\" value=\"" + this.id + "\"" + (selected ? " checked" : "") + ">" +
             "       " + this.name + "" +
-            "   </a>" +
+            "   </label>" +
             "   <div class = \"card\">" +
             "       <div class = \"card-body\">" +
             "           Location: " + this.location + "" +
@@ -49,10 +55,26 @@ class Station {
             //     humidity: entry.humidity,
             //     temperature: entry.temperature
             // })
-            this.dataPrepared[jsTimeToLocalReadableString(mySQLToUTCJSDate(entry.time))] = {
-                co2: entry.co2,
-                humidity: entry.humidity,
-                temperature: entry.temperature
+            let entryTimeString = jsTimeTo10MinLocalReadableString(mySQLToUTCJSDate(entry.time));
+            if (typeof this.dataPrepared[entryTimeString] === "object") {
+                let actSet = this.dataPrepared[entryTimeString];
+                this.dataPrepared[entryTimeString] = {
+                    minCo2: Math.min(actSet.minCo2, entry.co2),
+                    maxCo2: Math.max(actSet.maxCo2, entry.co2),
+                    minHumidity: Math.min(actSet.minHumidity, entry.humidity),
+                    maxHumidity: Math.max(actSet.maxHumidity, entry.humidity),
+                    minTemperature: Math.min(actSet.minTemperature, entry.temperature),
+                    maxTemperature: Math.max(actSet.maxTemperature, entry.temperature)
+                }
+            } else {
+                this.dataPrepared[entryTimeString] = {
+                    minCo2: entry.co2,
+                    maxCo2: entry.co2,
+                    minHumidity: entry.humidity,
+                    maxHumidity: entry.humidity,
+                    minTemperature: entry.temperature,
+                    maxTemperature: entry.temperature
+                }
             }
         }
         this.lastFetch = new Date();
@@ -70,7 +92,7 @@ class Station {
             where.shift();
         }
 
-        if (this.lastChartUpdate == null) {
+        if (this.lastChartUpdate === null) {
             push = function (where, what) {
                 where.push(what);
             }
@@ -78,19 +100,43 @@ class Station {
             time = this.lastChartUpdate;
         }
 
-        for (; time < actDate; time.setSeconds(time.getSeconds() + 1)) {
-            let timeString = jsTimeToLocalReadableString(time);
+        // console.log("stations - lastChartUpdate: " + this.lastChartUpdate);
+        // console.log(this.dataPrepared);
+
+        for (; time < actDate; time.setSeconds(time.getSeconds() + 10)) {
+            let timeString = jsTimeTo10MinLocalReadableString(time);
 
             let values = this.dataPrepared[timeString];
             if (typeof values !== "object") {
-                values = {temperature: NaN, co2: NaN, humidity: NaN}
+                values = {
+                    minCo2: NaN,
+                    maxCo2: NaN,
+                    minHumidity: NaN,
+                    maxHumidity: NaN,
+                    minTemperature: NaN,
+                    maxTemperature: NaN
+                }
             }
-            push(this.datasetChart.temperature, values.temperature);
-            push(this.datasetChart.co2, values.co2);
-            push(this.datasetChart.humidity, values.humidity);
+            push(this.datasetChart.minTemperature, values.minTemperature);
+            push(this.datasetChart.maxTemperature, values.maxTemperature);
+            push(this.datasetChart.minCo2, values.minCo2);
+            push(this.datasetChart.maxCo2, values.maxCo2);
+            push(this.datasetChart.minHumidity, values.minHumidity);
+            push(this.datasetChart.maxHumidity, values.maxHumidity);
         }
 
         this.lastChartUpdate = new Date();
         return this.datasetChart;
+    }
+
+    /**
+     *
+     * @return {HTMLElement|null}
+     */
+    getNavNode() {
+        if (this.navNode === null) {
+            this.navNode = document.getElementById("station-" + this.id);
+        }
+        return this.navNode;
     }
 }

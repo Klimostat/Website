@@ -12,7 +12,7 @@ let liveCharts = {
      */
     MAX_ENTRIES: 60,
 
-    displayedStation: null,
+    displayedStations: null,
 
     lastUpdate: null
 }
@@ -21,31 +21,19 @@ let liveCharts = {
  * initializes live charts and sets interval
  */
 liveCharts.init = function () {
-    console.log("init called")
-    let selectedStation = getSelectedStation();
+    // console.log("init called")
+    let selectedStations = getSelectedStations();
     // const skipped = (ctx, value) => ctx.p0.skip || ctx.p1.skip ? value : undefined;
 
     if (loadedCharts !== "live") {
 
         document.getElementById("timing").innerHTML = "" +
             "                           Stand: <span id = \"lastUpdated\">noch nicht gelanden</span>, nächstes Update in <span id = \"nextUpdateIn\">0</span> Sekunden.\n" +
-            "                           <a class=\"nav-link\" href=\"javascript:nextUpdateIn = 0; liveCharts.updateCountdown()\">Update</a>"
+            "                           <a class=\"nav-link\" href=\"javascript:liveCharts.updateCharts()\">Update</a>"
         charts = {
             temperature: new Chart(document.getElementById('chart-temperature'), {
                 type: 'line',
-                data: {
-                    labels: [],
-                    datasets: [{
-                        label: 'Temperature in °C',
-                        data: [],
-                        backgroundColor: 'rgba(255, 99, 132, 0.7)',
-                        borderColor: 'rgba(255, 99, 132, 0.7)',
-                        borderWidth: 1,
-                        segment: {
-                            // borderDash: ctx => skipped(ctx, ctx.p0.skip || ctx.p1.skip ? [6, 6] : undefined),
-                        }
-                    }]
-                },
+                data: {},
                 options: {
                     legend: {
                         labels: {
@@ -57,19 +45,7 @@ liveCharts.init = function () {
             }),
             humidity: new Chart(document.getElementById('chart-humidity'), {
                 type: 'line',
-                data: {
-                    labels: [],
-                    datasets: [{
-                        label: "Humidity in %",
-                        data: [],
-                        backgroundColor: 'rgba(153, 102, 255, 0.7)',
-                        borderColor: 'rgba(153, 102, 255, 1)',
-                        borderWidth: 1,
-                        segment: {
-                            // borderDash: ctx => skipped(ctx, ctx.p0.skip || ctx.p1.skip ? [6, 6] : undefined),
-                        }
-                    }]
-                },
+                data: {},
                 options: {
                     legend: {
                         labels: {
@@ -81,19 +57,7 @@ liveCharts.init = function () {
             }),
             co2: new Chart(document.getElementById('chart-co2'), {
                 type: 'line',
-                data: {
-                    labels: [],
-                    datasets: [{
-                        label: "CO2 concentration in ppm",
-                        data: [],
-                        backgroundColor: 'rgba(54, 162, 235, 0.7)',
-                        borderColor: 'rgba(54, 162, 235, 1)',
-                        borderWidth: 1,
-                        segment: {
-                            // borderDash: ctx => skipped(ctx, ctx.p0.skip || ctx.p1.skip ? [6, 6] : undefined),
-                        }
-                    }]
-                },
+                data: {},
                 options: {
                     legend: {
                         labels: {
@@ -105,21 +69,16 @@ liveCharts.init = function () {
             })
         };
 
-    } else if (selectedStation === liveCharts.displayedStation) {
+
+        for (let station of selectedStations) {
+            toggleDisplayedStation(station.id, true);
+        }
+
+    } else if (selectedStations === liveCharts.displayedStations) {
         return;
     }
 
-    for (let station of stations) {
-
-        //check for empty slots
-        if (typeof station !== "object") {
-            continue;
-        }
-        document.getElementById("station-" + station.id).classList.toggle("active", station.id === selectedStation.id);
-    }
-
-    nextUpdateIn = 0;
-    liveCharts.updateCountdown();
+    liveCharts.updateCharts();
     // console.log("inited live station-" + selectedStation.id);
 
     loadedCharts = "live";
@@ -138,22 +97,49 @@ liveCharts.updateCountdown = function () {
         nextUpdateIn--;
     }
     document.getElementById("nextUpdateIn").innerHTML = "" + nextUpdateIn;
+
+    // feeds db
+    // let xhttp = new XMLHttpRequest();
+    // xhttp.open("GET", "PHP/feeddb.php", true);
+    // xhttp.send();
+
+}
+
+liveCharts.updateCharts = function () {
+    nextUpdateIn = 0;
+    liveCharts.updateCountdown();
+    clearInterval(intervalObj);
+    intervalObj = setInterval(liveCharts.updateCountdown, 1000);
 }
 
 liveCharts.fetchAndDeliverValuesFromDB = function () {
-    let station = getSelectedStation()
+    let selectedStations = getSelectedStations();
+
+    let stationsToLoad = [/*{
+            id: station.id,
+            since: station.lastFetch
+    }*/];
+    for (let station of selectedStations) {
+        stationsToLoad.push({
+            id: station.id,
+            since: station.lastFetch
+        })
+    }
 
     let data = new FormData();
-    data.append('station_id', station.id);
-    if (station.lastFetch !== null) {
-        data.append('from', jsToUTCMySQLDate(station.lastFetch));
-    }
+    data.append('stations', JSON.stringify(stationsToLoad));
 
     let xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
         if (this.readyState === 4 && this.status === 200) {
-            console.log("db response: " + this.responseText);
-            station.updateValues(JSON.parse(this.responseText));
+            // console.log("db response: " + this.responseText);
+            let dataPerStation = JSON.parse(this.responseText);
+            for (let dataset of dataPerStation) {
+                stations[dataset.id].updateValues(dataset.data);
+                // console.log("id: " + dataset.id);
+                // console.log(stations[dataset.id].getChartValues());
+            }
+            // selectedStation.updateValues(JSON.parse(this.responseText));
             liveCharts.appendValuesFromStationToCharts();
         }
     };
@@ -167,7 +153,7 @@ liveCharts.fetchAndDeliverValuesFromDB = function () {
  * @param dataset {Object[]} an array that has entries of {time:,co2:,temperature:,humidity:} objects
  */
 liveCharts.appendValuesFromStationToCharts = function () {
-        let actDate = new Date();
+    let actDate = new Date();
     actDate.setMilliseconds(0);
 
     let time = new Date();
@@ -186,30 +172,35 @@ liveCharts.appendValuesFromStationToCharts = function () {
         time = liveCharts.lastUpdate;
     }
 
-    for (; time < actDate; time.setSeconds(time.getSeconds() + 1)) {
-        let timeString = jsTimeToLocalReadableString(time);
+    for (; time < actDate; time.setSeconds(time.getSeconds() + 10)) {
+        let timeString = jsTimeTo10MinLocalReadableString(time);
         push(charts.temperature.data.labels, timeString);
         push(charts.co2.data.labels, timeString);
         push(charts.humidity.data.labels, timeString);
     }
 
-    let station = getSelectedStation();
-    let stationLastUpdate = liveCharts.lastUpdate
-    if (station !== liveCharts.displayedStation) {
-        stationLastUpdate = null;
-    }
-    let datas = station.getChartValues();
+    for (let i = 0; i < displayedStations.length; i++) {
+        let selectedStation = displayedStations[i];
+        let datas = selectedStation.getChartValues();
+        // console.log("getChartValues: " + datas);
 
-    charts.temperature.data.datasets[0].data = datas.temperature;
-    charts.co2.data.datasets[0].data = datas.co2;
-    charts.humidity.data.datasets[0].data = datas.humidity;
+        charts.temperature.update();
+        charts.co2.update();
+        charts.humidity.update();
+
+        charts.temperature.data.datasets[i].data = datas.maxTemperature;
+        charts.co2.data.datasets[i].data = datas.maxCo2;
+        charts.humidity.data.datasets[i].data = datas.maxHumidity;
+
+    }
+
     liveCharts.lastUpdate = actDate;
 
     charts.temperature.update();
     charts.co2.update();
     charts.humidity.update();
 
-    liveCharts.displayedStation = station;
+    liveCharts.displayedStations = displayedStations;
 }
 
 // liveCharts.clearCharts = function () {

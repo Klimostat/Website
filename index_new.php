@@ -20,13 +20,13 @@
 require "PHP/session.php";
 verifySession();
 
-$scriptname = "chartslive.js";
-
-if (isset($_GET["hist"])) {
-    $scriptname = "chartshist.js";
-} else {
-    $_GET["hist"] = 1;
-}
+//$scriptname = "chartslive.js";
+//
+//if (isset($_GET["hist"])) {
+//    $scriptname = "chartshist.js";
+//} else {
+//    $_GET["hist"] = 1;
+//}
 
 $stations = $conn -> prepare("
 select s.pk_station_id id, s.name, s.location from station s

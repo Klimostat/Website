@@ -12,31 +12,39 @@
 
 require "session.php";
 verifySession();
+header("Content-Type: text/json");
 
-if (isset($_POST["from"])) {
-    $data = $conn -> prepare("
+$stations = json_decode($_POST["stations"]);
+//print_r($stations);
+$outObject = array();
+
+for ($i = 0; $i < count($stations); $i++) {
+    if ($stations[$i]->since != null) {
+        $data = $conn -> prepare("
 select m.pk_measurement_time time, m.co2, m.humidity, m.temperature from live_data m
 where m.pk_measurement_time > :from
 and m.fk_station_id = :station_id
 ");
-    $data -> bindParam(":from", $_POST["from"]);
-} else {
-    $data = $conn -> prepare("
+        $data -> bindParam(":from", $stations[$i]->since);
+    } else {
+        $data = $conn -> prepare("
 select m.pk_measurement_time time, m.co2, m.humidity, m.temperature from live_data m
 where m.pk_measurement_time > subtime(utc_timestamp, '00:10:00')
 and m.fk_station_id = :station_id
 ");
-}
+    }
 
-$data -> bindParam(":station_id", $_POST["station_id"]);
-$data -> execute();
+    $data -> bindParam(":station_id", $stations[$i]->id);
+    $data -> execute();
 
-$outObj = array();
 
-if ($data -> rowCount() > 0) {
-    while ($tupel = $data -> fetch(PDO::FETCH_ASSOC)) {
-        array_push($outObj, array("time" => $tupel['time'], "humidity" => $tupel['humidity'], "temperature" => $tupel['temperature'], "co2" => $tupel['co2']));
+    if ($data -> rowCount() > 0) {
+        $outValuesPerStation = array();
+        while ($tupel = $data -> fetch(PDO::FETCH_ASSOC)) {
+            array_push($outValuesPerStation, ["time" => $tupel['time'], "humidity" => $tupel['humidity'], "temperature" => $tupel['temperature'], "co2" => $tupel['co2']]);
+        }
+        array_push($outObject, ["id" => $stations[$i]->id, "data" => $outValuesPerStation]);
     }
 }
 
-echo json_encode($outObj);
+echo json_encode($outObject);
