@@ -1,6 +1,5 @@
 <?php
 require "../PHP/session.php";
-header("Content-Type: text/json");
 
 $data = $_POST["data"];
 $data_json = json_decode($data, true);
@@ -10,7 +9,7 @@ $stmt->execute([$data_json["id"]]);
 $token = $stmt->fetch(PDO::FETCH_ASSOC)["token"];
 
 if (password_verify($data_json["token"], $token)) {
-    $thresholds = $conn->prepare("SELECT `co2`, `humidity`, `temperature` FROM `threshold` WHERE `pk_threshold_id` = 1");
-    $thresholds->execute();
-    echo json_encode($thresholds->fetch(PDO::FETCH_ASSOC));
+    $thresholds = $conn->prepare("UPDATE `station` SET `last_connection` = utc_timestamp() WHERE `pk_station_id` = ?");
+    $thresholds->execute([$data_json["id"]]);
+    echo $thresholds->rowCount() == 1 ? "pong" : "not pong";
 }
