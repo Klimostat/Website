@@ -99,9 +99,9 @@ liveCharts.updateCountdown = function () {
     document.getElementById("nextUpdateIn").innerHTML = "" + nextUpdateIn;
 
     // feeds db
-    // let xhttp = new XMLHttpRequest();
-    // xhttp.open("GET", "PHP/feeddb.php", true);
-    // xhttp.send();
+    let xhttp = new XMLHttpRequest();
+    xhttp.open("GET", "PHP/feeddb.php", true);
+    xhttp.send();
 
 }
 
