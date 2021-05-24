@@ -244,10 +244,10 @@ const selectedStations = {
             if (toDisplay) {
                 // adds to graph
                 // console.log("pushed toDisplay");
-                displayedStations.push(station);
+                displayedStations.push(station.id);
             } else {
                 //removes from graph
-                displayedStations.remove(station);
+                displayedStations.remove(station.id);
             }
         };
 
@@ -269,34 +269,34 @@ const displayedStations = {
     /**
      *
      */
-    _stations: [],
     _ids: [],
 
     /**
      *
-     * @param station {Station}
+     * @param id {number}
      */
-    remove: function (station) {
-        if (this._stations.includes(station)) {
-            let index = this._stations.indexOf(station);
+    remove: function (id) {
+        if (this._ids.includes(id)) {
+            let index = this._ids.indexOf(id);
 
             charts.temperature.data.datasets.splice(index, 1);
             charts.humidity.data.datasets.splice(index, 1);
             charts.co2.data.datasets.splice(index, 1);
 
-            this._stations.splice(index, 1);
+            this._ids.splice(index, 1);
         }
     },
 
     /**
      *
-     * @param station {Station}
+     * @param id {number}
      */
-    push: function (station) {
+    push: function (id) {
 
         // console.log("displayed Stations:");
         // console.log(this._stations);
-        if (!this._stations.includes(station)) {
+        if (!this._ids.includes(id)) {
+            let station = stations[id];
             let color = station.color;
 
             // console.log("pushed station to charts");
@@ -331,7 +331,7 @@ const displayedStations = {
                 }
             });
 
-            this._stations.push(station);
+            this._ids.push(id);
         }
     },
 
@@ -340,14 +340,14 @@ const displayedStations = {
      * @param fn {function}
      */
     forEach: function (fn) {
-        this._stations.forEach(fn);
+        this._ids.forEach(id => fn(stations[id]));
     },
 
     /**
      *
      */
     clear: function () {
-        this._stations = [];
+        this._ids = [];
         charts.temperature.data.datasets = [];
         charts.humidity.data.datasets = [];
         charts.co2.data.datasets = [];
@@ -355,22 +355,27 @@ const displayedStations = {
 
     /**
      *
-     * @param station {Station}
+     * @param id {number}
      * @return {boolean}
      */
-    includes: function (station) {
-        return this._stations.includes(station);
+    includes: function (id) {
+        return this._ids.includes(id);
     },
 
     /**
      * @return {number}
      */
     size: function () {
-        return this._stations.length;
+        return this._ids.length;
     },
 
+    /**
+     *
+     * @param index {number}
+     * @return {Station}
+     */
     get: function (index) {
-        return this._stations[index];
+        return stations[this._ids[index]];
     }
 }
 

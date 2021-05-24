@@ -158,7 +158,7 @@ dashboard.appendValuesFromStationToCharts = function () {
 
     for (let i = 0; i < extremeStations.maxCo2.length; i++) {
         let selectedStation = extremeStations.maxCo2[i];
-        displayedStations.push(selectedStation);
+        displayedStations.push(selectedStation.id);
 
         let datas = selectedStation.getChartValues();
         // console.log("getChartValues: " + datas);
@@ -170,7 +170,7 @@ dashboard.appendValuesFromStationToCharts = function () {
 
     for (let i = 0; i < extremeStations.minHumidity.length; i++) {
         let selectedStation = extremeStations.minHumidity[i];
-        displayedStations.push(selectedStation);
+        displayedStations.push(selectedStation.id);
         let datas = selectedStation.getChartValues();
         // console.log("getChartValues: " + datas);
 
@@ -184,6 +184,4 @@ dashboard.appendValuesFromStationToCharts = function () {
     charts.temperature.update();
     charts.co2.update();
     charts.humidity.update();
-
-    dashboard.displayedStations = displayedStations;
 }
