@@ -59,7 +59,7 @@ verifySession();
                 <div class="container-fluid">
                     <div class = "nav-item" id = "timing">
                            Stand: <span id = "lastUpdated">noch nicht gelanden</span>, nächstes Update in <span id = "nextUpdateIn">0</span> Sekunden.
-                           <a class="nav-link" href="javascript:liveCharts.updateCharts()">Update</a>
+                           <a class="nav-link" href="javascript:updateCharts()">Update</a>
 
                     </div>
                     <div class="nav-item">

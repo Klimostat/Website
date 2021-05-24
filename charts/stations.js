@@ -46,7 +46,7 @@ function init() {
             let json = JSON.parse(this.responseText);
             for (let i = 0; i < json.length; i++) {
                 let stationId = parseInt(json[i].pk_station_id);
-                stations[stationId] = new Station(json[i], selectedStations.getIds().includes(stationId));
+                stations[stationId] = new Station(json[i], selectedStations.includes(stationId));
             }
             determineView();
         }
@@ -68,7 +68,7 @@ function determineView() {
     } else {
         if (loadedCharts !== "live") {
             loadedCharts = "live";
-            liveCharts.init();
+            live.init();
         }
     }
 }
@@ -76,7 +76,7 @@ function determineView() {
 function updateCharts() {
     switch (loadedCharts) {
         case "live":
-            liveCharts.updateCharts();
+            live.updateCharts();
             return;
         case "dashboard":
             dashboard.updateCharts();
