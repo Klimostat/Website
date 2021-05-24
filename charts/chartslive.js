@@ -6,14 +6,6 @@ let liveCharts = {
      */
     UPDATE_INTERVAL: 10,
 
-    /**
-     * The maximum number of values per chart.
-     * @type {number}
-     */
-    MAX_ENTRIES: 60,
-
-    displayedStations: null,
-
     lastUpdate: null
 }
 
@@ -22,68 +14,61 @@ let liveCharts = {
  */
 liveCharts.init = function () {
     // console.log("init called")
-    let selectedStations = getSelectedStations();
     // const skipped = (ctx, value) => ctx.p0.skip || ctx.p1.skip ? value : undefined;
 
-    if (loadedCharts !== "live") {
-
-        document.getElementById("timing").innerHTML = "" +
-            "                           Stand: <span id = \"lastUpdated\">noch nicht gelanden</span>, nächstes Update in <span id = \"nextUpdateIn\">0</span> Sekunden.\n" +
-            "                           <a class=\"nav-link\" href=\"javascript:liveCharts.updateCharts()\">Update</a>"
-        charts = {
-            temperature: new Chart(document.getElementById('chart-temperature'), {
-                type: 'line',
-                data: {},
-                options: {
-                    legend: {
-                        labels: {
-                            fontColor: 'black',
-                            defaultFontColor: 'black'
-                        }
-                    },
+    if (charts.temperature !== null) {
+        charts.temperature.destroy();
+    }
+    if (charts.humidity !== null) {
+        charts.humidity.destroy();
+    }
+    if (charts.co2 !== null) {
+        charts.co2.destroy();
+    }
+    charts = {
+        temperature: new Chart(document.getElementById('chart-temperature'), {
+            type: 'line',
+            data: {},
+            options: {
+                legend: {
+                    labels: {
+                        fontColor: 'black',
+                        defaultFontColor: 'black'
+                    }
                 },
-            }),
-            humidity: new Chart(document.getElementById('chart-humidity'), {
-                type: 'line',
-                data: {},
-                options: {
-                    legend: {
-                        labels: {
-                            fontColor: 'black',
-                            defaultFontColor: 'black'
-                        }
-                    },
-                }
-            }),
-            co2: new Chart(document.getElementById('chart-co2'), {
-                type: 'line',
-                data: {},
-                options: {
-                    legend: {
-                        labels: {
-                            fontColor: 'black',
-                            defaultFontColor: 'black'
-                        }
+            },
+        }),
+        humidity: new Chart(document.getElementById('chart-humidity'), {
+            type: 'line',
+            data: {},
+            options: {
+                legend: {
+                    labels: {
+                        fontColor: 'black',
+                        defaultFontColor: 'black'
+                    }
+                },
+            }
+        }),
+        co2: new Chart(document.getElementById('chart-co2'), {
+            type: 'line',
+            data: {},
+            options: {
+                legend: {
+                    labels: {
+                        fontColor: 'black',
+                        defaultFontColor: 'black'
                     }
                 }
-            })
-        };
+            }
+        })
+    };
+    displayedStations.clear();
 
-
-        for (let station of selectedStations) {
-            toggleDisplayedStation(station.id, true);
-        }
-
-    } else if (selectedStations === liveCharts.displayedStations) {
-        return;
-    }
+    // console.log("destroyed charts and loaded live");
+    selectedStations.display();
 
     liveCharts.updateCharts();
-    // console.log("inited live station-" + selectedStation.id);
-
-    loadedCharts = "live";
-    clearInterval(intervalObj);
-    intervalObj = setInterval(liveCharts.updateCountdown, 1000);
 }
 
 /**
@@ -113,29 +98,28 @@ liveCharts.updateCharts = function () {
 }
 
 liveCharts.fetchAndDeliverValuesFromDB = function () {
-    let selectedStations = getSelectedStations();
-
     let stationsToLoad = [/*{
             id: station.id,
             since: station.lastFetch
     }*/];
-    for (let station of selectedStations) {
+    displayedStations.forEach((station) => {
         stationsToLoad.push({
             id: station.id,
             since: station.lastFetch
         })
-    }
+    });
 
     let data = new FormData();
     data.append('stations', JSON.stringify(stationsToLoad));
 
     let xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function() {
+    xhttp.onreadystatechange = function () {
         if (this.readyState === 4 && this.status === 200) {
-            // console.log("db response: " + this.responseText);
             let dataPerStation = JSON.parse(this.responseText);
+            // console.log("db response: ");
+            // console.log(dataPerStation);
             for (let dataset of dataPerStation) {
-                stations[dataset.id].updateValues(dataset.data);
+                stations[parseInt(dataset.id)].updateValues(dataset.data);
                 // console.log("id: " + dataset.id);
                 // console.log(stations[dataset.id].getChartValues());
             }
@@ -179,14 +163,14 @@ liveCharts.appendValuesFromStationToCharts = function () {
         push(charts.humidity.data.labels, timeString);
     }
 
-    for (let i = 0; i < displayedStations.length; i++) {
-        let selectedStation = displayedStations[i];
-        let datas = selectedStation.getChartValues();
-        // console.log("getChartValues: " + datas);
+    charts.temperature.update();
+    charts.co2.update();
+    charts.humidity.update();
 
-        charts.temperature.update();
-        charts.co2.update();
-        charts.humidity.update();
+    // goes through all displayed stations, i important for index of chart
+    for (let i = 0; i < displayedStations.size(); i++) {
+        let datas = displayedStations.get(i).getChartValues();
+        // console.log("adds data to charts, getChartValues: " + datas);
 
         charts.temperature.data.datasets[i].data = datas.maxTemperature;
         charts.co2.data.datasets[i].data = datas.maxCo2;
@@ -199,8 +183,6 @@ liveCharts.appendValuesFromStationToCharts = function () {
     charts.temperature.update();
     charts.co2.update();
     charts.humidity.update();
-
-    liveCharts.displayedStations = displayedStations;
 }
 
 // liveCharts.clearCharts = function () {

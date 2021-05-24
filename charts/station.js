@@ -1,3 +1,18 @@
+let colors = [
+    "#ff0000",
+    "#ffb000",
+    "#ffff00",
+    "#b0ff00",
+    "#00ff00",
+    "#00ffb0",
+    "#00ffff",
+    "#00b0ff",
+    "#0000ff",
+    "#b000ff",
+    "#ff00ff",
+    "#ff00b0"
+]
+
 class Station {
     lastFetch = null;
     lastChartUpdate = null;
@@ -11,6 +26,9 @@ class Station {
         maxHumidity: []
     };
     navNode = null;
+    maxCo2 = 0;
+    minHumidity = 100;
+    color = colors[/*(stations.length * 2 + 1) % 11*/stations.length % 12];
 
     /**
      *
@@ -18,7 +36,7 @@ class Station {
      * @param selected {boolean}
      */
     constructor(dbFetch, selected=false) {
-        this.id = dbFetch.pk_station_id;
+        this.id = parseInt(dbFetch.pk_station_id);
         this.name = dbFetch.name;
         this.alertMessageHumidity = dbFetch.alert_message_humidity;
         this.alertMessageCO2 = dbFetch.alert_message_co2;
@@ -27,7 +45,7 @@ class Station {
         document.getElementById("stations-box").innerHTML +=
             "<div class = \"tooltip-base\">" +
             "   <label class=\"list-group-item\">" +
-            "       <input  id = \"station-" + this.id + "\" type=\"checkbox\" onchange=\"toggleDisplayedStation(" + this.id + ")\" value=\"" + this.id + "\"" + (selected ? " checked" : "") + ">" +
+            "       <input  id = \"station-" + this.id + "\" type=\"checkbox\" onchange=\"selectedStations.toggle(" + this.id + ")\" value=\"" + this.id + "\"" + (selected ? " checked" : "") + ">" +
             "       " + this.name + "" +
             "   </label>" +
             "   <div class = \"card\">" +
@@ -49,12 +67,6 @@ class Station {
             if (entry.humidity < grenzwertHumidity) {
                 sendAlert(this.alertMessageHumidity);
             }
-            // this.values.append({
-            //     date: mySQLToUTCJSDate(entry.time),
-            //     co2: entry.co2,
-            //     humidity: entry.humidity,
-            //     temperature: entry.temperature
-            // })
             let entryTimeString = jsTimeTo10MinLocalReadableString(mySQLToUTCJSDate(entry.time));
             if (typeof this.dataPrepared[entryTimeString] === "object") {
                 let actSet = this.dataPrepared[entryTimeString];
@@ -66,6 +78,8 @@ class Station {
                     minTemperature: Math.min(actSet.minTemperature, entry.temperature),
                     maxTemperature: Math.max(actSet.maxTemperature, entry.temperature)
                 }
+                this.minHumidity = Math.min(actSet.minHumidity, this.minHumidity);
+                this.maxCo2 = Math.max(actSet.maxCo2, this.maxCo2);
             } else {
                 this.dataPrepared[entryTimeString] = {
                     minCo2: entry.co2,
@@ -78,6 +92,7 @@ class Station {
             }
         }
         this.lastFetch = new Date();
+        extremeStations.checkAppendedValues(this);
     }
 
     getChartValues() {
@@ -138,5 +153,39 @@ class Station {
             this.navNode = document.getElementById("station-" + this.id);
         }
         return this.navNode;
+    }
+}
+
+const extremeStations = {
+    maxCo2: [],
+    minHumidity: [],
+    /**
+     *
+     * @param station {Station}
+     */
+    checkAppendedValues: function (station) {
+        //CO2
+        if (this.maxCo2.includes(station)) {
+            this.maxCo2.sort((a, b) => - a.maxCo2 + b.maxCo2);
+        } else if (this.maxCo2.length < 5) {
+            this.maxCo2.push(station);
+            this.maxCo2.sort((a, b) => - a.maxCo2 + b.maxCo2);
+        } else if (station.maxCo2 > this.maxCo2[this.maxCo2.length - 1].maxCo2) {
+            this.maxCo2.push(station);
+            this.maxCo2.sort((a, b) => - a.maxCo2 + b.maxCo2);
+            this.maxCo2.pop();
+        }
+
+        //Humidity
+        if (this.minHumidity.includes(station)) {
+            this.minHumidity.sort((a, b) => a.minHumidity - b.minHumidity);
+        } else if (this.minHumidity.length < 5) {
+            this.minHumidity.push(station);
+            this.minHumidity.sort((a, b) => a.minHumidity - b.minHumidity);
+        } else if (station.minHumidity < this.minHumidity[this.minHumidity.length - 1].minHumidity) {
+            this.minHumidity.push(station);
+            this.minHumidity.sort((a, b) => a.minHumidity - b.minHumidity);
+            this.minHumidity.pop();
+        }
     }
 }

@@ -78,7 +78,15 @@ INSERT INTO `station` (`name`, `alert_message_co2`, `alert_message_humidity`, `l
 VALUE ('test_station', '2500', '20', 'deine mama', '$argon2id$v=19$m=65536,t=4,p=1$UVVzSEdINGNIUWJpZUN4cQ$wFH1+6ztyX8xBRtOSbW7pjZ4SujcezIrVLB0v38I/Q4'),
     ('Virt1', 'Der virtuellen Messstation wurde es zu verraucht', 'Der virtuellen Messstation wurde es zu trocken', 'In der Datenbank', 'token1'),
     ('Virt2', 'Der virtuellen Messstation wurde es zu verraucht', 'Der virtuellen Messstation wurde es zu trocken', 'In der Datenbank', 'token2'),
-    ('Virt3', 'Der virtuellen Messstation wurde es zu verraucht', 'Der virtuellen Messstation wurde es zu trocken', 'In der Datenbank', 'token3');
+    ('Virt3', 'Der virtuellen Messstation wurde es zu verraucht', 'Der virtuellen Messstation wurde es zu trocken', 'In der Datenbank', 'token3'),
+    ('Virt4', 'Der virtuellen Messstation wurde es zu verraucht', 'Der virtuellen Messstation wurde es zu trocken', 'In der Datenbank', 'token4'),
+    ('Virt5', 'Der virtuellen Messstation wurde es zu verraucht', 'Der virtuellen Messstation wurde es zu trocken', 'In der Datenbank', 'token5'),
+    ('Virt6', 'Der virtuellen Messstation wurde es zu verraucht', 'Der virtuellen Messstation wurde es zu trocken', 'In der Datenbank', 'token6'),
+    ('Virt7', 'Der virtuellen Messstation wurde es zu verraucht', 'Der virtuellen Messstation wurde es zu trocken', 'In der Datenbank', 'token7'),
+    ('Virt8', 'Der virtuellen Messstation wurde es zu verraucht', 'Der virtuellen Messstation wurde es zu trocken', 'In der Datenbank', 'token8'),
+    ('Virt9', 'Der virtuellen Messstation wurde es zu verraucht', 'Der virtuellen Messstation wurde es zu trocken', 'In der Datenbank', 'token9'),
+    ('Virt10', 'Der virtuellen Messstation wurde es zu verraucht', 'Der virtuellen Messstation wurde es zu trocken', 'In der Datenbank', 'token10'),
+    ('Virt11', 'Der virtuellen Messstation wurde es zu verraucht', 'Der virtuellen Messstation wurde es zu trocken', 'In der Datenbank', 'token11');
 
 
 

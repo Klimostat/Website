@@ -8,22 +8,15 @@ document.addEventListener("DOMContentLoaded", init, false);
  */
 let stations = [];
 
-let displayedStations = [];
-
-let colors = [
-    "#ff0000",
-    "#ffff00",
-    "#00ff00",
-    "#00ffff",
-    "#0000ff",
-    "#ff00ff"
-]
-
 /**
  * Object of all ChartJS charts, initialized with the init() call.
  * @type {Object}
  */
-let charts = {};
+let charts = {
+    temperature: null,
+    humidity: null,
+    co2: null
+};
 
 /**
  * live, dashboard, history
@@ -42,12 +35,6 @@ let nextUpdateIn = 0;
 let intervalObj = null;
 
 /**
- * Controls the data-updates
- * @type {Date}
- */
-let lastUpdate = null;
-
-/**
  * initializes environment at the start
  */
 function init() {
@@ -55,12 +42,11 @@ function init() {
 
     xhttp.onreadystatechange = function() {
         if (this.readyState === 4 && this.status === 200) {
-            console.log("init: stations loaded: " + this.responseText);
-            let selectedStationIds = getSelectedStationIds();
+            // console.log("init: stations loaded: " + this.responseText);
             let json = JSON.parse(this.responseText);
             for (let i = 0; i < json.length; i++) {
-                let stationId = json[i].pk_station_id
-                stations[stationId] = new Station(json[i], selectedStationIds.includes(json[i].pk_station_id));
+                let stationId = parseInt(json[i].pk_station_id);
+                stations[stationId] = new Station(json[i], selectedStations.getIds().includes(stationId));
             }
             determineView();
         }
@@ -69,156 +55,322 @@ function init() {
     xhttp.send();
 
     Notification.requestPermission();
-
 }
 
 function determineView() {
-    let selectedStations = getSelectedStations();
-    // if (selectedStation === null) {
-        // dashboardCharts.updateCharts();
-    // } else {
-        liveCharts.init();
-    // }
-}
-
-/**
- *
- * @return {Station|null}
- */
-function getSelectedStation() {
-    let cookie = document.cookie.split('; ')
-        .find(cookie => cookie.startsWith("station_id="));
-    if (typeof cookie === "string" || typeof cookie === "number") {
-        // console.log("getSelectedStation: " + cookie);
-        return stations[parseInt(cookie.split("=")[1])];
+    // console.log("selectedStations");
+    // console.log(selectedStations.get());
+    if (selectedStations.get().length === 0) {
+        if (loadedCharts !== "dashboard") {
+            loadedCharts = "dashboard";
+            dashboard.init();
+        }
     } else {
-        // console.log("getSelectedStation: null");
-        return null;
+        if (loadedCharts !== "live") {
+            loadedCharts = "live";
+            liveCharts.init();
+        }
     }
 }
 
-function setSelectedStation(id) {
-    if (id === null) {
-        document.cookie = "station_id=null; SameSite=None; Secure; expires=Thu, 01 Jan 1970 00:00:00 UTC";
-    } else {
-        document.cookie = "station_id=" + id + "; SameSite=None; Secure";
-    }
-    determineView();
-}
-
-function getSelectedStationIds() {
-    let cookie = document.cookie.split('; ')
-        .find(cookie => cookie.startsWith("station_ids="));
-    if (cookie !== null && (typeof cookie === "string" || typeof cookie === "number")) {
-        return cookie.split("=")[1].split(",");
-    } else {
-        return [];
+function updateCharts() {
+    switch (loadedCharts) {
+        case "live":
+            liveCharts.updateCharts();
+            return;
+        case "dashboard":
+            dashboard.updateCharts();
+            return;
+        default:
+            console.log("no charts loaded");
     }
 }
 
-function getSelectedStations() {
-    let selectedStationIds = getSelectedStationIds();
-    let selectedStations = [];
-    for (let id of selectedStationIds) {
-        selectedStations.push(stations[id])
-    }
-    // console.log("getSelectedStations: " + selectedStations);
-    return selectedStations;
-}
+const selectedStations = {
+    _ids: null,
 
-// let checkStationSelection = function() {
-//     let selectedStations = [];
-//     for (let station of stations) {
-//
-//         check for empty slots
-        // if (typeof station !== "object") {
-        //     continue;
+    get: function () {
+        let lstations = [];
+        this.getIds().forEach(id => {
+            lstations.push(stations[id])
+        });
+        return lstations;
+    },
+
+    getIds: function () {
+        if (this._ids === null) {
+            this._ids = [];
+
+            let cookie = document.cookie.split('; ')
+                .find(cookie => cookie.startsWith("station_ids="));
+            if (cookie !== undefined) {
+                cookie.split("=")[1].split(",").forEach(id => {
+                    this._ids.push(parseInt(id));
+                });
+            }
+        }
+        return this._ids;
+    },
+
+    /**
+     *
+     * @param id {number}
+     */
+    toggle: function (id) {
+        this.getIds();
+
+        // checks on wrong loaded charts
+        if (this._ids.length === 0 && loadedCharts !== "live") {
+            this._ids.push(id);
+            this.updateCookie();
+            determineView();
+            return;
+        }
+
+        if (this._ids.includes(id)) {
+            //remove
+            // console.log("remove " + id);
+            this.remove(id, true)
+        } else {
+            // add
+            // console.log("adds " + id);
+            this.push(id, true);
+        }
+
+        this.updateCookie();
+
+        updateCharts();
+    },
+
+    /**
+     *
+     */
+    updateCookie: function () {
+        if (this._ids.length === 0) {
+            document.cookie = "station_ids=null; SameSite=Strict; Secure; expires=Thu, 01 Jan 1970 00:00:00 UTC";
+        } else {
+            document.cookie = "station_ids=" + this._ids + "; SameSite=Strict; Secure";
+        }
+    },
+
+    clear: function () {
+        // loads updates from cookie
+        this.getIds();
+
+        // clears list
+        this._ids = []
+
+        // disables all styling
+        this.display();
+
+        // writes cookie
+        this.updateCookie();
+
+        determineView();
+    },
+
+    /**
+     *
+     * @param id {number}
+     * @param secure {boolean}
+     */
+    remove: function (id, secure = true) {
+        if (secure) {
+            // loads updates from cookie
+            this.getIds();
+        }
+
+        // checks for already displayed
+        if (!this._ids.includes(id)) {
+            return;
+        }
+
+        // takes out of list
+        this._ids.splice(this._ids.indexOf(id), 1);
+
+        // disables styling and removes from displayed stations
+        this.display(id);
+
+        if (secure) {
+            // writes cookie
+            this.updateCookie();
+        }
+    },
+
+    /**
+     *
+     * @param id {number}
+     * @param secure {boolean}
+     */
+    push: function (id, secure=true) {
+        if (secure) {
+            // loads updates from cookie
+            this.getIds();
+        }
+
+        // checks for already displayed
+        if (this._ids.includes(id)) {
+            return;
+        }
+
+        // checks on wrong loaded charts
+        // if (loadedCharts !== "live") {
+        //     this._ids.push(id);
+        //     this.updateCookie();
+        //     determineView();
+        //     return;
         // }
-        //
-        // if (station.getNavNode().checked) {
-        //     selectedStations.push(station.id);
-        // }
-    // }
-    // console.log(selectedStations + " are checked");
-    // if (selectedStations.length === 0) {
-    //     document.cookie = "station_ids=null; SameSite=Strict; Secure; expires=Thu, 01 Jan 1970 00:00:00 UTC";
-    // } else {
-    //     document.cookie = "station_ids=" + selectedStations + "; SameSite=Strict; Secure";
-    // }
-// }
 
-/**
- *
- * @param stationId {number}
- */
-function toggleDisplayedStation(stationId, initial=false) {
-    let station = stations[stationId];
+        // adds to list
+        this._ids.push(id);
 
-    if (displayedStations.includes(station)) {
-        
-        //remove
-        station.getNavNode().parentElement.classList.toggle("active", false);
+        // enables styling and adds to displayed stations
+        this.display(id);
 
-        let index = displayedStations.indexOf(station);
+        if (secure) {
+            // updates cookies
+            this.updateCookie();
+        }
+    },
 
-        displayedStations.splice(index, 1);
-        charts.temperature.data.datasets.splice(index, 1);
-        charts.humidity.data.datasets.splice(index, 1);
-        charts.co2.data.datasets.splice(index, 1);
+    display: function (id=null) {
+        let displayFunction = station => {
+            let toDisplay = this._ids.includes(station.id);
+            // console.log("display - id: " + station.id + ", toDisplay: " + toDisplay);
 
-    } else {
-        // add
-        station.getNavNode().parentElement.classList.toggle("active", true);
-        let color = colors[(station.id * 2 + 1) % 5];
+            // toggles styling
+            station.getNavNode().parentElement.classList.toggle("active", toDisplay);
 
-        displayedStations.push(station);
-
-        charts.temperature.data.datasets.push({
-            label: station.name,
-            data: [],
-            backgroundColor: color,
-            borderColor: color,
-            borderWidth: 1,
-            segment: {
-                // borderDash: ctx => skipped(ctx, ctx.p0.skip || ctx.p1.skip ? [6, 6] : undefined),
+            if (toDisplay) {
+                // adds to graph
+                // console.log("pushed toDisplay");
+                displayedStations.push(station);
+            } else {
+                //removes from graph
+                displayedStations.remove(station);
             }
-        });
+        };
 
-        charts.humidity.data.datasets.push({
-            label: station.name,
-            data: [],
-            backgroundColor: color,
-            borderColor: color,
-            borderWidth: 1,
-            segment: {
-                // borderDash: ctx => skipped(ctx, ctx.p0.skip || ctx.p1.skip ? [6, 6] : undefined),
-            }
-        });
+        if (typeof id === "number") {
+            displayFunction(stations[id]);
+        } else {
+            stations.forEach(displayFunction);
+        }
+    },
 
-        charts.co2.data.datasets.push({
-            label: station.name,
-            data: [],
-            backgroundColor: color,
-            borderColor: color,
-            borderWidth: 1,
-            segment: {
-                // borderDash: ctx => skipped(ctx, ctx.p0.skip || ctx.p1.skip ? [6, 6] : undefined),
-            }
+    forEach: function (fn) {
+        this._ids.forEach(id => {
+            fn(stations[id]);
         });
     }
+}
 
-    let selectedStations = [];
-    for (let station of displayedStations) {
-        selectedStations.push(station.id);
-    }
-    if (selectedStations.length === 0) {
-        document.cookie = "station_ids=null; SameSite=Strict; Secure; expires=Thu, 01 Jan 1970 00:00:00 UTC";
-    } else {
-        document.cookie = "station_ids=" + selectedStations + "; SameSite=Strict; Secure";
-    }
+const displayedStations = {
+    /**
+     *
+     */
+    _stations: [],
+    _ids: [],
 
-    if (!initial) {
-        liveCharts.updateCharts();
+    /**
+     *
+     * @param station {Station}
+     */
+    remove: function (station) {
+        if (this._stations.includes(station)) {
+            let index = this._stations.indexOf(station);
+
+            charts.temperature.data.datasets.splice(index, 1);
+            charts.humidity.data.datasets.splice(index, 1);
+            charts.co2.data.datasets.splice(index, 1);
+
+            this._stations.splice(index, 1);
+        }
+    },
+
+    /**
+     *
+     * @param station {Station}
+     */
+    push: function (station) {
+
+        // console.log("displayed Stations:");
+        // console.log(this._stations);
+        if (!this._stations.includes(station)) {
+            let color = station.color;
+
+            // console.log("pushed station to charts");
+            charts.temperature.data.datasets.push({
+                label: station.name,
+                data: [],
+                backgroundColor: color,
+                borderColor: color,
+                borderWidth: 1,
+                segment: {
+                    // borderDash: ctx => skipped(ctx, ctx.p0.skip || ctx.p1.skip ? [6, 6] : undefined),
+                }
+            });
+            charts.humidity.data.datasets.push({
+                label: station.name,
+                data: [],
+                backgroundColor: color,
+                borderColor: color,
+                borderWidth: 1,
+                segment: {
+                    // borderDash: ctx => skipped(ctx, ctx.p0.skip || ctx.p1.skip ? [6, 6] : undefined),
+                }
+            });
+            charts.co2.data.datasets.push({
+                label: station.name,
+                data: [],
+                backgroundColor: color,
+                borderColor: color,
+                borderWidth: 1,
+                segment: {
+                    // borderDash: ctx => skipped(ctx, ctx.p0.skip || ctx.p1.skip ? [6, 6] : undefined),
+                }
+            });
+
+            this._stations.push(station);
+        }
+    },
+
+    /**
+     *
+     * @param fn {function}
+     */
+    forEach: function (fn) {
+        this._stations.forEach(fn);
+    },
+
+    /**
+     *
+     */
+    clear: function () {
+        this._stations = [];
+        charts.temperature.data.datasets = [];
+        charts.humidity.data.datasets = [];
+        charts.co2.data.datasets = [];
+    },
+
+    /**
+     *
+     * @param station {Station}
+     * @return {boolean}
+     */
+    includes: function (station) {
+        return this._stations.includes(station);
+    },
+
+    /**
+     * @return {number}
+     */
+    size: function () {
+        return this._stations.length;
+    },
+
+    get: function (index) {
+        return this._stations[index];
     }
 }
 
@@ -259,13 +411,11 @@ function jsToLocalReadableString(dateObj) {
         ('00' + dateObj.getSeconds()).slice(-2);
 }
 
-
 function jsTimeTo10MinLocalReadableString(dateObj) {
     return dateObj.getHours() + ':' +
         dateObj.getMinutes() + ':' +
         Math.floor(dateObj.getSeconds() / 10) + 'x';
 }
-
 
 /**
  * sends an alert via notifications and displays a red bar
