@@ -6,7 +6,9 @@ let liveCharts = {
      */
     UPDATE_INTERVAL: 10,
 
-    lastUpdate: null
+    lastUpdate: null,
+
+    sensorCharts: {}
 }
 
 /**
@@ -63,7 +65,7 @@ liveCharts.init = function () {
             }
         })
     };
-    displayedStations.clear();
+    liveCharts.sensorCharts = new SensorChart([charts.temperature,charts.humidity,charts.co2]);
 
     // console.log("destroyed charts and loaded live");
     selectedStations.display();
@@ -102,7 +104,7 @@ liveCharts.fetchAndDeliverValuesFromDB = function () {
             id: station.id,
             since: station.lastFetch
     }*/];
-    displayedStations.forEach((station) => {
+    liveCharts.sensorCharts.forEach((station) => {
         stationsToLoad.push({
             id: station.id,
             since: station.lastFetch
@@ -133,8 +135,6 @@ liveCharts.fetchAndDeliverValuesFromDB = function () {
 
 /**
  * appends values to a chart
- * @param index {number} the index of the station in the stations array
- * @param dataset {Object[]} an array that has entries of {time:,co2:,temperature:,humidity:} objects
  */
 liveCharts.appendValuesFromStationToCharts = function () {
     let actDate = new Date();
@@ -168,8 +168,8 @@ liveCharts.appendValuesFromStationToCharts = function () {
     charts.humidity.update();
 
     // goes through all displayed stations, i important for index of chart
-    for (let i = 0; i < displayedStations.size(); i++) {
-        let datas = displayedStations.get(i).getChartValues();
+    for (let i = 0; i < liveCharts.sensorCharts.size(); i++) {
+        let datas = liveCharts.sensorCharts.get(i).getChartValues();
         // console.log("adds data to charts, getChartValues: " + datas);
 
         charts.temperature.data.datasets[i].data = datas.maxTemperature;
@@ -183,6 +183,185 @@ liveCharts.appendValuesFromStationToCharts = function () {
     charts.temperature.update();
     charts.co2.update();
     charts.humidity.update();
+}
+
+const selectedStations = {
+    _ids: null,
+
+    get: function () {
+        let lstations = [];
+        this.getIds().forEach(id => {
+            lstations.push(stations[id])
+        });
+        return lstations;
+    },
+
+    getIds: function () {
+        if (this._ids === null) {
+            this._ids = [];
+
+            let cookie = document.cookie.split('; ')
+                .find(cookie => cookie.startsWith("station_ids="));
+            if (cookie !== undefined) {
+                cookie.split("=")[1].split(",").forEach(id => {
+                    this._ids.push(parseInt(id));
+                });
+            }
+        }
+        return this._ids;
+    },
+
+    /**
+     *
+     * @param id {number}
+     */
+    toggle: function (id) {
+        this.getIds();
+
+        // checks on wrong loaded charts
+        if (this._ids.length === 0 && loadedCharts !== "live") {
+            this._ids.push(id);
+            this.updateCookie();
+            determineView();
+            return;
+        }
+
+        if (this._ids.includes(id)) {
+            //remove
+            // console.log("remove " + id);
+            this.remove(id, true)
+        } else {
+            // add
+            // console.log("adds " + id);
+            this.push(id, true);
+        }
+
+        this.updateCookie();
+
+        updateCharts();
+    },
+
+    /**
+     *
+     */
+    updateCookie: function () {
+        if (this._ids.length === 0) {
+            document.cookie = "station_ids=null; SameSite=Strict; Secure; expires=Thu, 01 Jan 1970 00:00:00 UTC";
+        } else {
+            document.cookie = "station_ids=" + this._ids + "; SameSite=Strict; Secure";
+        }
+    },
+
+    clear: function () {
+        // loads updates from cookie
+        this.getIds();
+
+        // clears list
+        this._ids = []
+
+        // disables all styling
+        this.display();
+
+        // writes cookie
+        this.updateCookie();
+
+        determineView();
+    },
+
+    /**
+     *
+     * @param id {number}
+     * @param secure {boolean}
+     */
+    remove: function (id, secure = true) {
+        if (secure) {
+            // loads updates from cookie
+            this.getIds();
+        }
+
+        // checks for already displayed
+        if (!this._ids.includes(id)) {
+            return;
+        }
+
+        // takes out of list
+        this._ids.splice(this._ids.indexOf(id), 1);
+
+        // disables styling and removes from displayed stations
+        this.display(id);
+
+        if (secure) {
+            // writes cookie
+            this.updateCookie();
+        }
+    },
+
+    /**
+     *
+     * @param id {number}
+     * @param secure {boolean}
+     */
+    push: function (id, secure=true) {
+        if (secure) {
+            // loads updates from cookie
+            this.getIds();
+        }
+
+        // checks for already displayed
+        if (this._ids.includes(id)) {
+            return;
+        }
+
+        // checks on wrong loaded charts
+        // if (loadedCharts !== "live") {
+        //     this._ids.push(id);
+        //     this.updateCookie();
+        //     determineView();
+        //     return;
+        // }
+
+        // adds to list
+        this._ids.push(id);
+
+        // enables styling and adds to displayed stations
+        this.display(id);
+
+        if (secure) {
+            // updates cookies
+            this.updateCookie();
+        }
+    },
+
+    display: function (id=null) {
+        let displayFunction = station => {
+            let toDisplay = this._ids.includes(station.id);
+            // console.log("display - id: " + station.id + ", toDisplay: " + toDisplay);
+
+            // toggles styling
+            station.getNavNode().parentElement.classList.toggle("active", toDisplay);
+
+            if (toDisplay) {
+                // adds to graph
+                // console.log("pushed toDisplay");
+                liveCharts.sensorCharts.push(station.id);
+            } else {
+                //removes from graph
+                liveCharts.sensorCharts.remove(station.id);
+            }
+        };
+
+        if (typeof id === "number") {
+            displayFunction(stations[id]);
+        } else {
+            stations.forEach(displayFunction);
+        }
+    },
+
+    forEach: function (fn) {
+        this._ids.forEach(id => {
+            fn(stations[id]);
+        });
+    }
 }
 
 // liveCharts.clearCharts = function () {

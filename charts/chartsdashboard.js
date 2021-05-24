@@ -7,6 +7,9 @@ let dashboard = {
     UPDATE_INTERVAL: 10,
 
     lastUpdate: null,
+
+    humidityChart: null,
+    co2Chart: null,
 }
 
 /**
@@ -62,7 +65,8 @@ dashboard.init = function () {
             }
         })
     };
-    displayedStations.clear();
+    dashboard.humidityChart = new SensorChart(charts.humidity);
+    dashboard.co2Chart = new SensorChart(charts.co2);
 
     dashboard.updateCharts();
 }
@@ -158,7 +162,7 @@ dashboard.appendValuesFromStationToCharts = function () {
 
     for (let i = 0; i < extremeStations.maxCo2.length; i++) {
         let selectedStation = extremeStations.maxCo2[i];
-        displayedStations.push(selectedStation.id);
+        dashboard.co2Chart.push(selectedStation.id);
 
         let datas = selectedStation.getChartValues();
         // console.log("getChartValues: " + datas);
@@ -170,7 +174,7 @@ dashboard.appendValuesFromStationToCharts = function () {
 
     for (let i = 0; i < extremeStations.minHumidity.length; i++) {
         let selectedStation = extremeStations.minHumidity[i];
-        displayedStations.push(selectedStation.id);
+        dashboard.humidityChart.push(selectedStation.id);
         let datas = selectedStation.getChartValues();
         // console.log("getChartValues: " + datas);
 
@@ -181,7 +185,6 @@ dashboard.appendValuesFromStationToCharts = function () {
 
     dashboard.lastUpdate = actDate;
 
-    charts.temperature.update();
     charts.co2.update();
     charts.humidity.update();
 }

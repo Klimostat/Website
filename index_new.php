@@ -127,5 +127,6 @@ verifySession();
         <script src="charts/chartsdashboard.js"></script>
         <script src="charts/station.js"></script>
         <script src="charts/stations.js"></script>
+        <script src="charts/sensorChart.js"></script>
     </body>
 </html>
