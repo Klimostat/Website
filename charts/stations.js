@@ -13,8 +13,19 @@ let stations = [];
  * @type {Object}
  */
 let charts = {
+    /**
+     * @type {Chart}
+     */
     temperature: null,
+
+    /**
+     * @type {Chart}
+     */
     humidity: null,
+
+    /**
+     * @type {Chart}
+     */
     co2: null
 };
 
@@ -60,15 +71,28 @@ function init() {
 function determineView() {
     // console.log("selectedStations");
     // console.log(selectedStations.get());
-    if (selectedStations.get().length === 0) {
-        if (loadedCharts !== "dashboard") {
-            loadedCharts = "dashboard";
-            dashboard.init();
+    let chartsToLoad = "live";
+    if (selectedStations.getIds().length === 0) {
+        chartsToLoad = "dashboard";
+    }
+
+    if (chartsToLoad !== loadedCharts) {
+        switch (loadedCharts) {
+            case "dashboard":
+                dashboard.destroy();
+                break;
+            case "live":
+                live.destroy();
+                break;
         }
-    } else {
-        if (loadedCharts !== "live") {
-            loadedCharts = "live";
-            live.init();
+        loadedCharts = chartsToLoad;
+        switch (loadedCharts) {
+            case "dashboard":
+                dashboard.init();
+                break;
+            case "live":
+                live.init();
+                break;
         }
     }
 }
@@ -82,7 +106,7 @@ function updateCharts() {
             dashboard.updateCharts();
             return;
         default:
-            console.log("no charts loaded");
+            throw new Error("no charts loaded");
     }
 }
 

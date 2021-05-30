@@ -29,7 +29,7 @@ and m.fk_station_id = :station_id
     } else {
         $data = $conn -> prepare("
 select m.pk_measurement_time time, m.co2, m.humidity, m.temperature from live_data m
-where m.pk_measurement_time > subtime(utc_timestamp, '00:10:00')
+where m.pk_measurement_time > subtime(utc_timestamp, '00:05:10')
 and m.fk_station_id = :station_id
 ");
     }

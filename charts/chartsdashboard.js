@@ -5,29 +5,39 @@ let dashboard = {
      * @type {number}
      */
     UPDATE_INTERVAL: 10,
+    DISPLAYED_STATION_COUNT: 5,
 
-    lastUpdate: null,
-
+    /**
+     *
+     * @type {SensorChart}
+     */
     humidityChart: null,
+
+    /**
+     *
+     * @type {SensorChart}
+     */
     co2Chart: null,
+
+    /**
+     *
+     * @type {number[]}
+     */
+    maxCo2Ids: null,
+
+    /**
+     *
+     * @type {number[]}
+     */
+    minHumidityIds: null,
 
     /**
      * initializes live charts and sets interval
      */
     init: function () {
-
-        if (charts.temperature !== null) {
-            charts.temperature.destroy();
-        }
-        if (charts.humidity !== null) {
-            charts.humidity.destroy();
-        }
-        if (charts.co2 !== null) {
-            charts.co2.destroy();
-        }
         // console.log("destroyed charts and loaded dashboard");
         charts = {
-            temperature: new Chart(document.getElementById('chart-temperature'), {
+            /*temperature: new Chart(document.getElementById('chart-temperature'), {
                 type: 'line',
                 data: {},
                 options: {
@@ -38,7 +48,7 @@ let dashboard = {
                         }
                     },
                 },
-            }),
+            }),*/
             humidity: new Chart(document.getElementById('chart-humidity'), {
                 type: 'line',
                 data: {},
@@ -64,10 +74,27 @@ let dashboard = {
                 }
             })
         };
-        this.humidityChart = new SensorChart(charts.humidity);
-        this.co2Chart = new SensorChart(charts.co2);
+
+        this.maxCo2Ids = [];
+        this.minHumidityIds = [];
+
+        this.humidityChart = new SensorChart([{name: "humidity", chart: charts.humidity}]);
+        this.co2Chart = new SensorChart([{name: "co2", chart: charts.co2}]);
 
         this.updateCharts();
+    },
+
+    /**
+     *
+     */
+    destroy: function () {
+        // console.log("dashboard.destroy");
+        charts.humidity.destroy();
+        this.humidityChart.clear();
+        charts.co2.destroy();
+        this.co2Chart.clear();
+        this.maxCo2Ids = null;
+        this.minHumidityIds = null;
     },
 
     /**
@@ -105,14 +132,17 @@ let dashboard = {
             })
         });
 
+        // console.log(stationsToLoad);
+
         let data = new FormData();
         data.append('stations', JSON.stringify(stationsToLoad));
 
         let xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function () {
             if (this.readyState === 4 && this.status === 200) {
-                // console.log("db response: " + this.responseText);
                 let dataPerStation = JSON.parse(this.responseText);
+                // console.log("db response: ");
+                // console.log(dataPerStation);
                 for (let dataset of dataPerStation) {
                     stations[parseInt(dataset.id)].updateValues(dataset.data);
                     // console.log("id: " + dataset.id);
@@ -129,62 +159,104 @@ let dashboard = {
      * appends values to a chart
      */
     appendValuesFromStationToCharts: function () {
-        let actDate = new Date();
-        actDate.setMilliseconds(0);
+        this.updateAndDisplay();
 
-        let time = new Date();
-        time.setMinutes(actDate.getMinutes() - 5);
+        // console.log("appendValuesFromStationsToCharts: updateCo2Chart()");
+        this.co2Chart.updateCharts();
+        // console.log("appendValuesFromStationsToCharts: updateHumidityChart()");
+        this.humidityChart.updateCharts();
+    },
 
-        let push = function (where, what) {
-            where.push(what);
-            where.shift();
-        }
+    /**
+     *
+     */
+    updateAndDisplay: function () {
+        /**
+         *
+         * @type {number[]}
+         */
+        let maxCo2IdsNew = this.maxCo2Ids.slice();
+        /**
+         *
+         * @type {number[]}
+         */
+        let maxCo2IdsOld = this.maxCo2Ids.slice();
+        /**
+         *
+         * @type {number[]}
+         */
+        let minHumidityIdsNew = this.minHumidityIds.slice();
+        /**
+         *
+         * @type {number[]}
+         */
+        let minHumidityIdsOld = this.minHumidityIds.slice();
 
-        if (this.lastUpdate == null) {
-            push = function (where, what) {
-                where.push(what);
+        stations.forEach(station => {
+            //CO2
+            let co2CompareFn = (a, b) => -stations[a].maxCo2 + stations[b].maxCo2;
+            if (maxCo2IdsNew.includes(station.id)) {
+                maxCo2IdsNew.sort(co2CompareFn);
+            } else if (maxCo2IdsNew.length < this.DISPLAYED_STATION_COUNT) {
+                maxCo2IdsNew.push(station.id);
+                maxCo2IdsNew.sort(co2CompareFn);
+            } else if (station.maxCo2 > stations[maxCo2IdsNew[maxCo2IdsNew.length - 1]].maxCo2) {
+                maxCo2IdsNew.push(station.id);
+                maxCo2IdsNew.sort(co2CompareFn);
+                maxCo2IdsNew.pop();
             }
-        } else {
-            time = this.lastUpdate;
+
+            //Humidity
+            let humidityCompareFn = (a, b) => stations[a].minHumidity - stations[b].minHumidity;
+            if (minHumidityIdsNew.includes(station.id)) {
+                minHumidityIdsNew.sort(humidityCompareFn);
+            } else if (minHumidityIdsNew.length < this.DISPLAYED_STATION_COUNT) {
+                minHumidityIdsNew.push(station.id);
+                minHumidityIdsNew.sort(humidityCompareFn);
+            } else if (station.minHumidity < stations[minHumidityIdsNew[minHumidityIdsNew.length - 1]].minHumidity) {
+                minHumidityIdsNew.push(station.id);
+                minHumidityIdsNew.sort(humidityCompareFn);
+                minHumidityIdsNew.pop();
+            }
+        });
+
+        for (let i = 0; i < maxCo2IdsOld.length; i++){
+            const id = maxCo2IdsOld[i];
+            if (!maxCo2IdsNew.includes(id)) {
+                maxCo2IdsOld.splice(i, 1);
+                this.co2Chart.remove(id);
+                i--;
+            }
         }
 
-        for (; time < actDate; time.setSeconds(time.getSeconds() + 10)) {
-            let timeString = jsTimeTo10MinLocalReadableString(time);
-            push(charts.temperature.data.labels, timeString);
-            push(charts.co2.data.labels, timeString);
-            push(charts.humidity.data.labels, timeString);
+        for (let i = 0; i < minHumidityIdsOld.length; i++){
+            const id = minHumidityIdsOld[i];
+            if (!minHumidityIdsNew.includes(id)) {
+                minHumidityIdsOld.splice(i, 1);
+                // console.log("dashboard.updateAndDisplay: remove station from humidity chart " + id)
+                this.humidityChart.remove(id);
+                i--;
+            }
         }
 
-        charts.temperature.update();
-        charts.co2.update();
-        charts.humidity.update();
-
-        for (let i = 0; i < extremeStations.maxCo2.length; i++) {
-            let selectedStation = extremeStations.maxCo2[i];
-            this.co2Chart.push(selectedStation.id);
-
-            let datas = selectedStation.getChartValues();
-            // console.log("getChartValues: " + datas);
-
-            // charts.temperature.data.datasets[i].data = datas.maxTemperature;
-            charts.co2.data.datasets[i].data = datas.maxCo2;
-            // charts.humidity.data.datasets[i].data = datas.maxHumidity;
+        for (let i = 0; i < maxCo2IdsNew.length; i++){
+            const id = maxCo2IdsNew[i];
+            if (!maxCo2IdsOld.includes(id)) {
+                maxCo2IdsOld.push(id);
+                this.co2Chart.push(id, {co2: stations[id].datasetChart.maxCo2});
+            }
         }
 
-        for (let i = 0; i < extremeStations.minHumidity.length; i++) {
-            let selectedStation = extremeStations.minHumidity[i];
-            this.humidityChart.push(selectedStation.id);
-            let datas = selectedStation.getChartValues();
-            // console.log("getChartValues: " + datas);
-
-            // charts.temperature.data.datasets[i].data = datas.maxTemperature;
-            charts.humidity.data.datasets[i].data = datas.minHumidity;
-            // charts.humidity.data.datasets[i].data = datas.maxHumidity;
+        for (let i = 0; i < minHumidityIdsNew.length; i++){
+            const id = minHumidityIdsNew[i];
+            if (!minHumidityIdsOld.includes(id)) {
+                minHumidityIdsOld.push(id);
+                // console.log("dashboard.updateAndDisplay: push station to humidity chart " + id)
+                this.humidityChart.push(id, {humidity: stations[id].datasetChart.minHumidity});
+            }
         }
 
-        this.lastUpdate = actDate;
-
-        charts.co2.update();
-        charts.humidity.update();
-    }
+        this.maxCo2Ids = maxCo2IdsNew;
+        this.minHumidityIds = minHumidityIdsNew;
+    },
 }

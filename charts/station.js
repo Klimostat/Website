@@ -92,10 +92,9 @@ class Station {
             }
         }
         this.lastFetch = new Date();
-        extremeStations.checkAppendedValues(this);
     }
 
-    getChartValues() {
+    updateDatasetChart() {
         let actDate = new Date();
         actDate.setMilliseconds(0);
 
@@ -141,7 +140,6 @@ class Station {
         }
 
         this.lastChartUpdate = new Date();
-        return this.datasetChart;
     }
 
     /**
@@ -153,39 +151,5 @@ class Station {
             this.navNode = document.getElementById("station-" + this.id);
         }
         return this.navNode;
-    }
-}
-
-const extremeStations = {
-    maxCo2: [],
-    minHumidity: [],
-    /**
-     *
-     * @param station {Station}
-     */
-    checkAppendedValues: function (station) {
-        //CO2
-        if (this.maxCo2.includes(station)) {
-            this.maxCo2.sort((a, b) => - a.maxCo2 + b.maxCo2);
-        } else if (this.maxCo2.length < 5) {
-            this.maxCo2.push(station);
-            this.maxCo2.sort((a, b) => - a.maxCo2 + b.maxCo2);
-        } else if (station.maxCo2 > this.maxCo2[this.maxCo2.length - 1].maxCo2) {
-            this.maxCo2.push(station);
-            this.maxCo2.sort((a, b) => - a.maxCo2 + b.maxCo2);
-            this.maxCo2.pop();
-        }
-
-        //Humidity
-        if (this.minHumidity.includes(station)) {
-            this.minHumidity.sort((a, b) => a.minHumidity - b.minHumidity);
-        } else if (this.minHumidity.length < 5) {
-            this.minHumidity.push(station);
-            this.minHumidity.sort((a, b) => a.minHumidity - b.minHumidity);
-        } else if (station.minHumidity < this.minHumidity[this.minHumidity.length - 1].minHumidity) {
-            this.minHumidity.push(station);
-            this.minHumidity.sort((a, b) => a.minHumidity - b.minHumidity);
-            this.minHumidity.pop();
-        }
     }
 }
