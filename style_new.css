@@ -21,6 +21,10 @@ a {
 body {
 }
 
+body.timeout > #main {
+    background-color: gray;
+}
+
 #main {
     display: flex;
     min-height: 90vh;

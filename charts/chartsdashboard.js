@@ -137,22 +137,23 @@ let dashboard = {
         let data = new FormData();
         data.append('stations', JSON.stringify(stationsToLoad));
 
-        let xhttp = new XMLHttpRequest();
-        xhttp.onreadystatechange = function () {
-            if (this.readyState === 4 && this.status === 200) {
-                let dataPerStation = JSON.parse(this.responseText);
-                // console.log("db response: ");
-                // console.log(dataPerStation);
-                for (let dataset of dataPerStation) {
-                    stations[parseInt(dataset.id)].updateValues(dataset.data);
-                    // console.log("id: " + dataset.id);
-                    // console.log(stations[dataset.id].getChartValues());
-                }
-                dashboard.appendValuesFromStationToCharts();
+        /**
+         *
+         * @param xhr {XMLHttpRequest}
+         */
+        let update_fn = function (xhr) {
+            let dataPerStation = JSON.parse(xhr.responseText);
+            // console.log("db response: ");
+            // console.log(dataPerStation);
+            for (let dataset of dataPerStation) {
+                stations[parseInt(dataset.id)].updateValues(dataset.data);
+                // console.log("id: " + dataset.id);
+                // console.log(stations[dataset.id].getChartValues());
             }
-        };
-        xhttp.open("POST", "PHP/getDataLive.php", true);
-        xhttp.send(data);
+            dashboard.appendValuesFromStationToCharts();
+        }
+
+        fetch(data, "POST", "PHP/getDataLive.php", update_fn, true);
     },
 
     /**

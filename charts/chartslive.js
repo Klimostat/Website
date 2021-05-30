@@ -105,10 +105,11 @@ const live = {
     },
 
     fetchAndDeliverValuesFromDB: function () {
-        let stationsToLoad = [/*{
-            id: station.id,
-            since: station.lastFetch
-    }*/];
+        /**
+         *
+         * @type {{id: number, since: Date}[]}
+         */
+        let stationsToLoad = [];
         this.sensorCharts.forEach((station) => {
             stationsToLoad.push({
                 id: station.id,
@@ -119,23 +120,24 @@ const live = {
         let data = new FormData();
         data.append('stations', JSON.stringify(stationsToLoad));
 
-        let xhttp = new XMLHttpRequest();
-        xhttp.onreadystatechange = function () {
-            if (this.readyState === 4 && this.status === 200) {
-                let dataPerStation = JSON.parse(this.responseText);
-                // console.log("db response: ");
-                // console.log(dataPerStation);
-                for (let dataset of dataPerStation) {
-                    stations[parseInt(dataset.id)].updateValues(dataset.data);
-                    // console.log("id: " + dataset.id);
-                    // console.log(stations[dataset.id].getChartValues());
-                }
-                // selectedStation.updateValues(JSON.parse(this.responseText));
-                live.sensorCharts.updateCharts();
+        /**
+         *
+         * @param xhr {XMLHttpRequest}
+         */
+        let update_fn = function (xhr) {
+            let dataPerStation = JSON.parse(xhr.responseText);
+            // console.log("db response: ");
+            // console.log(dataPerStation);
+            for (let dataset of dataPerStation) {
+                stations[parseInt(dataset.id)].updateValues(dataset.data);
+                // console.log("id: " + dataset.id);
+                // console.log(stations[dataset.id].getChartValues());
             }
-        };
-        xhttp.open("POST", "PHP/getDataLive.php", true);
-        xhttp.send(data);
+            // selectedStation.updateValues(JSON.parse(this.responseText));
+            live.sensorCharts.updateCharts();
+        }
+
+        fetch(data, "POST", "PHP/getDataLive.php", update_fn, true);
     }
 }
 

@@ -9,10 +9,10 @@
 
 
 
-
+//die();
 require "session.php";
 verifySession();
-header("Content-Type: text/json");
+header("Content-Type: text/json", false);
 
 $stations = json_decode($_POST["stations"]);
 //print_r($stations);

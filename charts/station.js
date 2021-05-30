@@ -14,9 +14,28 @@ let colors = [
 ]
 
 class Station {
+    /**
+     *
+     * @type {?Date}
+     */
     lastFetch = null;
+
+    /**
+     *
+     * @type {?Date}
+     */
     lastChartUpdate = null;
+
+    /**
+     *
+     * @type {{}}
+     */
     dataPrepared = {};
+
+    /**
+     *
+     * @type {{maxTemperature: [], minTemperature: [], maxHumidity: [], maxCo2: [], minCo2: [], minHumidity: []}}
+     */
     datasetChart = {
         minTemperature: [],
         maxTemperature: [],
@@ -25,9 +44,29 @@ class Station {
         minHumidity: [],
         maxHumidity: []
     };
+
+    /**
+     *
+     * @type {?HTMLElement}
+     */
     navNode = null;
+
+    /**
+     *
+     * @type {number}
+     */
     maxCo2 = 0;
+
+    /**
+     *
+     * @type {number}
+     */
     minHumidity = 100;
+
+    /**
+     *
+     * @type {string}
+     */
     color = colors[/*(stations.length * 2 + 1) % 11*/stations.length % 12];
 
     /**

@@ -162,3 +162,26 @@ let sendAlert = function () {
     }
     // document.getElementById("alert").style.display = "block";
 }
+
+/**
+ *
+ * @param formdata {FormData}
+ * @param method {string}
+ * @param url {string}
+ * @param callback_fn_on_200 {function(xhr: XMLHttpRequest)}
+ * @param async {boolean}
+ */
+let fetch = function (formdata, method, url, callback_fn_on_200, async) {
+    let xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function () {
+        if (this.readyState === 4) {
+            if (this.status === 200) {
+                callback_fn_on_200(this);
+            } else {
+                document.body.classList.toggle("timeout", true);
+            }
+        }
+    };
+    xhr.open(method, url, async);
+    xhr.send(formdata);
+}
