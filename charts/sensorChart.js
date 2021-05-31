@@ -37,9 +37,14 @@ class SensorChart {
     remove(id) {
         if (this._ids.includes(id)) {
             let index = this._ids.indexOf(id);
-            // console.log("sensorCharts.remove: remove station " + id);
             this._charts.forEach(chart => chart.chart.data.datasets.splice(index, 1));
             this._ids.splice(index, 1);
+
+            index = this._ids.indexOf(id);
+            if (index >= 0) {
+                this._charts.forEach(chart => chart.chart.data.datasets.splice(index, 1));
+                this._ids.splice(index, 1);
+            }
         }
     };
 
@@ -47,26 +52,37 @@ class SensorChart {
      *
      * @param id {number}
      * @param datasets {Object}
+     * @param datasetsDashed {?Object}
      */
-    push(id, datasets) {
+    push(id, datasets, datasetsDashed=null) {
         if (!this._ids.includes(id)) {
-            // console.log("sensorCharts.push: push station " + id);
             let color = stations[id].color;
             let station = stations[id];
             this._charts.forEach(chart => {
                 chart.chart.data.datasets.push({
-                    label: station.name,
-                    data: datasets[chart.name],
+                    label: datasets[chart.name].name,
+                    data: datasets[chart.name].dataset,
+                    cubicInterpolationMode: 'monotone',
                     backgroundColor: color,
                     borderColor: color,
                     borderWidth: 1,
-                    segment: {
-                        // borderDash: ctx => skipped(ctx, ctx.p0.skip || ctx.p1.skip ? [6, 6] : undefined),
-                    }
                 });
-                // chart.chart.update();
             });
             this._ids.push(id);
+            if (datasetsDashed !== null) {
+                this._charts.forEach(chart => {
+                    chart.chart.data.datasets.push({
+                        label: datasetsDashed[chart.name].name,
+                        data: datasetsDashed[chart.name].dataset,
+                        cubicInterpolationMode: 'monotone',
+                        backgroundColor: color,
+                        borderColor: color,
+                        borderWidth: 1,
+                        borderDash: [5, 5],
+                    });
+                });
+                this._ids.push(id);
+            }
         }
     };
 

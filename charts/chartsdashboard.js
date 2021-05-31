@@ -37,38 +37,52 @@ let dashboard = {
     init: function () {
         // console.log("destroyed charts and loaded dashboard");
         charts = {
-            /*temperature: new Chart(document.getElementById('chart-temperature'), {
-                type: 'line',
-                data: {},
-                options: {
-                    legend: {
-                        labels: {
-                            fontColor: 'black',
-                            defaultFontColor: 'black'
-                        }
-                    },
-                },
-            }),*/
             humidity: new Chart(document.getElementById('chart-humidity'), {
                 type: 'line',
                 data: {},
                 options: {
-                    legend: {
-                        labels: {
-                            fontColor: 'black',
-                            defaultFontColor: 'black'
+                    plugins: {
+                        legend: {
+                            position: 'left',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Humidity'
                         }
                     },
+                    scales: {
+                        y: {
+                            display: true,
+                            title: {
+                                display: true,
+                                text: '% rH',
+                                align: 'end'
+                            }
+                        }
+                    }
                 }
             }),
             co2: new Chart(document.getElementById('chart-co2'), {
                 type: 'line',
                 data: {},
                 options: {
-                    legend: {
-                        labels: {
-                            fontColor: 'black',
-                            defaultFontColor: 'black'
+                    plugins: {
+                        legend: {
+                            position: 'left',
+                        },
+                        title: {
+                            display: true,
+                            text: 'CO2'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            display: true,
+                            title: {
+                                display: true,
+                                text: 'ppm',
+                                align: 'end'
+                            }
                         }
                     }
                 }
@@ -226,7 +240,7 @@ let dashboard = {
             const id = maxCo2IdsNew[i];
             if (!maxCo2IdsOld.includes(id)) {
                 maxCo2IdsOld.push(id);
-                this.co2Chart.push(id, {co2: stations[id].datasetChart.maxCo2});
+                this.co2Chart.push(id, {co2: {dataset: stations[id].datasetChart.maxCo2, name: stations[id].name + " max"}});
             }
         }
 
@@ -235,7 +249,7 @@ let dashboard = {
             if (!minHumidityIdsOld.includes(id)) {
                 minHumidityIdsOld.push(id);
                 // console.log("dashboard.updateAndDisplay: push station to humidity chart " + id)
-                this.humidityChart.push(id, {humidity: stations[id].datasetChart.minHumidity});
+                this.humidityChart.push(id, {humidity: {dataset: stations[id].datasetChart.minHumidity, name: stations[id].name + " min"}});
             }
         }
 

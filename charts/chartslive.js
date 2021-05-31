@@ -23,34 +23,73 @@ const live = {
                 type: 'line',
                 data: {},
                 options: {
-                    legend: {
-                        labels: {
-                            fontColor: 'black',
-                            defaultFontColor: 'black'
+                    plugins: {
+                        legend: {
+                            position: 'left',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Temperature'
                         }
                     },
-                },
+                    scales: {
+                        y: {
+                            display: true,
+                            title: {
+                                display: true,
+                                text: '°C',
+                                align: 'end'
+                            }
+                        }
+                    }
+                }
             }),
             humidity: new Chart(document.getElementById('chart-humidity'), {
                 type: 'line',
                 data: {},
                 options: {
-                    legend: {
-                        labels: {
-                            fontColor: 'black',
-                            defaultFontColor: 'black'
+                    plugins: {
+                        legend: {
+                            position: 'left',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Humidity'
                         }
                     },
+                    scales: {
+                        y: {
+                            display: true,
+                            title: {
+                                display: true,
+                                text: '% rH',
+                                align: 'end'
+                            }
+                        }
+                    }
                 }
             }),
             co2: new Chart(document.getElementById('chart-co2'), {
                 type: 'line',
                 data: {},
                 options: {
-                    legend: {
-                        labels: {
-                            fontColor: 'black',
-                            defaultFontColor: 'black'
+                    plugins: {
+                        legend: {
+                            position: 'left',
+                        },
+                        title: {
+                            display: true,
+                            text: 'CO2'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            display: true,
+                            title: {
+                                display: true,
+                                text: 'ppm',
+                                align: 'end'
+                            }
                         }
                     }
                 }
@@ -296,9 +335,13 @@ const selectedStations = {
                 // adds to graph
                 // console.log("pushed toDisplay");
                 live.sensorCharts.push(station.id, {
-                    humidity: station.datasetChart.minHumidity,
-                    temperature: station.datasetChart.maxTemperature,
-                    co2: station.datasetChart.maxCo2,
+                    humidity: {dataset: station.datasetChart.minHumidity, name: station.name + " min"},
+                    temperature: {dataset: station.datasetChart.maxTemperature, name: station.name + " max"},
+                    co2: {dataset: station.datasetChart.maxCo2, name: station.name + " max"},
+                },{
+                    humidity: {dataset: station.datasetChart.maxHumidity, name: station.name + " max"},
+                    temperature: {dataset: station.datasetChart.minTemperature, name: station.name + " min"},
+                    co2: {dataset: station.datasetChart.minCo2, name: station.name + " min"},
                 });
             } else {
                 //removes from graph
