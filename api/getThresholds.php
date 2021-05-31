@@ -10,7 +10,7 @@ $stmt->execute([$data_json["id"]]);
 $token = $stmt->fetch(PDO::FETCH_ASSOC)["token"];
 
 if (password_verify($data_json["token"], $token)) {
-    $thresholds = $conn->prepare("SELECT `threshold_co2` AS `co2`, `threshold_humidity` AS `humidity`, `threshold_temperature` AS `temperature` FROM `station` WHERE `pk_station_id` = ?");
+    $thresholds = $conn->prepare("SELECT `threshold_co2` AS `co2`, `threshold_humidity` AS `humidity` FROM `station` WHERE `pk_station_id` = ?");
     $thresholds->execute([$data_json["id"]]);
     echo json_encode($thresholds->fetch(PDO::FETCH_ASSOC));
 }
