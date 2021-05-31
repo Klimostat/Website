@@ -17,8 +17,8 @@ $insert->bindParam(':station_id', $data_json["id"]);
 
 if (password_verify($data_json["token"], $token)) {
     if ($insert->execute()) {
-        $thresholds = $conn->prepare("SELECT `co2`, `humidity`, `temperature` FROM `threshold` WHERE `pk_threshold_id` = 1");
-        $thresholds->execute();
+        $thresholds = $conn->prepare("SELECT `threshold_co2` AS `co2`, `threshold_humidity` AS `humidity`, `threshold_temperature` AS  FROM `station` WHERE `pk_station_id` = ?");
+        $thresholds->execute([$data_json["id"]]);
         echo json_encode($thresholds->fetch(PDO::FETCH_ASSOC));
     }
 }
