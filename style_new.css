@@ -5,7 +5,7 @@
 
 :root {
     --color1: #172815;
-    --color2: #DBFF78;
+    --color2: #dbff78;
 }
 
 * {
@@ -95,23 +95,13 @@ body.timeout > #main {
     position: static;
 }
 
-/*
-    footer
- */
-
-#footer {
-    min-height: 10vh;
-    background: var(--color1);
-    color: var(--color2);
-}
-
-#footer > * {
-    text-align: center;
-}
-
 .list-group-item.off {
     display:block;
     color: #454545;
     background-color: #a2a2a2;
     opacity: 0.5;
+}
+
+.list-group-item {
+    color: #dbff78;
 }

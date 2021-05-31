@@ -10,7 +10,7 @@
     }
 
     div{
-        padding: 5px;
+        padding: 3px;
     }
 
 </style>
