@@ -88,10 +88,9 @@ class Station {
 
         document.getElementById("stations-box").innerHTML +=
             "<div class = \"tooltip-base\">" +
-            "   <label class=\"list-group-item station-node\">" +
-            "       <input  id = \"station-" + this.id + "\" type=\"checkbox\" onchange=\"selectedStations.toggle(" + this.id + ")\" value=\"" + this.id + "\"" + (selected ? " checked" : "") + ">" +
+            "   <a href = \"javascript:selectedStations.toggle(" + this.id + ")\" class=\"list-group-item station-node\" id = \"station-" + this.id + "\">" +
             "       " + this.name + "" +
-            "   </label>" +
+            "   </a>" +
             "   <div class = \"card\">" +
             "       <div class = \"card-body\">" +
             "           Location: " + this.location + "" +

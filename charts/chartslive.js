@@ -289,7 +289,7 @@ const selectedStations = {
             // console.log("display - id: " + station.id + ", toDisplay: " + toDisplay);
 
             // toggles styling
-            station.getNavNode().parentElement.classList.toggle("selected", toDisplay);
+            station.getNavNode().classList.toggle("selected", toDisplay);
             selectedStations.updateOffline(station.id, toDisplay);
 
             if (toDisplay) {
@@ -345,6 +345,6 @@ const selectedStations = {
      * @param forceOnline {boolean}
      */
     updateOffline: function (id, forceOnline=true) {
-        stations[id].getNavNode().parentElement.classList.toggle("offline", forceOnline && stations[id].isOffline());
+        stations[id].getNavNode().classList.toggle("offline", forceOnline && stations[id].isOffline());
     }
 }
