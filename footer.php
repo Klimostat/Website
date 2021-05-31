@@ -9,6 +9,10 @@
         text-align: center;
     }
 
+    div{
+        padding: 5px;
+    }
+
 </style>
 
 <footer id = "footer">
