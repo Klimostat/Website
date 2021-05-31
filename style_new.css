@@ -109,6 +109,9 @@ body.timeout > #main {
     text-align: center;
 }
 
-label.off {
-
+.list-group-item.off {
+    display:block;
+    color: #303030;
+    background-color: #bcbcbc;
+    opacity: 0.7;
 }
