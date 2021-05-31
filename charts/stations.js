@@ -220,9 +220,9 @@ let countdown = {
         this._secsLeft--;
 
         // feeds db
-        let xhttp = new XMLHttpRequest();
-        xhttp.open("GET", "PHP/feeddb.php", true);
-        xhttp.send();
+        // let xhttp = new XMLHttpRequest();
+        // xhttp.open("GET", "PHP/feeddb.php", true);
+        // xhttp.send();
     }
 }
 
