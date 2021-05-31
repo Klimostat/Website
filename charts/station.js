@@ -88,7 +88,7 @@ class Station {
 
         document.getElementById("stations-box").innerHTML +=
             "<div class = \"tooltip-base\">" +
-            "   <label class=\"list-group-item active\">" +
+            "   <label class=\"list-group-item\">" +
             "       <input  id = \"station-" + this.id + "\" type=\"checkbox\" onchange=\"selectedStations.toggle(" + this.id + ")\" value=\"" + this.id + "\"" + (selected ? " checked" : "") + ">" +
             "       " + this.name + "" +
             "   </label>" +
