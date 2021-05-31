@@ -8,6 +8,11 @@
     #footer > * {
         text-align: center;
     }
+
+    div{
+        padding: 5px;
+    }
+
 </style>
 
 <footer id = "footer">
@@ -23,7 +28,7 @@
                 &copy; Klimostat
             </div>
             <div class="col">
-                <a href = "impressum.html">
+                <a href = "Impressum.php">
                     Impressum
                 </a>
             </div>

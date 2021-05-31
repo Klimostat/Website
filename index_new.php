@@ -31,8 +31,8 @@ verifySession();
         <link href="https://fonts.gstatic.com" rel="preconnect">
         <link href="https://fonts.googleapis.com/css2?family=Karla:ital,wght@1,700&display=swap" rel="stylesheet">
 
-<!--        <link crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" rel="stylesheet">-->
-        <link href="cache/http_cdn.jsdelivr.net_npm_bootstrap@5.0.0-beta1_dist_css_bootstrap.css" rel="stylesheet">
+        <link crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" rel="stylesheet">
+<!--        <link href="cache/http_cdn.jsdelivr.net_npm_bootstrap@5.0.0-beta1_dist_css_bootstrap.css" rel="stylesheet">-->
 
         <link rel="preconnect" href="https://fonts.gstatic.com">
         <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">
@@ -118,10 +118,10 @@ verifySession();
         </div>
 
 
-<!--        <script crossorigin="anonymous" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"></script>-->
-<!--        <script src="https://cdn.jsdelivr.net/npm/chart.js@3.2.1/dist/chart.min.js" integrity="sha256-uVEHWRIr846/vAdLJeybWxjPNStREzOlqLMXjW/Saeo=" crossorigin="anonymous"></script>-->
-        <script src="cache/http_cdn.jsdelivr.net_npm_bootstrap@5.0.0-beta1_dist_js_bootstrap.bundle.js"></script>
-        <script src="cache/http_cdn.jsdelivr.net_npm_chart.js@3.2.1_dist_chart.js"></script>
+        <script crossorigin="anonymous" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@3.2.1/dist/chart.min.js" integrity="sha256-uVEHWRIr846/vAdLJeybWxjPNStREzOlqLMXjW/Saeo=" crossorigin="anonymous"></script>
+<!--        <script src="cache/http_cdn.jsdelivr.net_npm_bootstrap@5.0.0-beta1_dist_js_bootstrap.bundle.js"></script>-->
+<!--        <script src="cache/http_cdn.jsdelivr.net_npm_chart.js@3.2.1_dist_chart.js"></script>-->
 
         <script src="charts/chartslive.js"></script>
         <script src="charts/chartsdashboard.js"></script>
