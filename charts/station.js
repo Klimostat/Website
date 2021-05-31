@@ -93,7 +93,8 @@ class Station {
             "   </a>" +
             "   <div class = \"card\">" +
             "       <div class = \"card-body\">" +
-            "           Location: " + this.location + "" +
+            "           Location: " + this.location + "<br>" +
+            "           Last update: <span> not yet </span>" +
             "       </div>" +
             "   </div>" +
             "</div>";
@@ -115,6 +116,7 @@ class Station {
 
             if (this.lastDatasetTime === null || entryTime > this.lastDatasetTime) {
                 this.lastDatasetTime = entryTime;
+                this.getNavNode().parentElement.getElementsByTagName("span")[0].innerHTML = jsToLocalReadableString(entryTime);
             }
 
             if (typeof this.dataPrepared[entryTimeString] === "object") {
