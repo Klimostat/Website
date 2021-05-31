@@ -9,7 +9,7 @@
 
 
 
-//die();
+//sleep(3);
 require "session.php";
 verifySession();
 header("Content-Type: text/json", false);

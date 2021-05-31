@@ -144,6 +144,9 @@ class SensorChart {
         this._lastUpdate = actDate;
     };
 
+    /**
+     *
+     */
     updateCharts() {
         this.updateChartLabels();
         this._charts.forEach(chart => {
@@ -157,7 +160,7 @@ class SensorChart {
         });
         this._charts.forEach(chart => {
             // console.log("update chart " + chart.name);
-            chart.chart.update()
+            chart.chart.update();
         });
     }
 }

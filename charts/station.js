@@ -27,6 +27,11 @@ class Station {
     lastChartUpdate = null;
 
     /**
+     * @type {?Date}
+     */
+    lastDatasetTime = null;
+
+    /**
      *
      * @type {{}}
      */
@@ -106,7 +111,13 @@ class Station {
             if (entry.humidity < grenzwertHumidity) {
                 sendAlert(this.alertMessageHumidity);
             }
-            let entryTimeString = jsTimeTo10MinLocalReadableString(mySQLToUTCJSDate(entry.time));
+            let entryTime = mySQLToUTCJSDate(entry.time);
+            let entryTimeString = jsTimeTo10MinLocalReadableString(entryTime);
+
+            if (this.lastDatasetTime === null || entryTime > this.lastDatasetTime) {
+                this.lastDatasetTime = entryTime;
+            }
+
             if (typeof this.dataPrepared[entryTimeString] === "object") {
                 let actSet = this.dataPrepared[entryTimeString];
                 this.dataPrepared[entryTimeString] = {
@@ -191,4 +202,8 @@ class Station {
         }
         return this.navNode;
     }
+
+   isOffline() {
+        return this.lastDatasetTime === null || this.lastDatasetTime.setMinutes(this.lastDatasetTime.getMinutes() + 10) < new Date();
+   }
 }

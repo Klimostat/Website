@@ -39,13 +39,6 @@ let grenzwertCO2;
 let grenzwertHumidity;
 
 /**
- * Controls the data-updates
- * @type {number}
- */
-let nextUpdateIn = 0;
-let intervalObj = null;
-
-/**
  * initializes environment at the start
  */
 function init() {
@@ -66,6 +59,8 @@ function init() {
     xhttp.send();
 
     Notification.requestPermission();
+
+    countdown.init(10, onConnectionLost, onUpdate);
 }
 
 function determineView() {
@@ -100,15 +95,137 @@ function determineView() {
 function updateCharts() {
     switch (loadedCharts) {
         case "live":
-            live.updateCharts();
+            live.startFetch(0);
             return;
         case "dashboard":
-            dashboard.updateCharts();
+            dashboard.startFetch(0);
             return;
         default:
             throw new Error("no charts loaded");
     }
 }
+
+/**
+ * sends a HTTP request to fetch data
+ * @param formdata {FormData} the data to be sent with the HTTP request
+ * @param method {string} the method for the request to be used
+ * @param url {string} the url of the request
+ * @param callbackFnOn200 {function(xhr: XMLHttpRequest)} a callback function that is called on HTTP 200 response
+ * @param async {?boolean} whether or not the request should be sent asynchronously
+ * @return {XMLHttpRequest} the XMLHttpRequest object
+ */
+let fetch = function (formdata, method, url, callbackFnOn200, async=true) {
+    let xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function () {
+        if (this.readyState === 4) {
+            if (this.status === 200) {
+                callbackFnOn200(this);
+            } else {
+                onConnectionLost();
+            }
+        }
+    };
+    xhr.open(method, url, async);
+    xhr.send(formdata);
+    return xhr;
+}
+
+let onConnectionLost = function () {
+    document.body.classList.toggle("timeout", true);
+}
+
+let onUpdate = function () {
+    document.body.classList.toggle("timeout", false);
+    document.getElementById("lastUpdated").innerHTML = jsToLocalReadableString(new Date());
+}
+
+let countdown = {
+    /**
+     *
+     * @type {?Function}
+     * @private
+     */
+    _fnOnEnd: null,
+
+    /**
+     *
+     * @type {?number}
+     * @private
+     */
+    _interval: null,
+
+    /**
+     *
+     * @type {number}
+     */
+    _secsLeft: 0,
+
+    /**
+     * @type {HTMLElement | null}
+     */
+    _node: null,
+
+    _timeout: 10,
+
+    _fnOnTimeout: null,
+
+    _fnOnReconnect: null,
+
+    /**
+     *
+     * @param timeout {number}
+     * @param callbackFnOnTimeout {Function}
+     * @param callbackFnOnReconnect {Function}
+     */
+    init: function (timeout, callbackFnOnTimeout, callbackFnOnReconnect) {
+        this._timeout = timeout;
+        this._fnOnTimeout = callbackFnOnTimeout;
+        this._fnOnReconnect = callbackFnOnReconnect;
+        this._node = document.getElementById("nextUpdateIn");
+        this._node = document.getElementById("nextUpdateIn");
+    },
+
+    /**
+     *
+     * @param secs {number}
+     * @param callbackFnOnEnd {Function}
+     */
+    start: function (secs, callbackFnOnEnd) {
+        this._fnOnReconnect();
+        this._secsLeft = secs;
+        this._fnOnEnd = callbackFnOnEnd;
+        this._update();
+        clearInterval(this._interval);
+        this._interval = setInterval(() => countdown._update(), 1000);
+    },
+
+    /**
+     *
+     * @private
+     */
+    _update: function () {
+        if (this._secsLeft === 0) {
+            this._fnOnEnd();
+            this._node.innerHTML = "new request sent";
+        } else if (this._timeout + this._secsLeft <= 0) {
+            this._fnOnTimeout();
+            this._fnOnEnd();
+            this._node.innerHTML = "retrying";
+            this._secsLeft = 0;
+        } else if (this._secsLeft < 0) {
+            this._node.innerHTML = "waiting for response: " + (this._timeout + this._secsLeft);
+        } else if (this._secsLeft > 0) {
+            this._node.innerHTML = "next update in " + (this._secsLeft) + " seconds";
+        }
+        this._secsLeft--;
+
+        // feeds db
+        let xhttp = new XMLHttpRequest();
+        xhttp.open("GET", "PHP/feeddb.php", true);
+        xhttp.send();
+    }
+}
+
 
 /**
  * convert a mySQL datetime string to a Date object
@@ -161,27 +278,4 @@ let sendAlert = function () {
         new Notification("Achtung! Ein Grenzwert wurde überschritten!");
     }
     // document.getElementById("alert").style.display = "block";
-}
-
-/**
- *
- * @param formdata {FormData}
- * @param method {string}
- * @param url {string}
- * @param callback_fn_on_200 {function(xhr: XMLHttpRequest)}
- * @param async {boolean}
- */
-let fetch = function (formdata, method, url, callback_fn_on_200, async) {
-    let xhr = new XMLHttpRequest();
-    xhr.onreadystatechange = function () {
-        if (this.readyState === 4) {
-            if (this.status === 200) {
-                callback_fn_on_200(this);
-            } else {
-                document.body.classList.toggle("timeout", true);
-            }
-        }
-    };
-    xhr.open(method, url, async);
-    xhr.send(formdata);
 }

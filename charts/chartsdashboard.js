@@ -77,18 +77,15 @@ let dashboard = {
 
         this.maxCo2Ids = [];
         this.minHumidityIds = [];
-
         this.humidityChart = new SensorChart([{name: "humidity", chart: charts.humidity}]);
         this.co2Chart = new SensorChart([{name: "co2", chart: charts.co2}]);
-
-        this.updateCharts();
+        this.startFetch(-10);
     },
 
     /**
      *
      */
     destroy: function () {
-        // console.log("dashboard.destroy");
         charts.humidity.destroy();
         this.humidityChart.clear();
         charts.co2.destroy();
@@ -98,32 +95,16 @@ let dashboard = {
     },
 
     /**
-     * updates the countdown, is called by an interval every second
+     *
      */
-    updateCountdown: function () {
-        if (nextUpdateIn <= 1) {
-            this.fetchAndDeliverValuesFromDB();
-            nextUpdateIn = this.UPDATE_INTERVAL;
-        } else {
-            nextUpdateIn--;
-        }
-        document.getElementById("nextUpdateIn").innerHTML = "" + nextUpdateIn;
-
-        // feeds db
-        let xhttp = new XMLHttpRequest();
-        xhttp.open("GET", "PHP/feeddb.php", true);
-        xhttp.send();
-
+    startFetch: function (secs) {
+        countdown.start(secs, function () {dashboard.fetchDataAndRestartCountdown()});
     },
 
-    updateCharts: function () {
-        nextUpdateIn = 0;
-        this.updateCountdown();
-        clearInterval(intervalObj);
-        intervalObj = setInterval(function () {dashboard.updateCountdown()}, 1000);
-    },
-
-    fetchAndDeliverValuesFromDB: function () {
+    /**
+     *
+     */
+    fetchDataAndRestartCountdown: function () {
         let stationsToLoad = [];
         stations.forEach(station => {
             stationsToLoad.push({
@@ -151,6 +132,7 @@ let dashboard = {
                 // console.log(stations[dataset.id].getChartValues());
             }
             dashboard.appendValuesFromStationToCharts();
+            dashboard.startFetch(10);
         }
 
         fetch(data, "POST", "PHP/getDataLive.php", update_fn, true);

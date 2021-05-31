@@ -48,7 +48,7 @@ verifySession();
                 <nav class="nav nav-pills">
                     <div class="container-fluid">
                         <a class="navbar-brand" href="javascript:selectedStations.clear()">
-                            <img src="res/Logo.png" alt="" width="40px" height="40px" class="d-inline-block align-center">
+                            <img src="res/logo2.png" alt="" width="40px" height="40px" class="d-inline-block align-center">
                             Klimostat
                         </a>
                     </div>
@@ -58,7 +58,7 @@ verifySession();
                 </nav>
                 <div class="container-fluid">
                     <div class = "nav-item" id = "timing">
-                           Stand: <span id = "lastUpdated">noch nicht gelanden</span>, nächstes Update in <span id = "nextUpdateIn">0</span> Sekunden.
+                           Effective: <span id = "lastUpdated">not loaded yet</span>, <span id = "nextUpdateIn"> </span>.
                            <a class="nav-link" href="javascript:updateCharts()">Update</a>
 
                     </div>

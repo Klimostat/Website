@@ -61,10 +61,8 @@ const live = {
             {name: "humidity", chart: charts.humidity},
             {name: "co2", chart:charts.co2}
         ]);
-
         selectedStations.display();
-
-        this.updateCharts();
+        this.startFetch(-10);
     },
 
     /**
@@ -78,33 +76,14 @@ const live = {
         this.sensorCharts.clear();
     },
 
+    startFetch: function (secs) {
+        countdown.start(secs, function () {live.fetchDataAndRestartCountdown()});
+    },
+
     /**
-     * updates the countdown, is called by an interval every second
+     *
      */
-    updateCountdown: function () {
-        if (nextUpdateIn <= 1) {
-            this.fetchAndDeliverValuesFromDB();
-            nextUpdateIn = this.UPDATE_INTERVAL;
-        } else {
-            nextUpdateIn--;
-        }
-        document.getElementById("nextUpdateIn").innerHTML = "" + nextUpdateIn;
-
-        // feeds db
-        let xhttp = new XMLHttpRequest();
-        xhttp.open("GET", "PHP/feeddb.php", true);
-        xhttp.send();
-
-    },
-
-    updateCharts: function () {
-        nextUpdateIn = 0;
-        this.updateCountdown();
-        clearInterval(intervalObj);
-        intervalObj = setInterval(function () {live.updateCountdown()}, 1000);
-    },
-
-    fetchAndDeliverValuesFromDB: function () {
+    fetchDataAndRestartCountdown: function () {
         /**
          *
          * @type {{id: number, since: Date}[]}
@@ -135,9 +114,15 @@ const live = {
             }
             // selectedStation.updateValues(JSON.parse(this.responseText));
             live.sensorCharts.updateCharts();
+
+            selectedStations.forEach(station => {
+                selectedStations.setOffline(station.id, station.isOffline());
+            });
+
+            live.startFetch(10);
         }
 
-        fetch(data, "POST", "PHP/getDataLive.php", update_fn, true);
+        let xhr = fetch(data, "POST", "PHP/getDataLive.php", update_fn, true);
     }
 }
 
@@ -350,5 +335,14 @@ const selectedStations = {
         this.getIds();
 
         return this._ids.includes(id);
+    },
+
+    /**
+     *
+     * @param id {number}
+     * @param offline {boolean}
+     */
+    setOffline: function (id, offline=true) {
+        stations[id].getNavNode().parentElement.classList.toggle("off", offline);
     }
 }
