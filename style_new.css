@@ -6,6 +6,7 @@
 :root {
     --color1: #172815;
     --color2: #dbff78;
+    --color3: #829D4B;
 }
 
 * {
@@ -102,6 +103,10 @@ body.timeout > #main {
     opacity: 0.5;
 }
 
-.list-group-item {
-    color: #dbff78;
+.list-group-item{
+    color: var(--color3);
+}
+
+.list-group-item.active {
+    background-color: var(--color3);
 }
