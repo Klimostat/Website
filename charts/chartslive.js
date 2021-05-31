@@ -116,7 +116,7 @@ const live = {
             live.sensorCharts.updateCharts();
 
             selectedStations.forEach(station => {
-                selectedStations.setOffline(station.id, station.isOffline());
+                selectedStations.updateOffline(station.id);
             });
 
             live.startFetch(10);
@@ -290,6 +290,7 @@ const selectedStations = {
 
             // toggles styling
             station.getNavNode().parentElement.classList.toggle("active", toDisplay);
+            selectedStations.updateOffline(station.id, toDisplay);
 
             if (toDisplay) {
                 // adds to graph
@@ -303,6 +304,7 @@ const selectedStations = {
                 //removes from graph
                 live.sensorCharts.remove(station.id);
             }
+
         };
 
         if (typeof id === "number") {
@@ -340,9 +342,9 @@ const selectedStations = {
     /**
      *
      * @param id {number}
-     * @param offline {boolean}
+     * @param forceOnline {boolean}
      */
-    setOffline: function (id, offline=true) {
-        stations[id].getNavNode().parentElement.classList.toggle("off", offline);
+    updateOffline: function (id, forceOnline=true) {
+        stations[id].getNavNode().parentElement.classList.toggle("off", forceOnline && stations[id].isOffline());
     }
 }
