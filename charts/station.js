@@ -14,44 +14,65 @@ let colors = [
 ]
 
 class Station {
-    /**
-     *
-     * @type {?Date}
-     */
-    lastFetch = null;
-
-    /**
-     * @type {?Date}
-     */
-    lastDatasetTime = null;
-
     // /**
     //  *
-    //  * @type {{live: Dataset, dashboard: Dataset, hist: Dataset}}
+    //  * @type {?Date}
     //  */
-    // datasetChart = {
-    //     live: new Dataset(),
-    //     dashboard: new Dataset(),
-    //     hist: new Dataset()
-    // };
-
-    /**
-     *
-     * @type {?HTMLElement}
-     */
-    navNode = null;
-
-    // /**
-    //  *
-    //  * @type {number}
-    //  */
-    // maxCo2 = 0;
+    // lastFetch = null;
     //
     // /**
-    //  *
-    //  * @type {number}
+    //  * @type {?Date}
     //  */
-    // minHumidity = 100;
+    // lastDatasetTime = null;
+
+    /**
+     *
+     * @type {Object}
+     */
+    navNode = {
+        station: this,
+        _node: null,
+        _loadedStyle: 0,
+        STYLES: [
+            "unselected",
+            "selected",
+            "offline"
+        ],
+
+
+        /**
+         *
+         * @return {HTMLElement|null}
+         */
+        get() {
+            return this._node;
+        },
+
+        /**
+         *
+         * @param style {string}
+         */
+        setStyle: function (style) {
+            if (!this.STYLES.includes(style)) {
+                return;
+            }
+            console.log(style);
+
+            // selected
+            this._node.classList.toggle("selected", style === "selected");
+
+            //offline
+            this._node.classList.toggle("offline", style === "offline");
+        },
+
+        /**
+         *
+         */
+        updateNewestData: function () {
+            this.get();
+            this._node.parentElement.getElementsByTagName("span")[0].innerHTML = jsToLocalReadableString(this.station.liveData.timestampOfNewestData);
+        }
+    };
 
     /**
      *
@@ -70,18 +91,28 @@ class Station {
         this.alertMessageCO2 = dbFetch.alert_message_co2;
         this.location = dbFetch.location;
 
-        document.getElementById("stations-box").innerHTML +=
-            "<div class = \"tooltip-base\">" +
-            "   <a href = \"javascript:selectedStations.toggle(" + this.id + ")\" class=\"list-group-item station-node\" id = \"station-" + this.id + "\">" +
-            "       " + this.name + "" +
-            "   </a>" +
-            "   <div class = \"card\">" +
-            "       <div class = \"card-body\">" +
-            "           Location: " + this.location + "<br>" +
-            "           Last update: <span> not yet </span>" +
-            "       </div>" +
-            "   </div>" +
-            "</div>";
+        let stationsBox = document.getElementById("stations-box");
+
+        let tooltipBase = document.createElement("div");
+        tooltipBase.classList.add("tooltip-base");
+
+        let navNode = document.createElement("a");
+        navNode.classList.add("list-group-item", "station-node");
+        navNode.href = "javascript:selectedStations.toggle(" + this.id + ")";
+        navNode.innerHTML = this.name;
+        this.navNode._node = navNode;
+
+        let card = document.createElement("div");
+        card.classList.add("card");
+
+        let cardBody = document.createElement("div");
+        cardBody.classList.add("card-body");
+        cardBody.innerHTML = "Location: " + this.location + "<br> Last update: <span> not yet </span>";
+
+        stationsBox.appendChild(tooltipBase);
+        tooltipBase.appendChild(navNode);
+        tooltipBase.appendChild(card);
+        card.appendChild(cardBody);
     }
 
     /**
@@ -97,17 +128,6 @@ class Station {
 
     /**
      *
-     * @return {HTMLElement|null}
-     */
-    getNavNode() {
-        if (this.navNode === null) {
-            this.navNode = document.getElementById("station-" + this.id);
-        }
-        return this.navNode;
-    }
-
-    /**
-     *
      * @return {boolean}
      */
     isOffline() {
@@ -117,7 +137,6 @@ class Station {
         }
         return true;
     }
-
 
     liveData = {
         station: this,
@@ -174,7 +193,7 @@ class Station {
                 // sets last the time when the station last sent data, to show offline stations
                 if (this.timestampOfNewestData === null || entryTime > this.timestampOfNewestData) {
                     this.timestampOfNewestData = entryTime;
-                    this.station.getNavNode().parentElement.getElementsByTagName("span")[0].innerHTML = jsToLocalReadableString(entryTime);
+                    this.station.navNode.updateNewestData();
                 }
 
                 if (dataPrepared[entryTimeString] === undefined) {

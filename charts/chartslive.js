@@ -114,6 +114,7 @@ const live = {
         charts.humidity.destroy();
         charts.co2.destroy();
         this.sensorCharts.clear();
+        stations.forEach(station => station.navNode.setStyle("unselected"));
     },
 
     startFetch: function (secs) {
@@ -160,14 +161,10 @@ const live = {
             selectedStations.updateAndDisplay();
             live.sensorCharts.updateCharts();
 
-            selectedStations.forEach(station => {
-                selectedStations.updateOffline(station.id);
-            });
-
             live.startFetch(10);
         }
 
-        let xhr = fetch(data, "POST", "PHP/getDataLive.php", update_fn, true);
+        fetcher.fetch(data, "POST", "PHP/getDataLive.php", update_fn, true);
     }
 }
 
@@ -259,7 +256,7 @@ const selectedStations = {
         this.updateCookie();
 
         // disables all styling
-        this.display();
+        // this.updateAndDisplay();
 
         determineView();
     },
@@ -278,7 +275,7 @@ const selectedStations = {
         this._idsSelected.splice(this._idsSelected.indexOf(id), 1);
 
         // disables styling and removes from displayed stations
-        this.display(id);
+        // this.display(id);
 
         //updates cookie
         this.updateCookie();
@@ -298,32 +295,10 @@ const selectedStations = {
         this._idsSelected.push(id);
 
         // enables styling and adds to displayed stations
-        this.display(id);
+        // this.display(id);
 
         // updates cookies
         this.updateCookie();
-    },
-
-    /**
-     *
-     * @param id
-     */
-    display: function (id=null) {
-        console.log("id = " + id)
-        let displayFunction = station => {
-            let toDisplay = this._idsSelected.includes(station.id);
-            // console.log("display - id: " + station.id + ", toDisplay: " + toDisplay);
-
-            // toggles styling
-            station.getNavNode().classList.toggle("selected", toDisplay);
-            selectedStations.updateOffline(station.id, toDisplay);
-        };
-
-        if (typeof id === "number") {
-            displayFunction(stations[id]);
-        } else {
-            stations.forEach(displayFunction);
-        }
     },
 
     /**
@@ -345,15 +320,6 @@ const selectedStations = {
         return this._idsSelected.includes(id);
     },
 
-    /**
-     *
-     * @param id {number}
-     * @param forceOnline {boolean}
-     */
-    updateOffline: function (id, forceOnline=true) {
-        stations[id].getNavNode().classList.toggle("offline", forceOnline && stations[id].isOffline());
-    },
-
     updateCookie: function () {
         selectedStationsCookie.update(this._idsSelected);
     },
@@ -361,28 +327,34 @@ const selectedStations = {
     updateAndDisplay: function () {
         //removes unselected
         for (let i = 0; i < this._idsDisplayed.length; i++){
-            const id = this._idsDisplayed[i];
-            if (!this._idsSelected.includes(id) && !stations[id].isOffline()) {
+            const station = stations[this._idsDisplayed[i]];
+            if (!this._idsSelected.includes(station.id) && !station.isOffline()) {
                 this._idsDisplayed.splice(i, 1);
-                live.sensorCharts.remove(id);
+                live.sensorCharts.remove(station.id);
                 i--;
+                station.navNode.setStyle("unselected");
             }
         }
 
         // adds selected
         for (let i = 0; i < this._idsSelected.length; i++){
             const station = stations[this._idsSelected[i]];
-            if (!this._idsDisplayed.includes(station.id) && !station.isOffline()) {
-                this._idsDisplayed.push(station.id);
-                live.sensorCharts.push(station.id, {
-                    humidity: {dataset: station.liveData.datasets.minHumidity, name: station.name + " min"},
-                    temperature: {dataset: station.liveData.datasets.maxTemperature, name: station.name + " max"},
-                    co2: {dataset: station.liveData.datasets.maxCo2, name: station.name + " max"},
-                },{
-                    humidity: {dataset: station.liveData.datasets.maxHumidity, name: station.name + " max"},
-                    temperature: {dataset: station.liveData.datasets.minTemperature, name: station.name + " min"},
-                    co2: {dataset: station.liveData.datasets.minCo2, name: station.name + " min"},
-                });
+            if (!this._idsDisplayed.includes(station.id)) {
+                if (!station.isOffline()) {
+                    this._idsDisplayed.push(station.id);
+                    live.sensorCharts.push(station.id, {
+                        humidity: {dataset: station.liveData.datasets.minHumidity, name: station.name + " min"},
+                        temperature: {dataset: station.liveData.datasets.maxTemperature, name: station.name + " max"},
+                        co2: {dataset: station.liveData.datasets.maxCo2, name: station.name + " max"},
+                    }, {
+                        humidity: {dataset: station.liveData.datasets.maxHumidity, name: station.name + " max"},
+                        temperature: {dataset: station.liveData.datasets.minTemperature, name: station.name + " min"},
+                        co2: {dataset: station.liveData.datasets.minCo2, name: station.name + " min"},
+                    });
+                    station.navNode.setStyle("selected");
+                } else {
+                    station.navNode.setStyle("offline");
+                }
             }
         }
     }

@@ -151,7 +151,7 @@ let dashboard = {
             dashboard.startFetch(10);
         }
 
-        fetch(data, "POST", "PHP/getDataLive.php", update_fn, true);
+        fetcher.fetch(data, "POST", "PHP/getDataLive.php", update_fn, true);
     },
 
     /**

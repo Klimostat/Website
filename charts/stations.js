@@ -105,29 +105,71 @@ function updateCharts() {
     }
 }
 
-/**
- * sends a HTTP request to fetch data
- * @param formdata {FormData} the data to be sent with the HTTP request
- * @param method {string} the method for the request to be used
- * @param url {string} the url of the request
- * @param callbackFnOn200 {function(xhr: XMLHttpRequest)} a callback function that is called on HTTP 200 response
- * @param async {?boolean} whether or not the request should be sent asynchronously
- * @return {XMLHttpRequest} the XMLHttpRequest object
- */
-let fetch = function (formdata, method, url, callbackFnOn200, async=true) {
-    let xhr = new XMLHttpRequest();
-    xhr.onreadystatechange = function () {
-        if (this.readyState === 4) {
-            if (this.status === 200) {
-                callbackFnOn200(this);
-            } else {
-                onConnectionLost();
+const fetcher = {
+    /**
+     * @type {XMLHttpRequest[]}
+     */
+    active: [],
+
+    /**
+     * @type {XMLHttpRequest[]}
+     */
+    que: [],
+
+    /**
+     * sends a HTTP request to fetch data
+     * @param formdata {FormData} the data to be sent with the HTTP request
+     * @param method {string} the method for the request to be used
+     * @param url {string} the url of the request
+     * @param callbackFnOn200 {function(xhr: XMLHttpRequest)} a callback function that is called on HTTP 200 response
+     * @param queue {boolean} whether the last request should be cancelled or the new request should be queued
+     // * @return {XMLHttpRequest} the XMLHttpRequest object
+     */
+    fetch: function (formdata, method, url, callbackFnOn200, queue=false) {
+        let xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function () {
+            if (this.readyState === 4) {
+                if (this.status === 200) {
+                    callbackFnOn200(this);
+                } else {
+                    onConnectionLost();
+                }
+                fetcher.next(this);
             }
+        };
+        xhr.open(method, url, true);
+        xhr.formdata = formdata;
+
+
+        //no active
+        if (this.active.length === 0) {
+            xhr.send(formdata);
+            this.active.push(xhr);
+
+        // cancel others
+        } else if (!queue) {
+            this.que = [];
+            this.active.forEach(xhr => xhr.onreadystatechange = new function () {});
+
+            xhr.send(formdata);
+            this.active.push(xhr);
+
+        // add to queue
+        } else {
+            this.que.push(xhr);
         }
-    };
-    xhr.open(method, url, async);
-    xhr.send(formdata);
-    return xhr;
+    },
+
+    next: function (xhr) {
+        let index = this.active.indexOf(xhr);
+        this.active.splice(index, 1);
+
+        if (this.que.length > 0) {
+            let newXhr = this.que.shift();
+            newXhr.send(newXhr.formdata);
+            this.active.push(newXhr);
+        }
+    }
 }
 
 let onConnectionLost = function () {
