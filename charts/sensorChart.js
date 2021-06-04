@@ -62,10 +62,11 @@ class SensorChart {
                 chart.chart.data.datasets.push({
                     label: datasets[chart.name].name,
                     data: datasets[chart.name].dataset,
-                    cubicInterpolationMode: 'monotone',
+                    // cubicInterpolationMode: 'monotone',
                     backgroundColor: color,
                     borderColor: color,
                     borderWidth: 1,
+                    segment: {}
                 });
             });
             this._ids.push(id);
@@ -74,11 +75,12 @@ class SensorChart {
                     chart.chart.data.datasets.push({
                         label: datasetsDashed[chart.name].name,
                         data: datasetsDashed[chart.name].dataset,
-                        cubicInterpolationMode: 'monotone',
+                        // cubicInterpolationMode: 'monotone',
                         backgroundColor: color,
                         borderColor: color,
                         borderWidth: 1,
                         borderDash: [5, 5],
+                        segment: {}
                     });
                 });
                 this._ids.push(id);
@@ -90,8 +92,14 @@ class SensorChart {
      *
      * @param fn {function(Station)}
      */
-    forEach(fn) {
-        this._ids.forEach(id => fn(stations[id]));
+    forEachLoadedStation(fn) {
+        let distinctStations = []
+        this._ids.forEach(id => {
+            if (!distinctStations.includes(id)) {
+                distinctStations.push(id)
+            }
+        });
+        distinctStations.forEach(id => fn(stations[id]));
     };
 
     /**
@@ -165,15 +173,15 @@ class SensorChart {
      */
     updateCharts() {
         this.updateChartLabels();
-        this._charts.forEach(chart => {
+        // this._charts.forEach(chart => {
             // console.log("update chart " + chart.name);
-            chart.chart.update()
-        });
-        this._ids.forEach(id => {
+            // chart.chart.update()
+        // });
+        // this._ids.forEach(id => {
             // console.log("updateCharts -> _ids.foreach -> " + id + " updateDatasetChart()")
             // console.log(stations[id]);
-            stations[id].updateDatasetChart();
-        });
+            // stations[id].updateDatasetChart();
+        // });
         this._charts.forEach(chart => {
             // console.log("update chart " + chart.name);
             chart.chart.update();

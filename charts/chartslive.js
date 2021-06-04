@@ -100,7 +100,9 @@ const live = {
             {name: "humidity", chart: charts.humidity},
             {name: "co2", chart:charts.co2}
         ]);
-        selectedStations.display();
+        selectedStationsCookie.getIds().forEach(id => {
+            selectedStations.push(id);
+        });
         this.startFetch(-10);
     },
 
@@ -108,7 +110,6 @@ const live = {
      *
      */
     destroy: function () {
-        // console.log("dashboard.destroy");
         charts.temperature.destroy();
         charts.humidity.destroy();
         charts.co2.destroy();
@@ -128,15 +129,19 @@ const live = {
          * @type {{id: number, since: Date}[]}
          */
         let stationsToLoad = [];
-        this.sensorCharts.forEach((station) => {
+        let time = new Date();
+        selectedStations.forEach((station) => {
             stationsToLoad.push({
                 id: station.id,
-                since: station.lastFetch
-            })
+                since: station.liveData.timestampOfLastFetch
+            });
+            station.liveData.timestampOfLastFetch = time;
         });
 
         let data = new FormData();
         data.append('stations', JSON.stringify(stationsToLoad));
+        console.log("db request: ");
+        console.log(stationsToLoad);
 
         /**
          *
@@ -144,14 +149,15 @@ const live = {
          */
         let update_fn = function (xhr) {
             let dataPerStation = JSON.parse(xhr.responseText);
-            // console.log("db response: ");
-            // console.log(dataPerStation);
+            console.log("db response: ");
+            console.log(dataPerStation);
             for (let dataset of dataPerStation) {
                 stations[parseInt(dataset.id)].updateValues(dataset.data);
                 // console.log("id: " + dataset.id);
                 // console.log(stations[dataset.id].getChartValues());
             }
             // selectedStation.updateValues(JSON.parse(this.responseText));
+            selectedStations.updateAndDisplay();
             live.sensorCharts.updateCharts();
 
             selectedStations.forEach(station => {
@@ -165,17 +171,16 @@ const live = {
     }
 }
 
-const selectedStations = {
+const selectedStationsCookie = {
+    /**
+     *
+     */
     _ids: null,
 
-    get: function () {
-        let lstations = [];
-        this.getIds().forEach(id => {
-            lstations.push(stations[id])
-        });
-        return lstations;
-    },
-
+    /**
+     *
+     * @return {null}
+     */
     getIds: function () {
         if (this._ids === null) {
             this._ids = [];
@@ -193,30 +198,52 @@ const selectedStations = {
 
     /**
      *
+     * @param ids {number[]}
+     */
+    update: function (ids) {
+        ids.sort();
+        this._ids = ids;
+        if (this._ids.length === 0) {
+            document.cookie = "station_ids=null; SameSite=Strict; Secure; expires=Thu, 01 Jan 1970 00:00:00 UTC";
+        } else {
+            document.cookie = "station_ids=" + this._ids + "; SameSite=Strict; Secure";
+        }
+    },
+}
+
+const selectedStations = {
+    _idsDisplayed: [],
+    _idsSelected: [],
+
+    get: function () {
+        let lstations = [];
+        this._idsSelected.forEach(id => {
+            lstations.push(stations[id])
+        });
+        return lstations;
+    },
+
+    /**
+     *
      * @param id {number}
      */
     toggle: function (id) {
-        this.getIds();
-
         // checks on wrong loaded charts
-        if (this._ids.length === 0 && loadedCharts !== "live") {
-            this._ids.push(id);
-            this.updateCookie();
+        if (this._idsSelected.length === 0 && loadedCharts !== "live") {
+            selectedStationsCookie.update([id]);
             determineView();
             return;
         }
 
-        if (this._ids.includes(id)) {
+        if (this._idsSelected.includes(id)) {
             //remove
             // console.log("remove " + id);
-            this.remove(id, true)
+            this.remove(id);
         } else {
             // add
             // console.log("adds " + id);
-            this.push(id, true);
+            this.push(id);
         }
-
-        this.updateCookie();
 
         updateCharts();
     },
@@ -224,23 +251,9 @@ const selectedStations = {
     /**
      *
      */
-    updateCookie: function () {
-        if (this._ids.length === 0) {
-            document.cookie = "station_ids=null; SameSite=Strict; Secure; expires=Thu, 01 Jan 1970 00:00:00 UTC";
-        } else {
-            document.cookie = "station_ids=" + this._ids + "; SameSite=Strict; Secure";
-        }
-    },
-
-    /**
-     *
-     */
     clear: function () {
-        // loads updates from cookie
-        this.getIds();
-
         // clears list
-        this._ids = [];
+        this._idsSelected = [];
 
         // writes cookie
         this.updateCookie();
@@ -254,65 +267,41 @@ const selectedStations = {
     /**
      *
      * @param id {number}
-     * @param secure {boolean}
      */
-    remove: function (id, secure = true) {
-        if (secure) {
-            // loads updates from cookie
-            this.getIds();
-        }
-
+    remove: function (id) {
         // checks for already displayed
-        if (!this._ids.includes(id)) {
+        if (!this._idsSelected.includes(id)) {
             return;
         }
 
         // takes out of list
-        this._ids.splice(this._ids.indexOf(id), 1);
+        this._idsSelected.splice(this._idsSelected.indexOf(id), 1);
 
         // disables styling and removes from displayed stations
         this.display(id);
 
-        if (secure) {
-            // writes cookie
-            this.updateCookie();
-        }
+        //updates cookie
+        this.updateCookie();
     },
 
     /**
      *
      * @param id {number}
-     * @param secure {boolean}
      */
-    push: function (id, secure=true) {
-        if (secure) {
-            // loads updates from cookie
-            this.getIds();
-        }
-
+    push: function (id) {
         // checks for already displayed
-        if (this._ids.includes(id)) {
+        if (this._idsSelected.includes(id)) {
             return;
         }
 
-        // checks on wrong loaded charts
-        // if (loadedCharts !== "live") {
-        //     this._ids.push(id);
-        //     this.updateCookie();
-        //     determineView();
-        //     return;
-        // }
-
         // adds to list
-        this._ids.push(id);
+        this._idsSelected.push(id);
 
         // enables styling and adds to displayed stations
         this.display(id);
 
-        if (secure) {
-            // updates cookies
-            this.updateCookie();
-        }
+        // updates cookies
+        this.updateCookie();
     },
 
     /**
@@ -320,34 +309,14 @@ const selectedStations = {
      * @param id
      */
     display: function (id=null) {
-        // loads updates from cookie
-        this.getIds();
-
+        console.log("id = " + id)
         let displayFunction = station => {
-            let toDisplay = this._ids.includes(station.id);
+            let toDisplay = this._idsSelected.includes(station.id);
             // console.log("display - id: " + station.id + ", toDisplay: " + toDisplay);
 
             // toggles styling
             station.getNavNode().classList.toggle("selected", toDisplay);
             selectedStations.updateOffline(station.id, toDisplay);
-
-            if (toDisplay) {
-                // adds to graph
-                // console.log("pushed toDisplay");
-                live.sensorCharts.push(station.id, {
-                    humidity: {dataset: station.datasetChart.minHumidity, name: station.name + " min"},
-                    temperature: {dataset: station.datasetChart.maxTemperature, name: station.name + " max"},
-                    co2: {dataset: station.datasetChart.maxCo2, name: station.name + " max"},
-                },{
-                    humidity: {dataset: station.datasetChart.maxHumidity, name: station.name + " max"},
-                    temperature: {dataset: station.datasetChart.minTemperature, name: station.name + " min"},
-                    co2: {dataset: station.datasetChart.minCo2, name: station.name + " min"},
-                });
-            } else {
-                //removes from graph
-                live.sensorCharts.remove(station.id);
-            }
-
         };
 
         if (typeof id === "number") {
@@ -359,13 +328,10 @@ const selectedStations = {
 
     /**
      *
-     * @param fn
+     * @param fn {function(Station)}
      */
     forEach: function (fn) {
-        // loads updates from cookie
-        this.getIds();
-
-        this._ids.forEach(id => {
+        this._idsSelected.forEach(id => {
             fn(stations[id]);
         });
     },
@@ -376,10 +342,7 @@ const selectedStations = {
      * @return {boolean}
      */
     includes: function (id) {
-        // loads updates from cookie
-        this.getIds();
-
-        return this._ids.includes(id);
+        return this._idsSelected.includes(id);
     },
 
     /**
@@ -389,5 +352,38 @@ const selectedStations = {
      */
     updateOffline: function (id, forceOnline=true) {
         stations[id].getNavNode().classList.toggle("offline", forceOnline && stations[id].isOffline());
+    },
+
+    updateCookie: function () {
+        selectedStationsCookie.update(this._idsSelected);
+    },
+
+    updateAndDisplay: function () {
+        //removes unselected
+        for (let i = 0; i < this._idsDisplayed.length; i++){
+            const id = this._idsDisplayed[i];
+            if (!this._idsSelected.includes(id) && !stations[id].isOffline()) {
+                this._idsDisplayed.splice(i, 1);
+                live.sensorCharts.remove(id);
+                i--;
+            }
+        }
+
+        // adds selected
+        for (let i = 0; i < this._idsSelected.length; i++){
+            const station = stations[this._idsSelected[i]];
+            if (!this._idsDisplayed.includes(station.id) && !station.isOffline()) {
+                this._idsDisplayed.push(station.id);
+                live.sensorCharts.push(station.id, {
+                    humidity: {dataset: station.liveData.datasets.minHumidity, name: station.name + " min"},
+                    temperature: {dataset: station.liveData.datasets.maxTemperature, name: station.name + " max"},
+                    co2: {dataset: station.liveData.datasets.maxCo2, name: station.name + " max"},
+                },{
+                    humidity: {dataset: station.liveData.datasets.maxHumidity, name: station.name + " max"},
+                    temperature: {dataset: station.liveData.datasets.minTemperature, name: station.name + " min"},
+                    co2: {dataset: station.liveData.datasets.minCo2, name: station.name + " min"},
+                });
+            }
+        }
     }
 }

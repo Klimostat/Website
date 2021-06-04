@@ -50,7 +50,7 @@ function init() {
             let json = JSON.parse(this.responseText);
             for (let i = 0; i < json.length; i++) {
                 let stationId = parseInt(json[i].pk_station_id);
-                stations[stationId] = new Station(json[i], selectedStations.includes(stationId));
+                stations[stationId] = new Station(json[i]);
             }
             determineView();
         }
@@ -67,7 +67,7 @@ function determineView() {
     // console.log("selectedStations");
     // console.log(selectedStations.get());
     let chartsToLoad = "live";
-    if (selectedStations.getIds().length === 0) {
+    if (selectedStationsCookie.getIds().length === 0) {
         chartsToLoad = "dashboard";
     }
 
@@ -220,9 +220,9 @@ let countdown = {
         this._secsLeft--;
 
         // feeds db
-        // let xhttp = new XMLHttpRequest();
-        // xhttp.open("GET", "PHP/feeddb.php", true);
-        // xhttp.send();
+        let xhttp = new XMLHttpRequest();
+        xhttp.open("GET", "PHP/feeddb.php", true);
+        xhttp.send();
     }
 }
 

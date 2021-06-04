@@ -1,6 +1,6 @@
 <?php
 error_reporting(E_ALL);
-$db = new PDO("mysql:host=localhost;dbname=klimostat", "root", "");
+$db = new PDO("mysql:host=localhost;dbname=klimostat", "root", "passwd");
 
 $fk_station_id = 0;
 while ($fk_station_id <= 4){
