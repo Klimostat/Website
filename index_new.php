@@ -58,9 +58,18 @@ verifySession();
                     </div>
                 </nav>
                 <div class="container-fluid">
+                    <div class = "nav-item">
+                        <select name = "interval" size = "1">
+                            <option value = "live"> Live </option>
+                            <option value = "today"> Today </option>
+                            <option value = "yesterday"> Yesterday </option>
+                        </select>
+                    </div>
                     <div class = "nav-item" id = "timing">
-                           Effective: <span id = "lastUpdated">not loaded yet</span>, <span id = "nextUpdateIn"> </span>.
-                           <a class="nav-link" href="javascript:updateCharts()">Update</a>
+                        Effective: <span id = "lastUpdated">not loaded yet</span>, <span id = "nextUpdateIn"> </span>.
+                    </div>
+                    <div class = "nav-item">
+                        <a class="nav-link" href="javascript:updateCharts()">Update</a>
                     </div>
                     <div class="nav-item">
                         <a class = "nav-link" href = "PHP/logout.php"> Logout </a>
@@ -125,6 +134,7 @@ verifySession();
 
         <script src="charts/chartslive.js"></script>
         <script src="charts/chartsdashboard.js"></script>
+        <script src="charts/chartshist.js"></script>
         <script src="charts/station.js"></script>
         <script src="charts/stations.js"></script>
         <script src="charts/sensorChart.js"></script>
