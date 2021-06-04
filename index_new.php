@@ -26,6 +26,7 @@ verifySession();
     <head>
         <meta charset="UTF-8">
         <meta content="width=device-width, initial-scale=1" name="viewport">
+        <link rel = "icon" href = "res/logo2.png">
         <title>Klimostat Home</title>
         <link href="https://fonts.gstatic.com" rel="preconnect">
         <link href="https://fonts.gstatic.com" rel="preconnect">
@@ -60,7 +61,6 @@ verifySession();
                     <div class = "nav-item" id = "timing">
                            Effective: <span id = "lastUpdated">not loaded yet</span>, <span id = "nextUpdateIn"> </span>.
                            <a class="nav-link" href="javascript:updateCharts()">Update</a>
-
                     </div>
                     <div class="nav-item">
                         <a class = "nav-link" href = "PHP/logout.php"> Logout </a>

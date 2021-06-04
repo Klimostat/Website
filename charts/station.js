@@ -214,11 +214,9 @@ class Station {
                         minTemperature: Math.min(entry.temperature, dataPrepared[entryTimeString].minTemperature),
                         maxTemperature: Math.max(entry.temperature, dataPrepared[entryTimeString].maxTemperature)
                     }
-
                 }
-
                 this.minHumidity = Math.min(entry.humidity, this.minHumidity);
-                this.maxCo2 = Math.max(entry.maxCo2, this.maxCo2);
+                this.maxCo2 = Math.max(entry.co2, this.maxCo2);
             }
 
             /**
