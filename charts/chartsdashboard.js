@@ -36,7 +36,7 @@ let dashboard = {
      */
     init: function () {
         // console.log("destroyed charts and loaded dashboard");
-        charts = {
+        klimostat.charts = {
             humidity: new Chart(document.getElementById('chart-humidity'), {
                 type: 'line',
                 data: {},
@@ -91,8 +91,8 @@ let dashboard = {
 
         this.maxCo2Ids = [];
         this.minHumidityIds = [];
-        this.humidityChart = new SensorChart([{name: "humidity", chart: charts.humidity}]);
-        this.co2Chart = new SensorChart([{name: "co2", chart: charts.co2}]);
+        this.humidityChart = new SensorChart([{name: "humidity", chart: klimostat.charts.humidity}]);
+        this.co2Chart = new SensorChart([{name: "co2", chart: klimostat.charts.co2}]);
         this.startFetch(-10);
     },
 
@@ -100,9 +100,9 @@ let dashboard = {
      *
      */
     destroy: function () {
-        charts.humidity.destroy();
+        klimostat.charts.humidity.destroy();
         this.humidityChart.clear();
-        charts.co2.destroy();
+        klimostat.charts.co2.destroy();
         this.co2Chart.clear();
         this.maxCo2Ids = null;
         this.minHumidityIds = null;
@@ -121,7 +121,7 @@ let dashboard = {
     fetchDataAndRestartCountdown: function () {
         let stationsToLoad = [];
         let time = new Date();
-        stations.forEach(station => {
+        klimostat.stations.forEach(station => {
             stationsToLoad.push({
                 id: station.id,
                 since: station.liveData.timestampOfLastFetch
@@ -142,11 +142,11 @@ let dashboard = {
             let dataPerStation = JSON.parse(xhr.responseText);
             // console.log("db response: ");
             // console.log(dataPerStation);
-            for (let dataset of dataPerStation) {
-                stations[parseInt(dataset.id)].updateValues(dataset.data);
-                // console.log("id: " + dataset.id);
-                // console.log(stations[dataset.id].getChartValues());
-            }
+            klimostat.intervals.live.updateChartValues(dataPerStation)
+            // for (let dataset of dataPerStation) {
+            //     console.log("id: " + dataset.id);
+            //     console.log(stations[dataset.id].getChartValues());
+            // }
             dashboard.appendValuesFromStationToCharts();
             dashboard.startFetch(10);
         }
@@ -191,28 +191,28 @@ let dashboard = {
          */
         let minHumidityIdsOld = this.minHumidityIds.slice();
 
-        stations.forEach(station => {
+        klimostat.stations.forEach(station => {
             //CO2
-            let co2CompareFn = (a, b) => -stations[a].liveData.maxCo2 + stations[b].liveData.maxCo2;
+            let co2CompareFn = (a, b) => -klimostat.stations[a].liveData.maxCo2 + klimostat.stations[b].liveData.maxCo2;
             if (maxCo2IdsNew.includes(station.id)) {
                 maxCo2IdsNew.sort(co2CompareFn);
             } else if (maxCo2IdsNew.length < this.DISPLAYED_STATION_COUNT) {
                 maxCo2IdsNew.push(station.id);
                 maxCo2IdsNew.sort(co2CompareFn);
-            } else if (station.liveData.maxCo2 > stations[maxCo2IdsNew[maxCo2IdsNew.length - 1]].liveData.maxCo2) {
+            } else if (station.liveData.maxCo2 > klimostat.stations[maxCo2IdsNew[maxCo2IdsNew.length - 1]].liveData.maxCo2) {
                 maxCo2IdsNew.push(station.id);
                 maxCo2IdsNew.sort(co2CompareFn);
                 maxCo2IdsNew.pop();
             }
 
             //Humidity
-            let humidityCompareFn = (a, b) => stations[a].liveData.minHumidity - stations[b].liveData.minHumidity;
+            let humidityCompareFn = (a, b) => klimostat.stations[a].liveData.minHumidity - klimostat.stations[b].liveData.minHumidity;
             if (minHumidityIdsNew.includes(station.id)) {
                 minHumidityIdsNew.sort(humidityCompareFn);
             } else if (minHumidityIdsNew.length < this.DISPLAYED_STATION_COUNT) {
                 minHumidityIdsNew.push(station.id);
                 minHumidityIdsNew.sort(humidityCompareFn);
-            } else if (station.liveData.minHumidity < stations[minHumidityIdsNew[minHumidityIdsNew.length - 1]].liveData.minHumidity) {
+            } else if (station.liveData.minHumidity < klimostat.stations[minHumidityIdsNew[minHumidityIdsNew.length - 1]].liveData.minHumidity) {
                 minHumidityIdsNew.push(station.id);
                 minHumidityIdsNew.sort(humidityCompareFn);
                 minHumidityIdsNew.pop();
@@ -242,16 +242,16 @@ let dashboard = {
             const id = maxCo2IdsNew[i];
             if (!maxCo2IdsOld.includes(id)) {
                 maxCo2IdsOld.push(id);
-                this.co2Chart.push(id, {co2: {dataset: stations[id].liveData.datasets.maxCo2, name: stations[id].name + " max"}});
+                this.co2Chart.push(id, {co2: {dataset: klimostat.stations[id].datasets.maxCo2, name: klimostat.stations[id].name + " max"}});
             }
         }
 
-        for (let i = 0; i < minHumidityIdsNew.length; i++){
+        for (let i = 0; i < minHumidityIdsNew.length; i++) {
             const id = minHumidityIdsNew[i];
             if (!minHumidityIdsOld.includes(id)) {
                 minHumidityIdsOld.push(id);
                 // console.log("dashboard.updateAndDisplay: push station to humidity chart " + id)
-                this.humidityChart.push(id, {humidity: {dataset: stations[id].liveData.datasets.minHumidity, name: stations[id].name + " min"}});
+                this.humidityChart.push(id, {humidity: {dataset: klimostat.stations[id].datasets.minHumidity, name: klimostat.stations[id].name + " min"}});
             }
         }
 

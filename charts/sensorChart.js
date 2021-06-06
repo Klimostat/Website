@@ -56,8 +56,7 @@ class SensorChart {
      */
     push(id, datasets, datasetsDashed=null) {
         if (!this._ids.includes(id)) {
-            let color = stations[id].color;
-            let station = stations[id];
+            let color = klimostat.stations[id].color;
             this._charts.forEach(chart => {
                 chart.chart.data.datasets.push({
                     label: datasets[chart.name].name,
@@ -99,7 +98,7 @@ class SensorChart {
                 distinctStations.push(id)
             }
         });
-        distinctStations.forEach(id => fn(stations[id]));
+        distinctStations.forEach(id => fn(klimostat.stations[id]));
     };
 
     /**
@@ -136,7 +135,7 @@ class SensorChart {
      * @return {Station}
      */
     get(index) {
-        return stations[this._ids[index]];
+        return klimostat.stations[this._ids[index]];
     };
 
     updateChartLabels() {
@@ -160,7 +159,7 @@ class SensorChart {
         }
 
         for (; time < actDate; time.setSeconds(time.getSeconds() + 10)) {
-            let timeString = jsTimeTo10MinLocalReadableString(time);
+            let timeString = date.toIntervalLocalReadableString(time, "10sec");
             this._charts.forEach(chart => push(chart.chart.data.labels, timeString));
         }
         // this._charts.forEach(chart => chart.chart.update());
@@ -173,17 +172,7 @@ class SensorChart {
      */
     updateCharts() {
         this.updateChartLabels();
-        // this._charts.forEach(chart => {
-            // console.log("update chart " + chart.name);
-            // chart.chart.update()
-        // });
-        // this._ids.forEach(id => {
-            // console.log("updateCharts -> _ids.foreach -> " + id + " updateDatasetChart()")
-            // console.log(stations[id]);
-            // stations[id].updateDatasetChart();
-        // });
         this._charts.forEach(chart => {
-            // console.log("update chart " + chart.name);
             chart.chart.update();
         });
     }

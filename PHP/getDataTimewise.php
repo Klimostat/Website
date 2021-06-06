@@ -12,24 +12,34 @@
 
 
 
-
+//sleep(3);
 require "session.php";
 verifySession();
+header("Content-Type: text/json", false);
 
-$from = $_POST["from"];
-$to = $_POST["to"];
-$sensorId = $_POST["sensorId"];
+$stations = json_decode($_POST["stations"]);
+//print_r($stations);
+$outObject = [];
+
 $interval = $_POST["interval"];
 
-$timeStrLen = 19;
-$timeAppend = "";
+$data = $data = $conn -> prepare("
+select timestamp(concat(left(l.pk_measurement_time, 17), '00')) time, max(l.co2) max_co2, min(l.co2) min_co2, max(l.humidity) max_humidity, min(l.humidity) min_humidity, max(l.temperature) max_temperature, min(l.temperature) min_temperature from live_data l
+where l.pk_measurement_time > subtime(utc_timestamp, '01:00:10')
+and l.fk_station_id = :station_id
+group by time;
+");
 
 switch ($interval) {
-    case "min":
-        $timeStrLen = 16;
-        $timeAppend = ":00";
+    case "hour":
+        $data = $conn -> prepare("
+select timestamp(concat(left(l.pk_measurement_time, 17), '00')) time, max(l.co2) max_co2, min(l.co2) min_co2, max(l.humidity) max_humidity, min(l.humidity) min_humidity, max(l.temperature) max_temperature, min(l.temperature) min_temperature from live_data l
+where l.pk_measurement_time > subtime(utc_timestamp, '01:00:10')
+and l.fk_station_id = :station_id
+group by time;
+");
         break;
-    case "10min":
+    case "day":
         $timeStrLen = 15;
         $timeAppend = "0:00";
         break;
@@ -37,36 +47,28 @@ switch ($interval) {
         $timeStrLen = 13;
         $timeAppend = ":00:00";
         break;
-    case "day":
-        $timeStrLen = 10;
-        $timeAppend = "";
-        break;
 }
 
-$data = $conn -> prepare("
-select timestamp(concat(left(m.measuring_time, :timeStrLen), :timeAppend)) time, max(m.measuring_data) max, min(m.measuring_data) min from measurement m
-where m.measuring_time > :from
-and m.measuring_time <= :to
-and m.fk_sensorId = :sensorId
-group by time;
-");
+//$data = $conn -> prepare("
+//select timestamp(concat(left(l.pk_measurement_time, 17), '00')) time1, max(l.co2) max_co2, min(l.co2) min_co2, max(l.humidity) max_humidity, min(l.humidity) min_humidity, max(l.temperature) max_temperature, min(l.temperature) min_temperature from live_data l
+//    where l.pk_measurement_time > :from
+//    and l.pk_measurement_time <= :to
+//    and l.fk_station_id = :fk_station_id
+//    group by time1;
+//");
 
-$data -> bindParam(":from", $from);
-$data -> bindParam(":to", $to);
-$data -> bindParam(":sensorId", $sensorId);
-$data -> bindParam(":timeStrLen", $timeStrLen);
-$data -> bindParam(":timeAppend", $timeAppend);
-$data -> execute();
+for ($i = 0; $i < count($stations); $i++) {
 
-$outString = "[";
+    $data -> bindParam(":station_id", $stations[$i] -> id);
+    $data -> execute();
 
-if ($data -> rowCount() > 0) {
-    while ($tupel = $data -> fetch(PDO::FETCH_ASSOC)) {
-        $outString .= "{\"time\":\"{$tupel['time']}\",\"min\":{$tupel['min']},\"max\":{$tupel['max']}},";
+    if ($data -> rowCount() > 0) {
+        $outValuesPerStation = [];
+        while ($tupel = $data -> fetch(PDO::FETCH_ASSOC)) {
+            array_push($outValuesPerStation, ["time" => $tupel['time'], "minHumidity" => $tupel['min_humidity'], "maxHumidity" => $tupel['max_humidity'], "minTemperature" => $tupel['min_temperature'], "maxTemperature" => $tupel['max_temperature'], "minCo2" => $tupel['min_co2'], "maxCo2" => $tupel['max_co2']]);
+        }
+        array_push($outObject, ["id" => $stations[$i] -> id, "data" => $outValuesPerStation]);
     }
-    $outString = substr($outString, 0, strlen($outString) - 1);
 }
 
-
-
-echo $outString . "]";
+echo json_encode($outObject);

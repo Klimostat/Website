@@ -59,17 +59,17 @@ verifySession();
                 </nav>
                 <div class="container-fluid">
                     <div class = "nav-item">
-                        <select name = "interval" size = "1">
-                            <option value = "live"> Live </option>
-                            <option value = "today"> Today </option>
-                            <option value = "yesterday"> Yesterday </option>
+                        <select id = "interval" name = "interval" size = "1" onchange="intervals.setSelected()">
+<!--                            <option value = "live"> Live </option>-->
+<!--                            <option value = "today"> Today </option>-->
+<!--                            <option value = "yesterday"> Yesterday </option>-->
                         </select>
                     </div>
                     <div class = "nav-item" id = "timing">
                         Effective: <span id = "lastUpdated">not loaded yet</span>, <span id = "nextUpdateIn"> </span>.
                     </div>
                     <div class = "nav-item">
-                        <a class="nav-link" href="javascript:updateCharts()">Update</a>
+                        <a class="nav-link" href="javascript:klimostat.updateCharts()">Update</a>
                     </div>
                     <div class="nav-item">
                         <a class = "nav-link" href = "PHP/logout.php"> Logout </a>
@@ -132,11 +132,13 @@ verifySession();
         <script src="cache/http_cdn.jsdelivr.net_npm_bootstrap@5.0.0-beta1_dist_js_bootstrap.bundle.js"></script>
         <script src="cache/http_cdn.jsdelivr.net_npm_chart.js@3.2.1_dist_chart.js"></script>
 
-        <script src="charts/chartslive.js"></script>
+        <script src="charts/klimostat.js"></script>
+        <script src="charts/selectedStations.js"></script>
+        <script src="charts/chartsinterval.js"></script>
+        <script src="charts/live.js"></script>
+        <script src="charts/hour.js"></script>
         <script src="charts/chartsdashboard.js"></script>
-        <script src="charts/chartshist.js"></script>
         <script src="charts/station.js"></script>
-        <script src="charts/stations.js"></script>
         <script src="charts/sensorChart.js"></script>
     </body>
 </html>

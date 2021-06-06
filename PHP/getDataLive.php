@@ -22,10 +22,10 @@ for ($i = 0; $i < count($stations); $i++) {
     if ($stations[$i]->since != null) {
         $data = $conn -> prepare("
 select m.pk_measurement_time time, m.co2, m.humidity, m.temperature from live_data m
-where m.pk_measurement_time > :from
+where m.pk_measurement_time > :since
 and m.fk_station_id = :station_id
 ");
-        $data -> bindParam(":from", $stations[$i]->since);
+        $data -> bindParam(":since", $stations[$i]->since);
     } else {
         $data = $conn -> prepare("
 select m.pk_measurement_time time, m.co2, m.humidity, m.temperature from live_data m
@@ -36,7 +36,6 @@ and m.fk_station_id = :station_id
 
     $data -> bindParam(":station_id", $stations[$i]->id);
     $data -> execute();
-
 
     if ($data -> rowCount() > 0) {
         $outValuesPerStation = array();

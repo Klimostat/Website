@@ -20,7 +20,7 @@
 require "PHP/session.php";
 verifySession();
 
-$scriptname = "chartslive.js";
+$scriptname = "chartsinterval.js";
 
 if (isset($_GET["hist"])) {
     $scriptname = "chartshist.js";
