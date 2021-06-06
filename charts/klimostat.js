@@ -79,6 +79,14 @@ const klimostat = {
 
         Notification.requestPermission();
 
+        Chart.defaults.interaction = {
+            mode: 'nearest',
+            axis: 'x'
+        }
+        Chart.defaults.plugins.tooltip.itemSort = (x, y) => {return y.raw - x.raw}
+        Chart.defaults.plugins.legend.position = 'left';
+        Chart.defaults.plugins.title.display = true;
+
         countdown.init(10, onConnectionLost, onUpdate);
     },
 

@@ -42,11 +42,7 @@ let dashboard = {
                 data: {},
                 options: {
                     plugins: {
-                        legend: {
-                            position: 'left',
-                        },
                         title: {
-                            display: true,
                             text: 'Humidity'
                         }
                     },
@@ -67,11 +63,7 @@ let dashboard = {
                 data: {},
                 options: {
                     plugins: {
-                        legend: {
-                            position: 'left',
-                        },
                         title: {
-                            display: true,
                             text: 'CO2'
                         }
                     },

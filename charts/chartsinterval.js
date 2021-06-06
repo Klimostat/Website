@@ -31,11 +31,7 @@ const interval = {
                 data: {},
                 options: {
                     plugins: {
-                        legend: {
-                            position: 'left',
-                        },
                         title: {
-                            display: true,
                             text: 'Temperature'
                         }
                     },
@@ -56,11 +52,7 @@ const interval = {
                 data: {},
                 options: {
                     plugins: {
-                        legend: {
-                            position: 'left',
-                        },
                         title: {
-                            display: true,
                             text: 'Humidity'
                         }
                     },
@@ -81,11 +73,7 @@ const interval = {
                 data: {},
                 options: {
                     plugins: {
-                        legend: {
-                            position: 'left',
-                        },
                         title: {
-                            display: true,
                             text: 'CO2'
                         }
                     },
