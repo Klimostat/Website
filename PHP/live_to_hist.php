@@ -8,10 +8,6 @@ $stations->execute();
 echo "<br> Connection to Database established";
 
 while ($station = $stations -> fetch(PDO::FETCH_ASSOC)) {
-
-    echo "<br> begin of while loop";
-    echo "<br>";
-
     $fk_station_id = $station['pk_station_id'];
 
     $today = date("Y-m-d H:i:s");
@@ -24,29 +20,23 @@ while ($station = $stations -> fetch(PDO::FETCH_ASSOC)) {
     group by time1;
     ");
 
-    echo "<br> Live Data selected";
-    echo "<br>";
 
     $data->bindParam(":fk_station_id", $fk_station_id);
     $data->bindParam(":to", $two_days_ago);
     $data->execute();
 
+    $delete = $conn->prepare("Delete from live_data where pk_measurement_time < :since;");
+    $delete->bindParam(":since", $two_days_ago);
+    $stations->execute();
+
     while ($line = $data -> fetch(PDO::FETCH_ASSOC)) {
-        echo "<br> min co2 value";
         echo $min_co2 = $line['min_co2'];
-        echo "<br> max co2 value";
         echo $max_co2 = $line['max_co2'];
-        echo "<br> min humidity value";
         echo $min_humidity = $line['min_humidity'];
-        echo "<br> max humidity value";
         echo $max_humidity = $line['max_humidity'];
-        echo "<br> min temperature value";
         echo $min_temperature = $line['min_temperature'];
-        echo "<br> max temperature value";
         echo $max_temperature = $line['max_temperature'];
-        echo "<br> timestamp";
         echo $time = $line['time1'];
-        echo "<br>";
 
         $insert_to_historical = $conn->prepare("INSERT INTO historical_data (`fk_station_id`, `pk_measurement_time`, `min_co2`, `max_co2`, `min_humidity`, `max_humidity`, `min_temperature`, `max_temperature`) VALUES (:fk_station_id, :time1, :min_co2, :max_co2, :min_humidity, :max_humidity, :min_temperature, :max_temperature)");
         $insert_to_historical->bindParam(":min_co2", $min_co2);
@@ -59,8 +49,6 @@ while ($station = $stations -> fetch(PDO::FETCH_ASSOC)) {
         $insert_to_historical->bindParam(":fk_station_id", $fk_station_id);
         $insert_to_historical->execute();
 
-        echo "<br> Insert into historical data successful";
-        echo "<br>";
     }
 }
 ?>
