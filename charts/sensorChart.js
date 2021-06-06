@@ -13,10 +13,14 @@ class SensorChart {
      */
     _charts;
 
+    labels = [];
+
+    loadedInterval = "";
+
     /**
      *
      */
-    _lastUpdate = null;
+    lastLabelUpdate = null;
 
     /**
      *
@@ -28,6 +32,7 @@ class SensorChart {
         } else {
             throw new Error();
         }
+        this._charts.forEach(chart => chart.chart.data.labels = this.labels);
     };
 
     /**
@@ -104,6 +109,13 @@ class SensorChart {
     /**
      *
      */
+    forEachChart(fn) {
+        this._charts.forEach(chart => fn(chart.chart));
+    }
+
+    /**
+     *
+     */
     clear() {
         this._charts.forEach(chart => {
             while (chart.chart.data.datasets.length > 0) {
@@ -138,40 +150,40 @@ class SensorChart {
         return klimostat.stations[this._ids[index]];
     };
 
-    updateChartLabels() {
-        let actDate = new Date();
-        actDate.setMilliseconds(0);
-
-        let time = new Date();
-        time.setMinutes(actDate.getMinutes() - 5);
-
-        let push = function (where, what) {
-            where.push(what);
-            where.shift();
-        }
-
-        if (this._lastUpdate == null) {
-            push = function (where, what) {
-                where.push(what);
-            }
-        } else {
-            time = this._lastUpdate;
-        }
-
-        for (; time < actDate; time.setSeconds(time.getSeconds() + 10)) {
-            let timeString = date.toIntervalLocalReadableString(time, "10sec");
-            this._charts.forEach(chart => push(chart.chart.data.labels, timeString));
-        }
-        // this._charts.forEach(chart => chart.chart.update());
-
-        this._lastUpdate = actDate;
-    };
+    // updateChartLabels() {
+    //     let actDate = new Date();
+    //     actDate.setMilliseconds(0);
+    //
+    //     let time = new Date();
+    //     time.setMinutes(actDate.getMinutes() - 5);
+    //
+    //     let push = function (where, what) {
+    //         where.push(what);
+    //         where.shift();
+    //     }
+    //
+    //     if (this._lastUpdate == null) {
+    //         push = function (where, what) {
+    //             where.push(what);
+    //         }
+    //     } else {
+    //         time = this._lastUpdate;
+    //     }
+    //
+    //     for (; time < actDate; time.setSeconds(time.getSeconds() + 10)) {
+    //         let timeString = date.toIntervalLocalReadableString(time, "10sec");
+    //         this._charts.forEach(chart => push(chart.chart.data.labels, timeString));
+    //     }
+    //     this._charts.forEach(chart => chart.chart.update());
+        //
+        // this._lastUpdate = actDate;
+    // };
 
     /**
      *
      */
     updateCharts() {
-        this.updateChartLabels();
+        // this.updateChartLabels();
         this._charts.forEach(chart => {
             chart.chart.update();
         });

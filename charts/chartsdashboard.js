@@ -153,8 +153,10 @@ let dashboard = {
         this.updateAndDisplay();
 
         // console.log("appendValuesFromStationsToCharts: updateCo2Chart()");
+        klimostat.intervals.live.updateChartLabels(this.co2Chart, true);
         this.co2Chart.updateCharts();
         // console.log("appendValuesFromStationsToCharts: updateHumidityChart()");
+        klimostat.intervals.live.updateChartLabels(this.humidityChart, true);
         this.humidityChart.updateCharts();
     },
 

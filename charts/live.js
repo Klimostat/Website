@@ -139,5 +139,40 @@ const live = {
 
             station.liveData.timestampOfNewestDatasetEntry = actTime;
         }
+    },
+
+    /**
+     *
+     * @param sensorChart {SensorChart}
+     * @param append {boolean}
+     */
+    updateChartLabels: function (sensorChart, append = false) {
+        let actDate = new Date();
+        actDate.setMilliseconds(0);
+
+        let time = new Date();
+        time.setMinutes(actDate.getMinutes() - 5);
+
+        let push = function (where, what) {
+            where.push(what);
+            where.shift();
+        }
+
+        if (append && sensorChart.lastLabelUpdate !== null && sensorChart.loadedInterval === "live") {
+            time = sensorChart.lastLabelUpdate;
+        } else {
+            sensorChart.labels.splice(0, sensorChart.labels.length);
+            push = function (where, what) {
+                where.push(what);
+            }
+        }
+
+        for (; time < actDate; time.setSeconds(time.getSeconds() + 10)) {
+            let timeString = date.toIntervalLocalReadableString(time, "10sec");
+            push(sensorChart.labels, timeString);
+        }
+
+        sensorChart.lastLabelUpdate = actDate;
+        sensorChart.loadedInterval = "live";
     }
 };

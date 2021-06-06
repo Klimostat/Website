@@ -97,5 +97,28 @@ const hour = {
                 push(station.datasets.maxHumidity, values.maxHumidity);
             }
         }
+    },
+
+    /**
+     *
+     * @param sensorChart {SensorChart}
+     * @param append {boolean}
+     */
+    updateChartLabels: function (sensorChart, append = false) {
+        let actDate = new Date();
+        actDate.setMilliseconds(0);
+
+        let time = new Date();
+        time.setHours(actDate.getHours() - 1);
+
+        sensorChart.labels.splice(0, sensorChart.labels.length);
+
+        for (; time < actDate; time.setMinutes(time.getMinutes() + 1)) {
+            let timeString = date.toIntervalLocalReadableString(time, "min");
+            sensorChart.labels.push(timeString);
+        }
+
+        sensorChart.lastLabelUpdate = actDate;
+        sensorChart.loadedInterval = "hour";
     }
 };

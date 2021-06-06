@@ -174,8 +174,8 @@ const selectedStations = {
         }
 
         // adds selected
-        console.log("idsDisplayed: ");
-        console.log(this._idsDisplayed);
+        // console.log("idsDisplayed: ");
+        // console.log(this._idsDisplayed);
         for (let i = 0; i < this._idsSelected.length; i++) {
             const station = klimostat.stations[this._idsSelected[i]];
             if (!this._idsDisplayed.includes(station.id)) {
@@ -196,6 +196,6 @@ const selectedStations = {
                 }
             }
         }
-        console.log(this._idsDisplayed);
+        // console.log(this._idsDisplayed);
     }
 }

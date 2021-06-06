@@ -355,14 +355,14 @@ const date = {
         switch (interval) {
             case "live":
             case "10sec":
-                return dateObj.getHours() + ':' +
-                    dateObj.getMinutes() + ':' +
+                return ('00' + dateObj.getHours()).slice(-2) + ':' +
+                    ('00' + dateObj.getMinutes()).slice(-2) + ':' +
                     Math.floor(dateObj.getSeconds() / 10) + 'x';
             case "min":
-                return dateObj.getHours() + ':' +
-                    dateObj.getMinutes();
+                return ('00' + dateObj.getHours()).slice(-2) + ':' +
+                    ('00' + dateObj.getMinutes()).slice(-2);
             case "10min":
-                return dateObj.getHours() + ':' +
+                return ('00' + dateObj.getHours()).slice(-2) + ':' +
                     Math.floor(dateObj.getMinutes() / 10) + 'x';
         }
     }
