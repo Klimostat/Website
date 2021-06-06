@@ -1,5 +1,8 @@
 document.addEventListener("DOMContentLoaded", () => klimostat.init(), false);
 
+/**
+ *
+ */
 const klimostat = {
     /**
      * Array of all sensors with all parameters as they are in the database.
@@ -30,6 +33,9 @@ const klimostat = {
         co2: null
     },
 
+    /**
+     * @type {Object}
+     */
     intervals: {},
 
     /**
@@ -39,13 +45,16 @@ const klimostat = {
     loadedView: "",
 
     /**
-     * @type {{}}
+     * @type {Object}
      */
     thresholds: {
         maxCo2: 5000,
         minHumidity: 20
     },
 
+    /**
+     * @type {boolean}
+     */
     alertSent: false,
 
     /**
@@ -90,6 +99,9 @@ const klimostat = {
         countdown.init(10, onConnectionLost, onUpdate);
     },
 
+    /**
+     *
+     */
     determineView: function () {
         let viewToLoad = "interval";
         if (selectedStationsCookie.getIds().length === 0) {
@@ -117,6 +129,9 @@ const klimostat = {
         }
     },
 
+    /**
+     *
+     */
     updateCharts: function () {
         switch (this.loadedView) {
             case "dashboard":
@@ -198,6 +213,10 @@ const fetcher = {
         }
     },
 
+    /**
+     *
+     * @param xhr
+     */
     next: function (xhr) {
         let index = this.active.indexOf(xhr);
         this.active.splice(index, 1);
@@ -210,15 +229,24 @@ const fetcher = {
     }
 }
 
+/**
+ *
+ */
 let onConnectionLost = function () {
     document.body.classList.toggle("timeout", true);
 }
 
+/**
+ *
+ */
 let onUpdate = function () {
     document.body.classList.toggle("timeout", false);
     document.getElementById("lastUpdated").innerHTML = date.toLocalReadableString(new Date());
 }
 
+/**
+ *
+ */
 let countdown = {
     /**
      *
@@ -245,10 +273,19 @@ let countdown = {
      */
     _node: null,
 
+    /**
+     * @type {number}
+     */
     _timeout: 10,
 
+    /**
+     * @type {Function}
+     */
     _fnOnTimeout: null,
 
+    /**
+     * @type {Function}
+     */
     _fnOnReconnect: null,
 
     /**
@@ -279,6 +316,9 @@ let countdown = {
         this._interval = setInterval(() => countdown._update(), 1000);
     },
 
+    /**
+     *
+     */
     stop: function () {
         this._fnOnReconnect();
         clearInterval(this._interval);
@@ -287,7 +327,6 @@ let countdown = {
 
     /**
      *
-     * @private
      */
     _update: function () {
         if (this._secsLeft === 0) {
@@ -312,6 +351,9 @@ let countdown = {
     }
 }
 
+/**
+ *
+ */
 const date = {
 
     /**
@@ -351,6 +393,12 @@ const date = {
             ('00' + dateObj.getSeconds()).slice(-2);
     },
 
+    /**
+     *
+     * @param dateObj
+     * @param interval
+     * @return {string}
+     */
     toIntervalLocalReadableString: function (dateObj, interval) {
         switch (interval) {
             case "live":

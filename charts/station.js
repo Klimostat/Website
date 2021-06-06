@@ -19,9 +19,19 @@ class Station {
      * @type {Object}
      */
     navNode = {
+        /**
+         * @type {Station}
+         */
         station: this,
+
+        /**
+         * @type {?HTMLElement}
+         */
         _node: null,
-        _loadedStyle: 0,
+
+        /**
+         *
+         */
         STYLES: [
             "unselected",
             "selected",
@@ -62,6 +72,10 @@ class Station {
         }
     };
 
+    /**
+     *
+     * @type {{maxTemperature: [], minTemperature: [], maxHumidity: [], maxCo2: [], minCo2: [], minHumidity: []}}
+     */
     datasets = {
         minTemperature: [],
         maxTemperature: [],
@@ -77,7 +91,7 @@ class Station {
      *
      * @type {string}
      */
-    color = colors[/*(stations.length * 2 + 1) % 11*/klimostat.stations.length % 12];
+    color = colors[klimostat.stations.length % 12];
 
     /**
      *
@@ -126,6 +140,10 @@ class Station {
         return true;
     }
 
+    /**
+     *
+     * @type {Object}
+     */
     liveData = {
         station: this,
 
@@ -150,10 +168,5 @@ class Station {
          * @type {Date}
          */
         timestampOfNewestDatasetEntry: null,
-
-        unload() {
-            this.timestampOfNewestData = null;
-            this.timestampOfNewestDatasetEntry = null;
-        }
     }
 }

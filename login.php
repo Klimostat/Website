@@ -47,7 +47,7 @@ if (isset($_GET["action"]) && $_GET["action"] !== "") {
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Klimostat Login</title>
         <link rel="preconnect" href="https://fonts.gstatic.com">
-        <link rel="stylesheet" href="style_login_new.css">
+        <link rel="stylesheet" href="style_login.css">
         <link rel="preconnect" href="https://fonts.gstatic.com">
         <link href="https://fonts.googleapis.com/css2?family=Karla:ital,wght@1,700&display=swap" rel="stylesheet">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"

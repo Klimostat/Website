@@ -15,7 +15,6 @@ verifySession();
 header("Content-Type: text/json", false);
 
 $stations = json_decode($_POST["stations"]);
-//print_r($stations);
 $outObject = array();
 
 for ($i = 0; $i < count($stations); $i++) {

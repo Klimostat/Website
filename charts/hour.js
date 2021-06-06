@@ -1,4 +1,12 @@
+/**
+ *
+ * @type {Object}
+ */
 const hour = {
+    /**
+     *
+     * @return {{data: FormData, method: string, callback: callback, refresh: boolean, url: string}}
+     */
     fetch: function () {
         // prepares data to fetch
         /**
@@ -30,6 +38,10 @@ const hour = {
         return {data: data, method: "POST", url: "PHP/getDataTimewise.php", callback: callback, refresh: false};
     },
 
+    /**
+     *
+     * @param data {Object}
+     */
     updateChartValues: function (data) {
         for (let dataOfStation of data) {
             let station = klimostat.stations[dataOfStation.id];

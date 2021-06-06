@@ -116,6 +116,10 @@ const interval = {
         selectedStations.updateAndDisplay(this.sensorCharts, "");
     },
 
+    /**
+     *
+     * @param secs {number}
+     */
     startFetch: function (secs) {
         countdown.start(secs, function () {interval.fetchDataAndRestartCountdown()});
     },
@@ -193,6 +197,8 @@ const intervals = {
 
     /**
      *
+     * @param interval {?String}
+     * @param updateCharts {boolean}
      */
     setSelected: function (interval = null, updateCharts = true) {
         if (interval !== null) {

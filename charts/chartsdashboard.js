@@ -102,6 +102,7 @@ let dashboard = {
 
     /**
      *
+     * @param secs {number}
      */
     startFetch: function (secs) {
         countdown.start(secs, function () {dashboard.fetchDataAndRestartCountdown()});

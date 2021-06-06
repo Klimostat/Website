@@ -13,12 +13,21 @@ class SensorChart {
      */
     _charts;
 
+    /**
+     *
+     * @type {string[]}
+     */
     labels = [];
 
+    /**
+     *
+     * @type {string}
+     */
     loadedInterval = "";
 
     /**
      *
+     * @type {?Date}
      */
     lastLabelUpdate = null;
 
@@ -94,27 +103,6 @@ class SensorChart {
 
     /**
      *
-     * @param fn {function(Station)}
-     */
-    forEachLoadedStation(fn) {
-        let distinctStations = []
-        this._ids.forEach(id => {
-            if (!distinctStations.includes(id)) {
-                distinctStations.push(id)
-            }
-        });
-        distinctStations.forEach(id => fn(klimostat.stations[id]));
-    };
-
-    /**
-     *
-     */
-    forEachChart(fn) {
-        this._charts.forEach(chart => fn(chart.chart));
-    }
-
-    /**
-     *
      */
     clear() {
         this._charts.forEach(chart => {
@@ -150,40 +138,10 @@ class SensorChart {
         return klimostat.stations[this._ids[index]];
     };
 
-    // updateChartLabels() {
-    //     let actDate = new Date();
-    //     actDate.setMilliseconds(0);
-    //
-    //     let time = new Date();
-    //     time.setMinutes(actDate.getMinutes() - 5);
-    //
-    //     let push = function (where, what) {
-    //         where.push(what);
-    //         where.shift();
-    //     }
-    //
-    //     if (this._lastUpdate == null) {
-    //         push = function (where, what) {
-    //             where.push(what);
-    //         }
-    //     } else {
-    //         time = this._lastUpdate;
-    //     }
-    //
-    //     for (; time < actDate; time.setSeconds(time.getSeconds() + 10)) {
-    //         let timeString = date.toIntervalLocalReadableString(time, "10sec");
-    //         this._charts.forEach(chart => push(chart.chart.data.labels, timeString));
-    //     }
-    //     this._charts.forEach(chart => chart.chart.update());
-        //
-        // this._lastUpdate = actDate;
-    // };
-
     /**
      *
      */
     updateCharts() {
-        // this.updateChartLabels();
         this._charts.forEach(chart => {
             chart.chart.update();
         });

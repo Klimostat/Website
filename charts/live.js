@@ -1,4 +1,12 @@
+/**
+ *
+ * @type {Object}
+ */
 const live = {
+    /**
+     *
+     * @return {{data: FormData, method: string, callback: callback, refresh: boolean, url: string}}
+     */
     fetch: function () {
         // prepares data to fetch
         /**
@@ -33,6 +41,10 @@ const live = {
         return {data: data, method: "POST", url: "PHP/getDataLive.php", callback: callback, refresh: true};
     },
 
+    /**
+     *
+     * @param data {Object}
+     */
     updateChartValues: function (data) {
         for (let dataOfStation of data) {
             let station = klimostat.stations[dataOfStation.id];

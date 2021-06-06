@@ -39,9 +39,20 @@ const selectedStationsCookie = {
 }
 
 const selectedStations = {
+    /**
+     * @type {number[]}
+     */
     _idsDisplayed: [],
+
+    /**
+     * @type {number[]}
+     */
     _idsSelected: [],
 
+    /**
+     *
+     * @return {Station[]}
+     */
     get: function () {
         let lstations = [];
         this._idsSelected.forEach(id => {
@@ -152,6 +163,9 @@ const selectedStations = {
         return this._idsSelected.includes(id);
     },
 
+    /**
+     *
+     */
     updateCookie: function () {
         selectedStationsCookie.update(this._idsSelected);
     },

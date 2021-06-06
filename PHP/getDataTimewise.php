@@ -18,7 +18,6 @@ verifySession();
 header("Content-Type: text/json", false);
 
 $stations = json_decode($_POST["stations"]);
-//print_r($stations);
 $outObject = [];
 
 $interval = $_POST["interval"];
@@ -48,14 +47,6 @@ group by time;
         $timeAppend = ":00:00";
         break;
 }
-
-//$data = $conn -> prepare("
-//select timestamp(concat(left(l.pk_measurement_time, 17), '00')) time1, max(l.co2) max_co2, min(l.co2) min_co2, max(l.humidity) max_humidity, min(l.humidity) min_humidity, max(l.temperature) max_temperature, min(l.temperature) min_temperature from live_data l
-//    where l.pk_measurement_time > :from
-//    and l.pk_measurement_time <= :to
-//    and l.fk_station_id = :fk_station_id
-//    group by time1;
-//");
 
 for ($i = 0; $i < count($stations); $i++) {
 

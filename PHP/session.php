@@ -112,7 +112,7 @@ function mainPage($action = "") {
     } else {
         $action = "";
     }
-    header("Location: $rootDomain/index_new.php$action");
+    header("Location: $rootDomain/index.php$action");
 }
 
 /**
