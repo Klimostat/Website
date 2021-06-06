@@ -98,7 +98,7 @@ function loginPage($action = "") {
     } else {
         $action = "";
     }
-    header("Location: $rootDomain/login_new.php$action");
+    header("Location: $rootDomain/login.php$action");
 }
 
 /**
