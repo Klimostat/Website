@@ -22,11 +22,8 @@ const interval = {
      * initializes live charts and sets interval
      */
     init: function () {
-        // console.log("init called")
-        // const skipped = (ctx, value) => ctx.p0.skip || ctx.p1.skip ? value : undefined;
-
         klimostat.charts = {
-            temperature: new Chart(document.getElementById('chart-temperature'), {
+            temperature: new Chart(klimostat.chartNodes.temperature, {
                 type: 'line',
                 data: {},
                 options: {
@@ -47,7 +44,7 @@ const interval = {
                     }
                 }
             }),
-            humidity: new Chart(document.getElementById('chart-humidity'), {
+            humidity: new Chart(klimostat.chartNodes.humidity, {
                 type: 'line',
                 data: {},
                 options: {
@@ -68,7 +65,7 @@ const interval = {
                     }
                 }
             }),
-            co2: new Chart(document.getElementById('chart-co2'), {
+            co2: new Chart(klimostat.chartNodes.co2, {
                 type: 'line',
                 data: {},
                 options: {
@@ -90,6 +87,10 @@ const interval = {
                 }
             })
         };
+        klimostat.chartNodes.temperature.parentElement.style.display = "block";
+        klimostat.chartNodes.humidity.parentElement.style.display = "block";
+        klimostat.chartNodes.co2.parentElement.style.display = "block";
+
         this.sensorCharts = new SensorChart([
             {name: "temperature", chart: klimostat.charts.temperature},
             {name: "humidity", chart: klimostat.charts.humidity},
@@ -113,6 +114,9 @@ const interval = {
         klimostat.charts.humidity.destroy();
         klimostat.charts.co2.destroy();
         this.sensorCharts.clear();
+        for (let chartNodesKey in klimostat.chartNodes) {
+            klimostat.chartNodes[chartNodesKey].parentElement.style.display = "none";
+        }
         selectedStations.updateAndDisplay(this.sensorCharts, "");
     },
 

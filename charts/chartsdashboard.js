@@ -35,9 +35,8 @@ let dashboard = {
      * initializes live charts and sets interval
      */
     init: function () {
-        // console.log("destroyed charts and loaded dashboard");
         klimostat.charts = {
-            humidity: new Chart(document.getElementById('chart-humidity'), {
+            humidity: new Chart(klimostat.chartNodes.humidity, {
                 type: 'line',
                 data: {},
                 options: {
@@ -58,7 +57,7 @@ let dashboard = {
                     }
                 }
             }),
-            co2: new Chart(document.getElementById('chart-co2'), {
+            co2: new Chart(klimostat.chartNodes.co2, {
                 type: 'line',
                 data: {},
                 options: {
@@ -80,6 +79,8 @@ let dashboard = {
                 }
             })
         };
+        klimostat.chartNodes.humidity.parentElement.style.display = "block";
+        klimostat.chartNodes.co2.parentElement.style.display = "block";
 
         this.maxCo2Ids = [];
         this.minHumidityIds = [];
@@ -96,6 +97,9 @@ let dashboard = {
         this.humidityChart.clear();
         klimostat.charts.co2.destroy();
         this.co2Chart.clear();
+        for (let chartNodesKey in klimostat.chartNodes) {
+            klimostat.chartNodes[chartNodesKey].parentElement.style.display = "none";
+        }
         this.maxCo2Ids = null;
         this.minHumidityIds = null;
     },

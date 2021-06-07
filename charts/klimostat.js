@@ -36,6 +36,12 @@ const klimostat = {
     /**
      * @type {Object}
      */
+    chartNodes: {},
+
+
+    /**
+     * @type {Object}
+     */
     intervals: {},
 
     /**
@@ -64,6 +70,11 @@ const klimostat = {
                 klimostat.intervals = {
                     live: live,
                     hour: hour,
+                }
+                klimostat.chartNodes = {
+                    temperature: document.getElementById('chart-temperature'),
+                    humidity: document.getElementById('chart-humidity'),
+                    co2: document.getElementById('chart-co2'),
                 }
 
                 // console.log("init: stations loaded: " + this.responseText);

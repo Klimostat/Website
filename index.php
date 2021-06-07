@@ -75,13 +75,13 @@ verifySession();
 
             <!-- Content -->
             <div id = "content" class = "">
-                <div class="chart-container card">
+                <div class="chart-container card" style = "display: none">
                     <canvas id="chart-temperature"></canvas>
                 </div>
-                <div class="chart-container card">
+                <div class="chart-container card" style = "display: none">
                     <canvas id="chart-humidity"></canvas>
                 </div>
-                <div class="chart-container card">
+                <div class="chart-container card" style = "display: none">
                     <canvas id="chart-co2"></canvas>
                 </div>
             </div>
