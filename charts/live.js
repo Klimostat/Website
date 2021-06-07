@@ -2,7 +2,8 @@
  *
  * @type {Object}
  */
-const live = {
+klimostat.intervals.live = {
+    fullName: "Live",
     /**
      *
      * @return {{data: FormData, method: string, callback: callback, refresh: boolean, url: string}}
@@ -29,13 +30,7 @@ const live = {
 
         // function to work with return values
         let callback = function (data) {
-            live.updateChartValues(data);
-            // for (let dataset of dataPerStation) {
-
-                // klimostat.stations[parseInt(dataset.id)].updateValues(dataset.data, "live");
-                // console.log("id: " + dataset.id);
-                // console.log(stations[dataset.id].getChartValues());
-            // }
+            klimostat.intervals.live.updateChartValues(data);
         }
 
         return {data: data, method: "POST", url: "PHP/getDataLive.php", callback: callback, refresh: true};

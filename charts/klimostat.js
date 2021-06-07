@@ -64,13 +64,10 @@ const klimostat = {
         xhttp.onreadystatechange = function () {
             if (this.readyState === 4 && this.status === 200) {
 
-                intervals.push("live");
-                intervals.push("hour");
-
-                klimostat.intervals = {
-                    live: live,
-                    hour: hour,
+                for (let intervalsKey in klimostat.intervals) {
+                    intervals.push(intervalsKey, klimostat.intervals[intervalsKey].fullName);
                 }
+
                 klimostat.chartNodes = {
                     temperature: document.getElementById('chart-temperature'),
                     humidity: document.getElementById('chart-humidity'),

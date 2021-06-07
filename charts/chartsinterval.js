@@ -170,13 +170,14 @@ const intervals = {
 
     /**
      *
-     * @param name {String}
+     * @param key {string}
+     * @param fullName {string}
      */
-    push: function (name) {
+    push: function (key, fullName) {
         let node = this.getNode();
         let option = document.createElement("option");
-        option.innerHTML = name;
-        option.value = name;
+        option.innerHTML = fullName;
+        option.value = key;
         node.appendChild(option);
     },
 

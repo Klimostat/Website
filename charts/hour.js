@@ -2,7 +2,8 @@
  *
  * @type {Object}
  */
-const hour = {
+klimostat.intervals.hour = {
+    fullName: "Last hour",
     /**
      *
      * @return {{data: FormData, method: string, callback: callback, refresh: boolean, url: string}}
@@ -27,12 +28,7 @@ const hour = {
 
         // function to work with return values
         let callback = function (data) {
-            hour.updateChartValues(data);
-            // for (let dataOfStation of data) {
-            //     klimostat.stations[parseInt(dataOfStation.id)].updateValues(dataOfStation.data, "hour");
-                // console.log("id: " + dataset.id);
-                // console.log(stations[dataset.id].getChartValues());
-            // }
+            klimostat.intervals.hour.updateChartValues(data);
         }
 
         return {data: data, method: "POST", url: "PHP/getDataTimewise.php", callback: callback, refresh: false};
