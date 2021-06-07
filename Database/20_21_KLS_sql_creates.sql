@@ -70,7 +70,7 @@ VALUES (0, 'admin', '$argon2id$v=19$m=65536,t=4,p=1$SjNLQldCS0FLTGx1YTV2Vg$nFQ9u
 
 INSERT INTO `station` (`name`, `location`, `token`, `threshold_co2`, `threshold_humidity`)
 VALUE
-    ('test_station', 'mobil', '$argon2id$v=19$m=65536,t=4,p=1$UVVzSEdINGNIUWJpZUN4cQ$wFH1+6ztyX8xBRtOSbW7pjZ4SujcezIrVLB0v38I/Q4', 2000, 30),
+    ('test_station', 'mobil', '$argon2id$v=19$m=65536,t=4,p=1$UUExSURscC5talRKNWk2Sg$WUB1PUiQOz5r6mHGK/zHC32eGaH3zO/j8SyQNBVjKtM', 2000, 30),
     ('Virt2', 'In der Datenbank', 'token2', 2000, 30),
     ('Virt3', 'In der Datenbank', 'token3', 2000, 30),
     ('Virt4', 'In der Datenbank', 'token4', 2000, 30),
