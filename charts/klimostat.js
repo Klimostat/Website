@@ -45,14 +45,6 @@ const klimostat = {
     loadedView: "",
 
     /**
-     * @type {Object}
-     */
-    thresholds: {
-        maxCo2: 5000,
-        minHumidity: 20
-    },
-
-    /**
      * @type {boolean}
      */
     alertSent: false,

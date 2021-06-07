@@ -12,7 +12,7 @@ verifySession();
 header("Content-Type: text/json", false);
 
 $data = $conn -> prepare("
-select s.pk_station_id, s.name, s.alert_message_humidity, s.alert_message_co2, s.location from station s
+select s.pk_station_id, s.name, s.alert_message_humidity, s.alert_message_co2, s.location, s.threshold_co2, s.threshold_humidity from station s
 ");
 $data -> execute();
 
