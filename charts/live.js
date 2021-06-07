@@ -51,13 +51,6 @@ const live = {
             let dataPrepared = {};
 
             for (const entry of dataOfStation.data) {
-
-                if (entry.co2 >= klimostat.thresholds.maxCo2) {
-                    klimostat.sendAlert(this.alertMessageCO2);
-                }
-                if (entry.humidity < klimostat.thresholds.minHumidity) {
-                    klimostat.sendAlert(this.alertMessageHumidity);
-                }
                 let entryTime = date.parseMySQL(entry.time);
                 let entryTimeString = date.toIntervalLocalReadableString(entryTime, "live");
 
@@ -88,6 +81,13 @@ const live = {
                 }
                 station.liveData.minHumidity = Math.min(entry.humidity, station.liveData.minHumidity);
                 station.liveData.maxCo2 = Math.max(entry.co2, station.liveData.maxCo2);
+            }
+
+            if (station.liveData.maxCo2 >= station.thresholdCo2) {
+                klimostat.sendAlert(station.alertMessageCO2);
+            }
+            if (station.liveData.minHumidity < station.thresholdHumidity) {
+                klimostat.sendAlert(station.alertMessageHumidity);
             }
 
             /**

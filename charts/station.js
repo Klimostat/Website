@@ -86,16 +86,18 @@ class Station {
     }
 
     loadedInterval = "";
+    color;
+    id;
+    name;
+    alertMessageHumidity;
+    alertMessageCO2;
+    location;
+    thresholdCo2;
+    thresholdHumidity;
 
     /**
      *
-     * @type {string}
-     */
-    color = colors[klimostat.stations.length % 12];
-
-    /**
-     *
-     * @param dbFetch {object}
+     * @param dbFetch {Object}
      */
     constructor(dbFetch) {
         this.id = parseInt(dbFetch.pk_station_id);
@@ -103,6 +105,9 @@ class Station {
         this.alertMessageHumidity = dbFetch.alert_message_humidity;
         this.alertMessageCO2 = dbFetch.alert_message_co2;
         this.location = dbFetch.location;
+        this.color = colors[klimostat.stations.length % 12];
+        this.thresholdCo2 = dbFetch.threshold_co2;
+        this.thresholdHumidity = dbFetch.threshold_humidity;
 
         let stationsBox = document.getElementById("stations-box");
 
