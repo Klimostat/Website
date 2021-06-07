@@ -5,13 +5,12 @@ include "session.php";
 $stations = $conn->prepare("SELECT pk_station_id FROM station;");
 $stations->execute();
 
+$two_days_ago = date("Y-m-d H:i:s", strtotime("-2 day"));
+
 echo "<br> Connection to Database established";
 
 while ($station = $stations->fetch(PDO::FETCH_ASSOC)) {
-    $fk_station_id = $station['pk_station_id'];
-
-    $today = date("Y-m-d H:i:s");
-    $two_days_ago = date("Y-m-d H:i:s", strtotime("-2 day"));
+    $fk_station_id = $station["pk_station_id"];
 
     $data = $conn->prepare("
     SELECT timestamp(concat(left(l.pk_measurement_time, 17), '00')) time1,
@@ -33,13 +32,13 @@ while ($station = $stations->fetch(PDO::FETCH_ASSOC)) {
     $data->execute();
 
     while ($line = $data->fetch(PDO::FETCH_ASSOC)) {
-        echo $min_co2 = $line['min_co2'];
-        echo $max_co2 = $line['max_co2'];
-        echo $min_humidity = $line['min_humidity'];
-        echo $max_humidity = $line['max_humidity'];
-        echo $min_temperature = $line['min_temperature'];
-        echo $max_temperature = $line['max_temperature'];
-        echo $time = $line['time1'];
+        echo $min_co2 = $line["min_co2"];
+        echo $max_co2 = $line["max_co2"];
+        echo $min_humidity = $line["min_humidity"];
+        echo $max_humidity = $line["max_humidity"];
+        echo $min_temperature = $line["min_temperature"];
+        echo $max_temperature = $line["max_temperature"];
+        echo $time = $line["time1"];
 
         $insert_to_historical = $conn->prepare("
         INSERT INTO historical_data (`fk_station_id`, `pk_measurement_time`, `min_co2`, `max_co2`, `min_humidity`, `max_humidity`, `min_temperature`, `max_temperature`)
