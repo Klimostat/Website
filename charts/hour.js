@@ -3,7 +3,11 @@
  * @type {Object}
  */
 klimostat.intervals.hour = {
+    name: "hour",
+
     fullName: "Last hour",
+
+    intervalPeriod: 60_000,
     /**
      *
      * @return {{data: FormData, method: string, callback: callback, refresh: boolean, url: string}}
@@ -27,8 +31,8 @@ klimostat.intervals.hour = {
         data.append('interval', "hour");
 
         // function to work with return values
-        let callback = function (data) {
-            klimostat.intervals.hour.updateChartValues(data);
+        let callback = function (data, sensorChart) {
+            klimostat.intervals.hour.updateChartValues(data, sensorChart);
         }
 
         return {data: data, method: "POST", url: "PHP/getDataTimewise.php", callback: callback, refresh: false};
@@ -37,96 +41,118 @@ klimostat.intervals.hour = {
     /**
      *
      * @param data {Object}
+     * @param sensorChart {SensorChart}
      */
-    updateChartValues: function (data) {
+    updateChartValues: function (data, sensorChart) {
+
+        //update labels
+        let actTime = new Date();
+        actTime.setMilliseconds(0);
+        actTime.setSeconds(0);
+        actTime.setSeconds(Math.floor(actTime.getSeconds() / 10) * 10);
+
+        let time = new Date(actTime);
+        time.setMinutes(actTime.getMinutes() - 60);
+
+        let shiftLeft = false;
+
+        if (sensorChart.lastLabelUpdate !== null && sensorChart.loadedInterval === this.name) {
+            time = sensorChart.lastLabelUpdate;
+            shiftLeft = true;
+        } else {
+            sensorChart.clearChartContents();
+        }
+
+        let labels = [];
+        while (time < actTime) {
+            time.setMinutes(time.getMinutes() + 1)
+            labels.push(date.toIntervalLocalReadableString(time, "min"));
+        }
+        sensorChart.pushTimestampRight(labels, shiftLeft);
+
+        sensorChart.lastLabelUpdate = time;
+        sensorChart.loadedInterval = this.name;
+
+        // append data
         for (let dataOfStation of data) {
             let station = klimostat.stations[dataOfStation.id];
-            let dataPrepared = {};
+            this.updateStation(station, actTime);
 
             for (const entry of dataOfStation.data) {
                 let entryTime = date.parseMySQL(entry.time);
-                let entryTimeString = date.toIntervalLocalReadableString(entryTime, "min");
-                dataPrepared[entryTimeString] = {
-                    minCo2: entry.minCo2,
-                    maxCo2: entry.maxCo2,
-                    minHumidity: entry.minHumidity,
-                    maxHumidity: entry.maxHumidity,
-                    minTemperature: entry.minTemperature,
-                    maxTemperature: entry.maxTemperature
+                entry.minCo2 = parseFloat(entry.minCo2);
+                entry.maxCo2 = parseFloat(entry.maxCo2);
+                entry.minHumidity = parseFloat(entry.minHumidity);
+                entry.maxHumidity = parseFloat(entry.maxHumidity);
+                entry.minTemperature = parseFloat(entry.minTemperature);
+                entry.maxTemperature = parseFloat(entry.maxTemperature);
+                entryTime.setSeconds(0);
+                // let entryTimeString = date.toIntervalLocalReadableString(entryTime, "live");
+                let index = sensorChart.labels.length - Math.floor((sensorChart.lastLabelUpdate.getTime() - entryTime.getTime()) / this.intervalPeriod) - 1;
+                // console.log(date.toIntervalLocalReadableString(entryTime, "live") + " index " + index + ", " + station.datasets.minHumidity.length);
+
+                // sets last the time when the station last sent data, to show offline stations
+                if (station.liveData.timestampOfNewestData === null || entryTime > station.liveData.timestampOfNewestData) {
+                    station.liveData.timestampOfNewestData = entryTime;
+                    station.liveData.station.navNode.updateNewestData();
                 }
-            }
 
-            /**
-             *
-             * @type {Date}
-             */
-            const actTime = new Date();
-            actTime.setMilliseconds(0);
-
-            /**
-             *
-             * @type {Date}
-             */
-            let time = new Date();
-            time.setHours(actTime.getHours() - 1);
-
-            let push = function (where, what) {
-                where.push(what);
-            }
-
-            station.datasets.minTemperature.splice(0, station.datasets.minTemperature.length);
-            station.datasets.maxTemperature.splice(0, station.datasets.maxTemperature.length);
-            station.datasets.minCo2.splice(0, station.datasets.minCo2.length);
-            station.datasets.maxCo2.splice(0, station.datasets.maxCo2.length);
-            station.datasets.minHumidity.splice(0, station.datasets.minHumidity.length);
-            station.datasets.maxHumidity.splice(0, station.datasets.maxHumidity.length);
-
-            for (; time < actTime; time.setMinutes(time.getMinutes() + 1)) {
-                let timeString = date.toIntervalLocalReadableString(time, "min");
-                // console.log("read entry " + timeString);
-                // console.log(dataPrepared);
-
-                let values = dataPrepared[timeString];
-                if (typeof values !== "object") {
-                    values = {
-                        minCo2: NaN,
-                        maxCo2: NaN,
-                        minHumidity: NaN,
-                        maxHumidity: NaN,
-                        minTemperature: NaN,
-                        maxTemperature: NaN
+                if (typeof station.datasets.minHumidity[index] === "number") {
+                    // console.log("outer " + station.id)
+                    if (isNaN(station.datasets.minHumidity[index])) {
+                        // console.log("first " + station.id)
+                        station.datasets.minCo2[index] = entry.minCo2;
+                        station.datasets.maxCo2[index] = entry.maxCo2;
+                        station.datasets.minHumidity[index] = entry.minHumidity;
+                        station.datasets.maxHumidity[index] = entry.maxHumidity;
+                        station.datasets.minTemperature[index] = entry.minTemperature;
+                        station.datasets.maxTemperature[index] = entry.maxTemperature;
+                    } else {
+                        // console.log(entry)
+                        // console.log(station.datasets.minHumidity[index]);
+                        // console.log("second " + station.id)
+                        station.datasets.minCo2[index] = Math.min(station.datasets.minCo2[index], entry.minCo2);
+                        station.datasets.maxCo2[index] = Math.max(station.datasets.maxCo2[index], entry.maxCo2);
+                        station.datasets.minHumidity[index] = Math.min(station.datasets.minHumidity[index], entry.minHumidity);
+                        station.datasets.maxHumidity[index] = Math.max(station.datasets.maxHumidity[index], entry.maxHumidity);
+                        station.datasets.minTemperature[index] = Math.min(station.datasets.minTemperature[index], entry.minTemperature);
+                        station.datasets.maxTemperature[index] = Math.max(station.datasets.maxTemperature[index], entry.maxTemperature);
                     }
                 }
-                push(station.datasets.minTemperature, values.minTemperature);
-                push(station.datasets.maxTemperature, values.maxTemperature);
-                push(station.datasets.minCo2, values.minCo2);
-                push(station.datasets.maxCo2, values.maxCo2);
-                push(station.datasets.minHumidity, values.minHumidity);
-                push(station.datasets.maxHumidity, values.maxHumidity);
+
+                station.liveData.minHumidity = Math.min(entry.minHumidity, station.liveData.minHumidity);
+                station.liveData.maxCo2 = Math.max(entry.maxCo2, station.liveData.maxCo2);
+            }
+
+            if (station.liveData.maxCo2 >= station.thresholdCo2) {
+                klimostat.sendAlert(station.alertMessageCO2);
+            }
+            if (station.liveData.minHumidity < station.thresholdHumidity) {
+                klimostat.sendAlert(station.alertMessageHumidity);
             }
         }
     },
 
     /**
      *
-     * @param sensorChart {SensorChart}
-     * @param append {boolean}
+     * @param station {Station}
+     * @param actTime {Date}
      */
-    updateChartLabels: function (sensorChart, append = false) {
-        let actDate = new Date();
-        actDate.setMilliseconds(0);
+    updateStation: function(station, actTime) {
+        let time = new Date(actTime);
+        time.setMinutes(actTime.getMinutes() - 60);
 
-        let time = new Date();
-        time.setHours(actDate.getHours() - 1);
+        let shiftLeft = false;
 
-        sensorChart.labels.splice(0, sensorChart.labels.length);
-
-        for (; time < actDate; time.setMinutes(time.getMinutes() + 1)) {
-            let timeString = date.toIntervalLocalReadableString(time, "min");
-            sensorChart.labels.push(timeString);
+        if (station.liveData.timestampOfNewestDatasetEntry !== null && station.loadedInterval === this.name) {
+            time = station.liveData.timestampOfNewestDatasetEntry;
+            shiftLeft = true;
+        } else {
+            station.clearDatasets();
         }
 
-        sensorChart.lastLabelUpdate = actDate;
-        sensorChart.loadedInterval = "hour";
-    }
-};
+        station.pushDatasets(Math.floor((actTime.getTime() - time.getTime()) / this.intervalPeriod), shiftLeft);
+
+        station.liveData.timestampOfNewestDatasetEntry = new Date(actTime);
+        station.loadedInterval = this.name;
+    }};

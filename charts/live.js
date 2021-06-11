@@ -3,6 +3,8 @@
  * @type {Object}
  */
 klimostat.intervals.live = {
+    name: "live",
+
     fullName: "Live",
 
     intervalPeriod: 10_000,
@@ -31,8 +33,8 @@ klimostat.intervals.live = {
         data.append('stations', JSON.stringify(stationsToLoad));
 
         // function to work with return values
-        let callback = function (data) {
-            klimostat.intervals.live.updateChartValues(data);
+        let callback = function (data, sensorChart) {
+            klimostat.intervals.live.updateChartValues(data, sensorChart);
         }
 
         return {data: data, method: "POST", url: "PHP/getDataLive.php", callback: callback, refresh: true};
@@ -42,9 +44,10 @@ klimostat.intervals.live = {
      *
      * @param data {Object}
      * @param sensorChart {SensorChart}
-     * @param append {boolean}
      */
-    updateChartValues: function (data, sensorChart, append) {
+    updateChartValues: function (data, sensorChart) {
+
+        //update labels
         let actTime = new Date();
         actTime.setMilliseconds(0);
         actTime.setSeconds(Math.floor(actTime.getSeconds() / 10) * 10);
@@ -71,6 +74,7 @@ klimostat.intervals.live = {
         sensorChart.lastLabelUpdate = time;
         sensorChart.loadedInterval = "live";
 
+        // append data
         for (let dataOfStation of data) {
             let station = klimostat.stations[dataOfStation.id];
             this.updateStation(station, actTime);

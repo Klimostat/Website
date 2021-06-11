@@ -143,12 +143,11 @@ const interval = {
 
             // console.log("db response:");
             // console.log(JSON.parse(xhr.responseText));
-            callback(JSON.parse(xhr.responseText));
+            callback(JSON.parse(xhr.responseText), interval.sensorCharts);
 
             // console.log("selectedStations: ")
             // console.log(selectedStations.get());
             selectedStations.updateAndDisplay(interval.sensorCharts, intervals.getSelected());
-            klimostat.intervals[intervals.getSelected()].updateChartLabels(interval.sensorCharts, intervals.getSelected() === "live");
             interval.sensorCharts.updateCharts();
 
             if (refresh) {

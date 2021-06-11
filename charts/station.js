@@ -152,7 +152,7 @@ class Station {
      *
      */
     clearDatasets() {
-        console.log("cleared data: " + this.id)
+        // console.log("cleared data: " + this.id)
         this.datasets.minTemperature.splice(0, length);
         this.datasets.maxTemperature.splice(0, length);
         this.datasets.minCo2.splice(0, length);
@@ -167,7 +167,7 @@ class Station {
      * @param shiftLeft {boolean}
      */
     pushDatasets(count, shiftLeft=true) {
-        console.log("count to push: " + count);
+        // console.log("count to push: " + count);
         for (let i = 0; i < count; i++) {
             this.datasets.minTemperature.push(NaN);
             this.datasets.maxTemperature.push(NaN);
