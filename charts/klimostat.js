@@ -183,6 +183,8 @@ const fetcher = {
         xhr.onreadystatechange = function () {
             if (this.readyState === 4) {
                 if (this.status === 200) {
+                    console.log("db response:")
+                    console.log(JSON.parse(this.responseText));
                     callbackFnOn200(this);
                 } else {
                     onConnectionLost();
@@ -409,9 +411,9 @@ const date = {
             case "min":
                 return ('00' + dateObj.getHours()).slice(-2) + ':' +
                     ('00' + dateObj.getMinutes()).slice(-2);
-            case "10min":
+            case "30min":
                 return ('00' + dateObj.getHours()).slice(-2) + ':' +
-                    Math.floor(dateObj.getMinutes() / 10) + 'x';
+                    Math.floor(dateObj.getMinutes() / 30) * 3 + 'x';
         }
     },
 }

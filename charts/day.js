@@ -2,12 +2,12 @@
  *
  * @type {Object}
  */
-klimostat.intervals.hour = {
-    name: "hour",
+klimostat.intervals.day = {
+    name: "day",
 
-    fullName: "Last hour",
+    fullName: "Last 24 hours",
 
-    intervalPeriod: 60_000,
+    intervalPeriod: 30 * 60_000,
     /**
      *
      * @return {{data: FormData, method: string, callback: callback, refresh: boolean, url: string}}
@@ -32,7 +32,7 @@ klimostat.intervals.hour = {
 
         // function to work with return values
         let callback = function (data, sensorChart) {
-            klimostat.intervals.hour.updateChartValues(data, sensorChart);
+            klimostat.intervals.day.updateChartValues(data, sensorChart);
         }
 
         return {data: data, method: "POST", url: "PHP/getDataTimewise.php", callback: callback, refresh: false};
@@ -49,9 +49,10 @@ klimostat.intervals.hour = {
         let actTime = new Date();
         actTime.setMilliseconds(0);
         actTime.setSeconds(0);
+        actTime.setMinutes(Math.floor(actTime.getMinutes() / 30) * 30);
 
         let time = new Date(actTime);
-        time.setMinutes(actTime.getMinutes() - 60);
+        time.setHours(actTime.getHours() - 24);
 
         let shiftLeft = false;
 
@@ -64,8 +65,8 @@ klimostat.intervals.hour = {
 
         let labels = [];
         while (time < actTime) {
-            time.setMinutes(time.getMinutes() + 1)
-            labels.push(date.toIntervalLocalReadableString(time, "min"));
+            time.setMinutes(time.getMinutes() + 30)
+            labels.push(date.toIntervalLocalReadableString(time, "30min"));
         }
         sensorChart.pushTimestampRight(labels, shiftLeft);
 
@@ -96,11 +97,10 @@ klimostat.intervals.hour = {
                     station.liveData.station.navNode.updateNewestData();
                 }
 
-                if (typeof station.datasets.dummy[index] === "number") {
+                if (typeof station.datasets.minHumidity[index] === "number") {
                     // console.log("outer " + station.id)
-                    if (isNaN(station.datasets.dummy[index])) {
+                    if (isNaN(station.datasets.minHumidity[index])) {
                         // console.log("first " + station.id)
-                        station.datasets.dummy[index] = 0;
                         station.datasets.minCo2[index] = entry.minCo2;
                         station.datasets.maxCo2[index] = entry.maxCo2;
                         station.datasets.minHumidity[index] = entry.minHumidity;
@@ -140,11 +140,10 @@ klimostat.intervals.hour = {
      */
     updateStation: function(station, actTime) {
         let time = new Date(actTime);
-        time.setMinutes(actTime.getMinutes() - 60);
+        time.setHours(actTime.getHours() - 24);
 
         let shiftLeft = false;
 
-        // console.log(station.loadedInterval + " === " + this.name)
         if (station.liveData.timestampOfNewestDatasetEntry !== null && station.loadedInterval === this.name) {
             time = station.liveData.timestampOfNewestDatasetEntry;
             shiftLeft = true;

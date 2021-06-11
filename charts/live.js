@@ -27,7 +27,7 @@ klimostat.intervals.live = {
                 id: station.id,
                 since: station.liveData.timestampOfNewestData
             });
-            station.loadedInterval = "live";
+            // station.loadedInterval = "live";
         });
         let data = new FormData();
         data.append('stations', JSON.stringify(stationsToLoad));

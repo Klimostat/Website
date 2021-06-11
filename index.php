@@ -99,10 +99,11 @@ verifySession();
         <script src="charts/klimostat.js"></script>
         <script src="charts/selectedStations.js"></script>
         <script src="charts/chartsinterval.js"></script>
-        <script src="charts/live.js"></script>
-        <script src="charts/hour.js"></script>
         <script src="charts/chartsdashboard.js"></script>
         <script src="charts/station.js"></script>
         <script src="charts/sensorChart.js"></script>
+        <script src="charts/live.js"></script>
+        <script src="charts/hour.js"></script>
+        <script src="charts/day.js"></script>
     </body>
 </html>

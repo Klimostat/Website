@@ -77,6 +77,7 @@ class Station {
      * @type {{maxTemperature: [], minTemperature: [], maxHumidity: [], maxCo2: [], minCo2: [], minHumidity: []}}
      */
     datasets = {
+        dummy: [],
         minTemperature: [],
         maxTemperature: [],
         minCo2: [],
@@ -152,7 +153,9 @@ class Station {
      *
      */
     clearDatasets() {
-        // console.log("cleared data: " + this.id)
+        // console.log("cleared data: " + this.id);
+        let length = this.datasets.dummy.length;
+        this.datasets.dummy.splice(0, length);
         this.datasets.minTemperature.splice(0, length);
         this.datasets.maxTemperature.splice(0, length);
         this.datasets.minCo2.splice(0, length);
@@ -169,6 +172,7 @@ class Station {
     pushDatasets(count, shiftLeft=true) {
         // console.log("count to push: " + count);
         for (let i = 0; i < count; i++) {
+            this.datasets.dummy.push(NaN);
             this.datasets.minTemperature.push(NaN);
             this.datasets.maxTemperature.push(NaN);
             this.datasets.minCo2.push(NaN);
@@ -176,6 +180,7 @@ class Station {
             this.datasets.minHumidity.push(NaN);
             this.datasets.maxHumidity.push(NaN);
             if (shiftLeft) {
+                this.datasets.dummy.shift();
                 this.datasets.minTemperature.shift();
                 this.datasets.maxTemperature.shift();
                 this.datasets.minCo2.shift();
