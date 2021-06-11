@@ -26,7 +26,7 @@ verifySession();
     <head>
         <meta charset="UTF-8">
         <meta content="width=device-width, initial-scale=1" name="viewport">
-        <link rel = "icon" href = "res/logo2.png">
+        <link rel="icon" href="res/logo2.png">
         <title> Klimostat Home </title>
         <link href="https://fonts.gstatic.com" rel="preconnect">
         <link href="https://fonts.gstatic.com" rel="preconnect">
