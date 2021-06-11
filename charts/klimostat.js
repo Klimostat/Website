@@ -413,5 +413,5 @@ const date = {
                 return ('00' + dateObj.getHours()).slice(-2) + ':' +
                     Math.floor(dateObj.getMinutes() / 10) + 'x';
         }
-    }
+    },
 }

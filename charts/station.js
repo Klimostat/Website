@@ -83,7 +83,9 @@ class Station {
         maxCo2: [],
         minHumidity: [],
         maxHumidity: []
-    }
+    };
+
+    // lastDataPrepared = null;
 
     loadedInterval = "";
     color;
@@ -109,6 +111,7 @@ class Station {
         this.thresholdCo2 = dbFetch.threshold_co2;
         this.thresholdHumidity = dbFetch.threshold_humidity;
 
+        // creates navNode
         let stationsBox = document.getElementById("stations-box");
 
         let tooltipBase = document.createElement("div");
@@ -143,6 +146,44 @@ class Station {
             return lastFetch.setMinutes(lastFetch.getMinutes() + 5) < new Date();
         }
         return true;
+    }
+
+    /**
+     *
+     */
+    clearDatasets() {
+        console.log("cleared data: " + this.id)
+        this.datasets.minTemperature.splice(0, length);
+        this.datasets.maxTemperature.splice(0, length);
+        this.datasets.minCo2.splice(0, length);
+        this.datasets.maxCo2.splice(0, length);
+        this.datasets.minHumidity.splice(0, length);
+        this.datasets.maxHumidity.splice(0, length);
+    }
+
+    /**
+     *
+     * @param count {number}
+     * @param shiftLeft {boolean}
+     */
+    pushDatasets(count, shiftLeft=true) {
+        console.log("count to push: " + count);
+        for (let i = 0; i < count; i++) {
+            this.datasets.minTemperature.push(NaN);
+            this.datasets.maxTemperature.push(NaN);
+            this.datasets.minCo2.push(NaN);
+            this.datasets.maxCo2.push(NaN);
+            this.datasets.minHumidity.push(NaN);
+            this.datasets.maxHumidity.push(NaN);
+            if (shiftLeft) {
+                this.datasets.minTemperature.shift();
+                this.datasets.maxTemperature.shift();
+                this.datasets.minCo2.shift();
+                this.datasets.maxCo2.shift();
+                this.datasets.minHumidity.shift();
+                this.datasets.maxHumidity.shift();
+            }
+        }
     }
 
     /**

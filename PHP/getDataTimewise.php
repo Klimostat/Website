@@ -22,7 +22,7 @@ $outObject = [];
 
 $interval = $_POST["interval"];
 
-$data = $data = $conn -> prepare("
+$data = $conn -> prepare("
 select timestamp(concat(left(l.pk_measurement_time, 17), '00')) time, max(l.co2) max_co2, min(l.co2) min_co2, max(l.humidity) max_humidity, min(l.humidity) min_humidity, max(l.temperature) max_temperature, min(l.temperature) min_temperature from live_data l
 where l.pk_measurement_time > subtime(utc_timestamp, '01:00:10')
 and l.fk_station_id = :station_id
@@ -38,7 +38,7 @@ and l.fk_station_id = :station_id
 group by time;
 ");
         break;
-    case "day":
+    case "today":
         $timeStrLen = 15;
         $timeAppend = "0:00";
         break;

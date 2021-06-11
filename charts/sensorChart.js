@@ -146,4 +146,29 @@ class SensorChart {
             chart.chart.update();
         });
     }
+
+    /**
+     *
+     * @param labels {string|string[]}
+     * @param shiftLeft {boolean}
+     */
+    pushTimestampRight(labels, shiftLeft=true) {
+        if (labels.constructor !== Array) {
+            labels = [labels];
+        }
+        labels.forEach(label => {
+            this.labels.push(label);
+            if (shiftLeft) {
+                this.labels.shift();
+            }
+        });
+    }
+
+    /**
+     *
+     */
+    clearChartContents() {
+        let length = this.labels.length;
+        this.labels.splice(0, length);
+    }
 }

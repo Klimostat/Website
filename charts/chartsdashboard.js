@@ -137,32 +137,13 @@ let dashboard = {
          */
         let update_fn = function (xhr) {
             let dataPerStation = JSON.parse(xhr.responseText);
-            // console.log("db response: ");
-            // console.log(dataPerStation);
-            klimostat.intervals.live.updateChartValues(dataPerStation)
-            // for (let dataset of dataPerStation) {
-            //     console.log("id: " + dataset.id);
-            //     console.log(stations[dataset.id].getChartValues());
-            // }
-            dashboard.appendValuesFromStationToCharts();
+            klimostat.intervals.live.updateChartValues(dataPerStation, dashboard.co2Chart, true);
+            klimostat.intervals.live.updateChartValues(dataPerStation, dashboard.humidityChart, true);
+            dashboard.updateAndDisplay();
             dashboard.startFetch(10);
         }
 
         fetcher.fetch(data, "POST", "PHP/getDataLive.php", update_fn, true);
-    },
-
-    /**
-     * appends values to a chart
-     */
-    appendValuesFromStationToCharts: function () {
-        this.updateAndDisplay();
-
-        // console.log("appendValuesFromStationsToCharts: updateCo2Chart()");
-        klimostat.intervals.live.updateChartLabels(this.co2Chart, true);
-        this.co2Chart.updateCharts();
-        // console.log("appendValuesFromStationsToCharts: updateHumidityChart()");
-        klimostat.intervals.live.updateChartLabels(this.humidityChart, true);
-        this.humidityChart.updateCharts();
     },
 
     /**
@@ -256,5 +237,8 @@ let dashboard = {
 
         this.maxCo2Ids = maxCo2IdsNew;
         this.minHumidityIds = minHumidityIdsNew;
+
+        this.co2Chart.updateCharts();
+        this.humidityChart.updateCharts();
     },
 }
