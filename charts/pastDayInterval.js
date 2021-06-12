@@ -1,10 +1,10 @@
 klimostat.initFunctions.push(() => {
-    klimostat.intervals.dayMinus1 = new pastDayInterval("-1day", "Yesterday", 1);
-    klimostat.intervals.dayMinus2 = new pastDayInterval("-2day", "Two days ago", 2);
-    klimostat.intervals.dayMinus3 = new pastDayInterval("-3day", "Three days ago", 3);
-    klimostat.intervals.dayMinus4 = new pastDayInterval("-4day", "Four days ago", 4);
-    klimostat.intervals.dayMinus5 = new pastDayInterval("-5day", "Five days ago", 5);
-    klimostat.intervals.dayMinus6 = new pastDayInterval("-6day", "Six days ago", 6);
+    klimostat.intervals.dayMinus1 = new pastDayInterval("-1day", null, 1);
+    klimostat.intervals.dayMinus2 = new pastDayInterval("-2day", null, 2);
+    klimostat.intervals.dayMinus3 = new pastDayInterval("-3day", null, 3);
+    klimostat.intervals.dayMinus4 = new pastDayInterval("-4day", null, 4);
+    klimostat.intervals.dayMinus5 = new pastDayInterval("-5day", null, 5);
+    klimostat.intervals.dayMinus6 = new pastDayInterval("-6day", null, 6);
 })
 
 class pastDayInterval {
@@ -16,8 +16,14 @@ class pastDayInterval {
 
     constructor(name, fullName, daysAgo) {
         this.name = name;
-        this.fullName = fullName;
         this.daysAgo = daysAgo;
+        if (typeof fullName !== "string") {
+            let date = new Date();
+            date.setDate(date.getDate() - daysAgo);
+            this.fullName = date.getDate() + "." + (date.getMonth() + 1) + "." + date.getFullYear();
+        } else {
+            this.fullName = fullName;
+        }
     }
 
     /**
@@ -134,16 +140,6 @@ class pastDayInterval {
                         station.datasets.maxTemperature[index] = Math.max(station.datasets.maxTemperature[index], entry.maxTemperature);
                     }
                 }
-
-                station.liveData.minHumidity = Math.min(entry.minHumidity, station.liveData.minHumidity);
-                station.liveData.maxCo2 = Math.max(entry.maxCo2, station.liveData.maxCo2);
-            }
-
-            if (station.liveData.maxCo2 >= station.thresholdCo2) {
-                klimostat.sendAlert(station.alertMessageCO2);
-            }
-            if (station.liveData.minHumidity < station.thresholdHumidity) {
-                klimostat.sendAlert(station.alertMessageHumidity);
             }
         }
     }

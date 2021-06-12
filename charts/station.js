@@ -92,11 +92,25 @@ class Station {
     color;
     id;
     name;
-    alertMessageHumidity;
-    alertMessageCO2;
     location;
-    thresholdCo2;
-    thresholdHumidity;
+
+    /**
+     *
+     * @type {Object}
+     */
+    liveData = {
+        station: this,
+
+        /**
+         * @type {Date}
+         */
+        timestampOfNewestData: null,
+
+        /**
+         * @type {Date}
+         */
+        timestampOfNewestDatasetEntry: null,
+    }
 
     /**
      *
@@ -105,12 +119,10 @@ class Station {
     constructor(dbFetch) {
         this.id = parseInt(dbFetch.pk_station_id);
         this.name = dbFetch.name;
-        this.alertMessageHumidity = dbFetch.alert_message_humidity;
-        this.alertMessageCO2 = dbFetch.alert_message_co2;
         this.location = dbFetch.location;
         this.color = colors[klimostat.stations.length % 12];
-        this.thresholdCo2 = dbFetch.threshold_co2;
-        this.thresholdHumidity = dbFetch.threshold_humidity;
+        this.liveData.maxCo2 = new ExtremeValues(parseFloat(dbFetch.threshold_co2), this.name + ": " + dbFetch.alert_message_co2, false, 0)
+        this.liveData.minHumidity = new ExtremeValues(parseFloat(dbFetch.threshold_humidity), this.name + ": " + dbFetch.alert_message_humidity, true, 100)
 
         // creates navNode
         let stationsBox = document.getElementById("stations-box");
@@ -190,34 +202,55 @@ class Station {
             }
         }
     }
+}
+
+class ExtremeValues {
+    alertSent = false;
+
+    alertMessage;
+
+    threshold;
+
+    defaultValue;
+
+    minNotMax;
 
     /**
-     *
-     * @type {Object}
+     * @type {{time: Date, value: number}[]}
      */
-    liveData = {
-        station: this,
+    _values = [];
 
-        /**
-         *
-         * @type {number}
-         */
-        maxCo2: 0,
+    constructor(threshold, alertMessage, minNotMax, defaultValue) {
+        this.threshold = threshold;
+        this.alertMessage = alertMessage;
+        this.defaultValue = defaultValue;
+        this.minNotMax = minNotMax;
+    }
 
-        /**
-         *
-         * @type {number}
-         */
-        minHumidity: 100,
+    update(time, value) {
+        let lastEntryDate = new Date(time);
+        lastEntryDate.setMinutes(lastEntryDate.getMinutes() - 5);
+        while (this._values.length > 0 && lastEntryDate > this._values[0].time) {
+            this._values.shift();
+        }
+        while (this._values.length > 0 && (this.minNotMax ? value <= this._values[this._values.length - 1].value : value >= this._values[this._values.length - 1].value)) {
+            this._values.pop();
+        }
+        this._values.push({time: time, value:value});
 
-        /**
-         * @type {Date}
-         */
-        timestampOfNewestData: null,
+        if (this.minNotMax ? value < this.threshold : value > this.threshold) {
+            this._sendAlert();
+        }
+    }
 
-        /**
-         * @type {Date}
-         */
-        timestampOfNewestDatasetEntry: null,
+    get() {
+        return this._values.length === 0 ? this.defaultValue : this._values[0].value;
+    }
+
+    _sendAlert() {
+        if (!this.alertSent) {
+            klimostat.sendAlert(this.alertMessage);
+            this.alertSent = true;
+        }
     }
 }
