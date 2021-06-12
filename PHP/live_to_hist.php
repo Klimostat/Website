@@ -5,7 +5,7 @@ include "session.php";
 $stations = $conn->prepare("SELECT pk_station_id FROM station;");
 $stations->execute();
 
-$timestamp = $conn->prepare("SELECT CURRENT_TIMESTAMP() AS ts;");
+$timestamp = $conn->prepare("SELECT utc_timestamp() AS ts;");
 $timestamp->execute();
 
 $two_days_ago = date("Y-m-d H:i:s", strtotime($timestamp->fetch(PDO::FETCH_ASSOC)["ts"] . " -2 day"));
