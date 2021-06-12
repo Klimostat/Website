@@ -18,16 +18,10 @@ verifySession();
 header("Content-Type: text/json", false);
 
 $stations = json_decode($_POST["stations"]);
-$outObject = [];
+
+$outObject = null;
 
 $interval = $_POST["interval"];
-
-$data = $conn -> prepare("
-select timestamp(concat(left(l.pk_measurement_time, 17), '00')) time, max(l.co2) max_co2, min(l.co2) min_co2, max(l.humidity) max_humidity, min(l.humidity) min_humidity, max(l.temperature) max_temperature, min(l.temperature) min_temperature from live_data l
-where l.pk_measurement_time > subtime(utc_timestamp, '01:00:10')
-and l.fk_station_id = :station_id
-group by time;
-");
 
 switch ($interval) {
     case "hour":
@@ -37,7 +31,10 @@ where timestampdiff(MINUTE, l.pk_measurement_time, utc_timestamp) < 61
 and l.fk_station_id = :station_id
 group by time;
 ");
+        $outObject = queryToObject($data);
         break;
+
+
     case "day":
         $data = $conn -> prepare("
 select timestamp(concat(left(l.pk_measurement_time, 15), '0:00')) time, max(l.co2) max_co2, min(l.co2) min_co2, max(l.humidity) max_humidity, min(l.humidity) min_humidity, max(l.temperature) max_temperature, min(l.temperature) min_temperature from live_data l
@@ -45,75 +42,100 @@ where timestampdiff(MINUTE, l.pk_measurement_time, utc_timestamp) < (24 * 60 + 1
 and l.fk_station_id = :station_id
 group by time;
 ");
+        $outObject = queryToObject($data);
         break;
+
+
     case "-1day":
-        $data = $conn -> prepare("
-select timestamp(concat(left(l.pk_measurement_time, 15), '0:00')) time, max(l.co2) max_co2, min(l.co2) min_co2, max(l.humidity) max_humidity, min(l.humidity) min_humidity, max(l.temperature) max_temperature, min(l.temperature) min_temperature from live_data l
-where l.pk_measurement_time < timestamp(utc_date)
-and l.pk_measurement_time > timestamp(subdate(utc_date, 1))
-and l.fk_station_id = :station_id
-group by time;
-");
+        $outObject = pastDayFetch(1);
         break;
+
+
     case "-2day":
-        $data = $conn -> prepare("
-select timestamp(concat(left(l.pk_measurement_time, 15), '0:00')) time, max(l.co2) max_co2, min(l.co2) min_co2, max(l.humidity) max_humidity, min(l.humidity) min_humidity, max(l.temperature) max_temperature, min(l.temperature) min_temperature from live_data l
-where l.pk_measurement_time < timestamp(subdate(utc_date, 1))
-and l.pk_measurement_time > timestamp(subdate(utc_date, 2))
-and l.fk_station_id = :station_id
-group by time;
-");
+        $outObject = pastDayFetch(2);
         break;
+
+
     case "-3day":
-        $data = $conn -> prepare("
-select timestamp(concat(left(l.pk_measurement_time, 15), '0:00')) time, max(l.co2) max_co2, min(l.co2) min_co2, max(l.humidity) max_humidity, min(l.humidity) min_humidity, max(l.temperature) max_temperature, min(l.temperature) min_temperature from live_data l
-where l.pk_measurement_time < timestamp(subdate(utc_date, 2))
-and l.pk_measurement_time > timestamp(subdate(utc_date, 3))
-and l.fk_station_id = :station_id
-group by time;
-");
+        $outObject = pastDayFetch(3);
         break;
+
+
     case "-4day":
-        $data = $conn -> prepare("
-select timestamp(concat(left(l.pk_measurement_time, 15), '0:00')) time, max(l.co2) max_co2, min(l.co2) min_co2, max(l.humidity) max_humidity, min(l.humidity) min_humidity, max(l.temperature) max_temperature, min(l.temperature) min_temperature from live_data l
-where l.pk_measurement_time < timestamp(subdate(utc_date, 2))
-and l.pk_measurement_time > timestamp(subdate(utc_date, 3))
-and l.fk_station_id = :station_id
-group by time;
-");
+        $outObject = pastDayFetch(4);
         break;
+
+
     case "-5day":
-        $data = $conn -> prepare("
-select timestamp(concat(left(l.pk_measurement_time, 15), '0:00')) time, max(l.co2) max_co2, min(l.co2) min_co2, max(l.humidity) max_humidity, min(l.humidity) min_humidity, max(l.temperature) max_temperature, min(l.temperature) min_temperature from live_data l
-where l.pk_measurement_time < timestamp(subdate(utc_date, 2))
-and l.pk_measurement_time > timestamp(subdate(utc_date, 3))
-and l.fk_station_id = :station_id
-group by time;
-");
+        $outObject = pastDayFetch(5);
         break;
+
+
     case "-6day":
-        $data = $conn -> prepare("
-select timestamp(concat(left(l.pk_measurement_time, 15), '0:00')) time, max(l.co2) max_co2, min(l.co2) min_co2, max(l.humidity) max_humidity, min(l.humidity) min_humidity, max(l.temperature) max_temperature, min(l.temperature) min_temperature from live_data l
-where l.pk_measurement_time < timestamp(subdate(utc_date, 2))
-and l.pk_measurement_time > timestamp(subdate(utc_date, 3))
-and l.fk_station_id = :station_id
-group by time;
-");
+        $outObject = pastDayFetch(6);
         break;
-}
-
-for ($i = 0; $i < count($stations); $i++) {
-
-    $data -> bindParam(":station_id", $stations[$i] -> id);
-    $data -> execute();
-
-    if ($data -> rowCount() > 0) {
-        $outValuesPerStation = [];
-        while ($tupel = $data -> fetch(PDO::FETCH_ASSOC)) {
-            array_push($outValuesPerStation, ["time" => $tupel['time'], "minHumidity" => $tupel['min_humidity'], "maxHumidity" => $tupel['max_humidity'], "minTemperature" => $tupel['min_temperature'], "maxTemperature" => $tupel['max_temperature'], "minCo2" => $tupel['min_co2'], "maxCo2" => $tupel['max_co2']]);
-        }
-        array_push($outObject, ["id" => $stations[$i] -> id, "data" => $outValuesPerStation]);
-    }
 }
 
 echo json_encode($outObject);
+
+
+
+
+
+
+
+function queryToObject($prepare) {
+    global $stations;
+
+    $outObject = [];
+
+    for ($i = 0; $i < count($stations); $i++) {
+
+        $prepare -> bindValue(":station_id", $stations[$i] -> id);
+        $prepare -> execute();
+
+        if ($prepare -> rowCount() > 0) {
+            $outValuesPerStation = [];
+            while ($tupel = $prepare -> fetch(PDO::FETCH_ASSOC)) {
+                array_push($outValuesPerStation, ["time" => $tupel['time'], "minHumidity" => $tupel['min_humidity'], "maxHumidity" => $tupel['max_humidity'], "minTemperature" => $tupel['min_temperature'], "maxTemperature" => $tupel['max_temperature'], "minCo2" => $tupel['min_co2'], "maxCo2" => $tupel['max_co2']]);
+            }
+            array_push($outObject, ["id" => $stations[$i] -> id, "data" => $outValuesPerStation]);
+        }
+    }
+    return $outObject;
+}
+
+function pastDayFetch($daysAgo) {
+    global $conn;
+
+    $data = $conn -> prepare("
+select timestamp(concat(left(h.pk_measurement_time, 15), '0:00')) time, max(h.max_co2) max_co2, min(h.min_co2) min_co2, max(h.max_humidity) max_humidity, min(h.min_humidity) min_humidity, max(h.max_temperature) max_temperature, min(h.min_temperature) min_temperature from historical_data h
+where h.pk_measurement_time < timestamp(subdate(utc_date, :daysFrom))
+and h.pk_measurement_time > timestamp(subdate(utc_date, :daysUntil))
+and h.fk_station_id = :station_id
+group by time;
+");
+    $data -> bindValue(":daysFrom", $daysAgo - 1);
+    $data -> bindValue(":daysUntil", $daysAgo);
+
+    $obj = queryToObject($data);
+
+
+    if (count($obj) == 0) {
+        $data = $conn -> prepare("
+select timestamp(concat(left(l.pk_measurement_time, 15), '0:00')) time, max(l.co2) max_co2, min(l.co2) min_co2, max(l.humidity) max_humidity, min(l.humidity) min_humidity, max(l.temperature) max_temperature, min(l.temperature) min_temperature from live_data l
+where l.pk_measurement_time < timestamp(subdate(utc_date, :daysFrom))
+and l.pk_measurement_time > timestamp(subdate(utc_date, :daysUntil))
+and l.fk_station_id = :station_id
+group by time;
+");
+        $data -> bindValue(":daysFrom", $daysAgo - 1);
+        $data -> bindValue(":daysUntil", $daysAgo);
+
+        $obj = queryToObject($data);
+    }
+
+
+
+    return $obj;
+}

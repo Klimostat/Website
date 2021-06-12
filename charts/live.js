@@ -118,15 +118,8 @@ klimostat.intervals.live = {
                     }
                 }
 
-                station.liveData.minHumidity = Math.min(entry.humidity, station.liveData.minHumidity);
-                station.liveData.maxCo2 = Math.max(entry.co2, station.liveData.maxCo2);
-            }
-
-            if (station.liveData.maxCo2 >= station.thresholdCo2) {
-                klimostat.sendAlert(station.alertMessageCO2);
-            }
-            if (station.liveData.minHumidity < station.thresholdHumidity) {
-                klimostat.sendAlert(station.alertMessageHumidity);
+                station.liveData.minHumidity.update(entryTime, entry.humidity);
+                station.liveData.maxCo2.update(entryTime, entry.co2);
             }
         }
     },
