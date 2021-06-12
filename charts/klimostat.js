@@ -55,6 +55,8 @@ const klimostat = {
      */
     alertSent: false,
 
+    initFunctions: [],
+
     /**
      * initializes environment at the start
      */
@@ -63,6 +65,8 @@ const klimostat = {
 
         xhttp.onreadystatechange = function () {
             if (this.readyState === 4 && this.status === 200) {
+
+                klimostat.initFunctions.forEach(fn => fn());
 
                 for (let intervalsKey in klimostat.intervals) {
                     intervals.push(intervalsKey, klimostat.intervals[intervalsKey].fullName);

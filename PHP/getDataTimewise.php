@@ -46,11 +46,56 @@ and l.fk_station_id = :station_id
 group by time;
 ");
         break;
-    case "today":
+    case "-1day":
         $data = $conn -> prepare("
 select timestamp(concat(left(l.pk_measurement_time, 15), '0:00')) time, max(l.co2) max_co2, min(l.co2) min_co2, max(l.humidity) max_humidity, min(l.humidity) min_humidity, max(l.temperature) max_temperature, min(l.temperature) min_temperature from live_data l
 where l.pk_measurement_time < timestamp(utc_date)
 and l.pk_measurement_time > timestamp(subdate(utc_date, 1))
+and l.fk_station_id = :station_id
+group by time;
+");
+        break;
+    case "-2day":
+        $data = $conn -> prepare("
+select timestamp(concat(left(l.pk_measurement_time, 15), '0:00')) time, max(l.co2) max_co2, min(l.co2) min_co2, max(l.humidity) max_humidity, min(l.humidity) min_humidity, max(l.temperature) max_temperature, min(l.temperature) min_temperature from live_data l
+where l.pk_measurement_time < timestamp(subdate(utc_date, 1))
+and l.pk_measurement_time > timestamp(subdate(utc_date, 2))
+and l.fk_station_id = :station_id
+group by time;
+");
+        break;
+    case "-3day":
+        $data = $conn -> prepare("
+select timestamp(concat(left(l.pk_measurement_time, 15), '0:00')) time, max(l.co2) max_co2, min(l.co2) min_co2, max(l.humidity) max_humidity, min(l.humidity) min_humidity, max(l.temperature) max_temperature, min(l.temperature) min_temperature from live_data l
+where l.pk_measurement_time < timestamp(subdate(utc_date, 2))
+and l.pk_measurement_time > timestamp(subdate(utc_date, 3))
+and l.fk_station_id = :station_id
+group by time;
+");
+        break;
+    case "-4day":
+        $data = $conn -> prepare("
+select timestamp(concat(left(l.pk_measurement_time, 15), '0:00')) time, max(l.co2) max_co2, min(l.co2) min_co2, max(l.humidity) max_humidity, min(l.humidity) min_humidity, max(l.temperature) max_temperature, min(l.temperature) min_temperature from live_data l
+where l.pk_measurement_time < timestamp(subdate(utc_date, 2))
+and l.pk_measurement_time > timestamp(subdate(utc_date, 3))
+and l.fk_station_id = :station_id
+group by time;
+");
+        break;
+    case "-5day":
+        $data = $conn -> prepare("
+select timestamp(concat(left(l.pk_measurement_time, 15), '0:00')) time, max(l.co2) max_co2, min(l.co2) min_co2, max(l.humidity) max_humidity, min(l.humidity) min_humidity, max(l.temperature) max_temperature, min(l.temperature) min_temperature from live_data l
+where l.pk_measurement_time < timestamp(subdate(utc_date, 2))
+and l.pk_measurement_time > timestamp(subdate(utc_date, 3))
+and l.fk_station_id = :station_id
+group by time;
+");
+        break;
+    case "-6day":
+        $data = $conn -> prepare("
+select timestamp(concat(left(l.pk_measurement_time, 15), '0:00')) time, max(l.co2) max_co2, min(l.co2) min_co2, max(l.humidity) max_humidity, min(l.humidity) min_humidity, max(l.temperature) max_temperature, min(l.temperature) min_temperature from live_data l
+where l.pk_measurement_time < timestamp(subdate(utc_date, 2))
+and l.pk_measurement_time > timestamp(subdate(utc_date, 3))
 and l.fk_station_id = :station_id
 group by time;
 ");

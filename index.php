@@ -105,5 +105,6 @@ verifySession();
         <script src="charts/live.js"></script>
         <script src="charts/hour.js"></script>
         <script src="charts/day.js"></script>
+        <script src="charts/pastDayInterval.js"></script>
     </body>
 </html>
