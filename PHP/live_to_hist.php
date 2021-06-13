@@ -35,13 +35,13 @@ while ($station = $stations->fetch(PDO::FETCH_ASSOC)) {
     $data->execute();
 
     while ($line = $data->fetch(PDO::FETCH_ASSOC)) {
-        echo $min_co2 = $line["min_co2"] . ", ";
-        echo $max_co2 = $line["max_co2"] . ", ";
-        echo $min_humidity = $line["min_humidity"] . ", ";
-        echo $max_humidity = $line["max_humidity"] . ", ";
-        echo $min_temperature = $line["min_temperature"] . ", ";
-        echo $max_temperature = $line["max_temperature"] . ", ";
-        echo $time = $line["time1"] . "\n";
+        echo ($min_co2 = $line["min_co2"]) . ", ";
+        echo ($max_co2 = $line["max_co2"]) . ", ";
+        echo ($min_humidity = $line["min_humidity"]) . ", ";
+        echo ($max_humidity = $line["max_humidity"]) . ", ";
+        echo ($min_temperature = $line["min_temperature"]) . ", ";
+        echo ($max_temperature = $line["max_temperature"]) . ", ";
+        echo ($time = $line["time1"]) . "\n";
 
         $insert_to_historical = $conn->prepare("
         INSERT INTO historical_data (`fk_station_id`, `pk_measurement_time`, `min_co2`, `max_co2`, `min_humidity`, `max_humidity`, `min_temperature`, `max_temperature`)
