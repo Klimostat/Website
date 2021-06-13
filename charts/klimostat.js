@@ -200,7 +200,7 @@ const fetcher = {
         xhr.formdata = formdata;
 
 
-        //no active
+        // no active requests
         if (this.active.length === 0) {
             xhr.send(formdata);
             this.active.push(xhr);

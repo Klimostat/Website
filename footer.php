@@ -5,33 +5,25 @@
         color: #DBFF78;
     }
 
-    #footer > * {
+    #footer .col {
         text-align: center;
+        vertical-align: center;
+        padding: 30px;
     }
-
-    div{
-        padding: 3px;
-    }
-
 </style>
 
 <footer id = "footer">
     <div class="container-fluid">
-        Ein Projekt der HTL Rennweg
-    </div>
-    <div class="container-fluid">
         <div class="row">
-            <div class="col">
-                Placeholder
-            </div>
             <div class="col">
                 &copy; Klimostat
             </div>
-            <div class="col">
-                <a href = "Impressum.php">
-                    Impressum
-                </a>
-            </div>
+            <a href = "https://www.htl.rennweg.at" class="col">
+                Ein Projekt der HTL Rennweg
+            </a>
+            <a href = "Impressum.php" class="col">
+                Impressum
+            </a>
         </div>
     </div>
 </footer>
