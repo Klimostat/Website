@@ -55,7 +55,11 @@ while ($station = $stations->fetch(PDO::FETCH_ASSOC)) {
         $insert_to_historical->bindParam(":max_temperature", $max_temperature);
         $insert_to_historical->bindParam(":time1", $time);
         $insert_to_historical->bindParam(":fk_station_id", $fk_station_id);
-        $insert_to_historical->execute();
+        try {
+            $insert_to_historical->execute();
+        } catch (PDOException $PDOException) {
+            echo $PDOException;
+        }
     }
 }
 
