@@ -68,24 +68,7 @@ body.timeout > #main {
     position: absolute;
     left: 105%;
     top: -1em;
-    min-width: 100%;
-    max-width: 70vw;
-}
-
-#navbar .station-node.offline {
-    display:block;
-    color: #454545;
-    background-color: #a2a2a2;
-    opacity: 0.5;
-}
-
-#navbar .station-node:not(.selected):not(.offline) {
-    color: var(--color3) !important;
-}
-
-#navbar .station-node.selected {
-    color: white;
-    background-color: var(--color3);
+    width: 200%;
 }
 
 #navbar #interval {
@@ -109,4 +92,34 @@ body.timeout > #main {
     margin: 10px;
     width: 720px;
     position: static;
+}
+
+/*
+    station node
+ */
+
+#navbar .station-node.offline {
+    display:block;
+    color: #454545;
+    background-color: #a2a2a2;
+    opacity: 0.5;
+}
+
+#navbar .station-node:not(.selected):not(.offline) {
+    color: var(--color3) !important;
+}
+
+#navbar .station-node.selected {
+    color: white;
+    background-color: var(--color3);
+}
+
+#navbar .station-node.alerting {
+    animation: alert 1s ease 0s infinite alternate both running;
+}
+
+@keyframes alert {
+    100% {
+        background-color: tomato;
+    }
 }

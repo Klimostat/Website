@@ -24,26 +24,19 @@ class Station {
          */
         station: this,
 
-        /**
-         * @type {?HTMLElement}
-         */
-        _node: null,
+        _nodes: {
+            nav: null,
+            lastUpdate: null,
+            alert: null
+        },
 
         /**
          *
          */
-        STYLES: [
-            "unselected",
-            "selected",
-            "offline"
-        ],
-
-        /**
-         *
-         * @return {HTMLElement|null}
-         */
-        get() {
-            return this._node;
+        styles: {
+            selected: false,
+            offline: false,
+            alerting: false
         },
 
         /**
@@ -51,24 +44,26 @@ class Station {
          * @param style {string}
          */
         setStyle: function (style) {
-            if (!this.STYLES.includes(style)) {
-                return;
-            }
             // console.log(style);
 
             // selected
-            this._node.classList.toggle("selected", style === "selected");
+            this._nodes.nav.classList.toggle("selected", style === "selected");
 
             //offline
-            this._node.classList.toggle("offline", style === "offline");
+            this._nodes.nav.classList.toggle("offline", style === "offline");
         },
 
         /**
          *
          */
         updateNewestData: function () {
-            this.get();
-            this._node.parentElement.getElementsByTagName("span")[0].innerHTML = date.toLocalReadableString(this.station.liveData.timestampOfNewestData);
+            this._nodes.lastUpdate.innerHTML = date.toLocalReadableString(this.station.liveData.timestampOfNewestData);
+        },
+
+        setAlerting: function (alerting=true, message) {
+            this.styles.alerting = alerting;
+            this._nodes.nav.classList.toggle("alerting", alerting);
+            this._nodes.alert.innerHTML = message;
         }
     };
 
@@ -131,8 +126,8 @@ class Station {
         this.name = dbFetch.name;
         this.location = dbFetch.location;
         this.color = colors[klimostat.stations.length % 12];
-        this.maxCo2 = new ExtremeValues(parseFloat(dbFetch.threshold_co2), this.name + ": " + dbFetch.alert_message_co2, false, 0)
-        this.minHumidity = new ExtremeValues(parseFloat(dbFetch.threshold_humidity), this.name + ": " + dbFetch.alert_message_humidity, true, 100)
+        this.maxCo2 = new ExtremeValues(this, parseFloat(dbFetch.threshold_co2), dbFetch.alert_message_co2, false, 0)
+        this.minHumidity = new ExtremeValues(this, parseFloat(dbFetch.threshold_humidity), dbFetch.alert_message_humidity, true, 100)
 
         // creates navNode
         let stationsBox = document.getElementById("stations-box");
@@ -140,19 +135,39 @@ class Station {
         let tooltipBase = document.createElement("div");
         tooltipBase.classList.add("tooltip-base");
 
-        let navNode = document.createElement("a");
+        let navNode = this.navNode._nodes.nav = document.createElement("a");
         navNode.classList.add("list-group-item", "station-node");
         navNode.href = "javascript:selectedStations.toggle(" + this.id + ")";
         navNode.innerHTML = this.name;
-        this.navNode._node = navNode;
 
+        // card
         let card = document.createElement("div");
         card.classList.add("card");
 
         let cardBody = document.createElement("div");
-        cardBody.classList.add("card-body");
-        cardBody.innerHTML = "Location: " + this.location + "<br> Last update: <span> not yet </span>";
+        cardBody.classList.add("list-group");
 
+        let location = document.createElement("li");
+        location.classList.add("list-group-item");
+        location.innerHTML = "Location: " + this.location;
+
+        let lastUpdate = this.navNode._nodes.lastUpdate = document.createElement("li");
+        lastUpdate.classList.add("list-group-item");
+        lastUpdate.innerHTML = "Last update: ";
+
+        let lastUpdateSpan = document.createElement("span");
+        lastUpdateSpan.innerHTML = "not yet";
+        lastUpdate.appendChild(lastUpdateSpan);
+
+        let alert = this.navNode._nodes.alert = document.createElement("li");
+        alert.classList.add("list-group-item");
+        alert.innerHTML = "everything ok";
+
+        cardBody.appendChild(location);
+        cardBody.appendChild(lastUpdate);
+        cardBody.appendChild(alert);
+
+        // appends
         stationsBox.appendChild(tooltipBase);
         tooltipBase.appendChild(navNode);
         tooltipBase.appendChild(card);
@@ -217,6 +232,8 @@ class Station {
 class ExtremeValues {
     alertSent = false;
 
+    station;
+
     alertMessage;
 
     threshold;
@@ -230,7 +247,16 @@ class ExtremeValues {
      */
     _values = [];
 
-    constructor(threshold, alertMessage, minNotMax, defaultValue) {
+    /**
+     *
+     * @param station {Station}
+     * @param threshold {number}
+     * @param alertMessage {string}
+     * @param minNotMax {boolean}
+     * @param defaultValue {number}
+     */
+    constructor(station, threshold, alertMessage, minNotMax, defaultValue) {
+        this.station = station;
         this.threshold = threshold;
         this.alertMessage = alertMessage;
         this.defaultValue = defaultValue;
@@ -259,7 +285,8 @@ class ExtremeValues {
 
     _sendAlert() {
         if (!this.alertSent) {
-            klimostat.sendAlert(this.alertMessage);
+            klimostat.sendAlert(this.station.name + ": " + this.alertMessage);
+            this.station.navNode.setAlerting(true, this.alertMessage);
             this.alertSent = true;
         }
     }

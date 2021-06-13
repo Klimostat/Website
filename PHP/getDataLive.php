@@ -20,16 +20,16 @@ $outObject = array();
 for ($i = 0; $i < count($stations); $i++) {
     if ($stations[$i]->since != null) {
         $data = $conn -> prepare("
-select m.pk_measurement_time time, m.co2, m.humidity, m.temperature from live_data m
-where m.pk_measurement_time > :since
-and m.fk_station_id = :station_id
+select l.pk_measurement_time time, l.co2, l.humidity, l.temperature from live_data l
+where l.pk_measurement_time > :since
+and l.fk_station_id = :station_id
 ");
         $data -> bindParam(":since", $stations[$i]->since);
     } else {
         $data = $conn -> prepare("
-select m.pk_measurement_time time, m.co2, m.humidity, m.temperature from live_data m
-where m.pk_measurement_time > subtime(utc_timestamp, '00:05:10')
-and m.fk_station_id = :station_id
+select l.pk_measurement_time time, l.co2, l.humidity, l.temperature from live_data l
+where l.pk_measurement_time > subtime(utc_timestamp, '00:05:10')
+and l.fk_station_id = :station_id
 ");
     }
 
