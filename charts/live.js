@@ -118,8 +118,8 @@ klimostat.intervals.live = {
                     }
                 }
 
-                station.liveData.minHumidity.update(entryTime, entry.humidity);
-                station.liveData.maxCo2.update(entryTime, entry.co2);
+                station.minHumidity.update(entryTime, entry.humidity);
+                station.maxCo2.update(entryTime, entry.co2);
             }
         }
     },

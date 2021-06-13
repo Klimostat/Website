@@ -45,33 +45,39 @@ verifySession();
         <main id = "main">
 
             <!-- Navbar -->
-            <nav id = "navbar">
-                <nav class="nav nav-pills">
+                <nav id = "navbar" class="nav nav-pills">
                     <div class="container-fluid">
                         <a class="navbar-brand" href="javascript:selectedStations.clear()">
                             <img src="res/logo2.png" alt="" width="40px" height="40px" class="d-inline-block align-center">
                             Klimostat
                         </a>
                     </div>
+                    <div class="container-fluid">
+                        <a class="nav-item" href="javascript:selectedStations.clear()">
+                            Dashboard
+                        </a>
+                    </div>
                     <div class="container-fluid" id = "stations-box">
-                        <div class="nav-item"> Stations </div>
+                        <div class="nav-item">
+                            Stations
+                        </div>
+                    </div>
+                    <div class="container-fluid">
+                        <div class = "nav-item">
+                            <label for = "interval"> Interval: </label>
+                            <select id = "interval" name = "interval" size = "1" onchange="intervals.setSelected()" class = "list-group-item"></select>
+                        </div>
+                        <div class = "nav-item" id = "timing">
+                            Effective: <span id = "lastUpdated">not loaded yet</span>, <span id = "nextUpdateIn"> </span>.
+                        </div>
+                        <div class = "nav-item">
+                            <a class="nav-link" href="javascript:klimostat.updateCharts()">Update</a>
+                        </div>
+                        <div class="nav-item">
+                            <a class = "nav-link" href = "PHP/logout.php"> Logout </a>
+                        </div>
                     </div>
                 </nav>
-                <div class="container-fluid">
-                    <div class = "nav-item">
-                        <select id = "interval" name = "interval" size = "1" onchange="intervals.setSelected()"></select>
-                    </div>
-                    <div class = "nav-item" id = "timing">
-                        Effective: <span id = "lastUpdated">not loaded yet</span>, <span id = "nextUpdateIn"> </span>.
-                    </div>
-                    <div class = "nav-item">
-                        <a class="nav-link" href="javascript:klimostat.updateCharts()">Update</a>
-                    </div>
-                    <div class="nav-item">
-                        <a class = "nav-link" href = "PHP/logout.php"> Logout </a>
-                    </div>
-                </div>
-            </nav>
 
             <!-- Content -->
             <div id = "content" class = "">

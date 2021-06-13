@@ -173,26 +173,26 @@ let dashboard = {
 
         klimostat.stations.forEach(station => {
             //CO2
-            let co2CompareFn = (a, b) => -klimostat.stations[a].liveData.maxCo2.get() + klimostat.stations[b].liveData.maxCo2.get();
+            let co2CompareFn = (a, b) => -klimostat.stations[a].maxCo2.get() + klimostat.stations[b].maxCo2.get();
             if (maxCo2IdsNew.includes(station.id)) {
                 maxCo2IdsNew.sort(co2CompareFn);
             } else if (maxCo2IdsNew.length < this.DISPLAYED_STATION_COUNT) {
                 maxCo2IdsNew.push(station.id);
                 maxCo2IdsNew.sort(co2CompareFn);
-            } else if (station.liveData.maxCo2.get() > klimostat.stations[maxCo2IdsNew[maxCo2IdsNew.length - 1]].liveData.maxCo2.get()) {
+            } else if (station.maxCo2.get() > klimostat.stations[maxCo2IdsNew[maxCo2IdsNew.length - 1]].maxCo2.get()) {
                 maxCo2IdsNew.push(station.id);
                 maxCo2IdsNew.sort(co2CompareFn);
                 maxCo2IdsNew.pop();
             }
 
             //Humidity
-            let humidityCompareFn = (a, b) => klimostat.stations[a].liveData.minHumidity.get() - klimostat.stations[b].liveData.minHumidity.get();
+            let humidityCompareFn = (a, b) => klimostat.stations[a].minHumidity.get() - klimostat.stations[b].minHumidity.get();
             if (minHumidityIdsNew.includes(station.id)) {
                 minHumidityIdsNew.sort(humidityCompareFn);
             } else if (minHumidityIdsNew.length < this.DISPLAYED_STATION_COUNT) {
                 minHumidityIdsNew.push(station.id);
                 minHumidityIdsNew.sort(humidityCompareFn);
-            } else if (station.liveData.minHumidity.get() < klimostat.stations[minHumidityIdsNew[minHumidityIdsNew.length - 1]].liveData.minHumidity.get()) {
+            } else if (station.minHumidity.get() < klimostat.stations[minHumidityIdsNew[minHumidityIdsNew.length - 1]].minHumidity.get()) {
                 minHumidityIdsNew.push(station.id);
                 minHumidityIdsNew.sort(humidityCompareFn);
                 minHumidityIdsNew.pop();

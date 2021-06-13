@@ -95,6 +95,16 @@ class Station {
     location;
 
     /**
+     * @type {ExtremeValues}
+     */
+    minHumidity;
+
+    /**
+     * @type {ExtremeValues}
+     */
+    maxCo2;
+
+    /**
      *
      * @type {Object}
      */
@@ -121,8 +131,8 @@ class Station {
         this.name = dbFetch.name;
         this.location = dbFetch.location;
         this.color = colors[klimostat.stations.length % 12];
-        this.liveData.maxCo2 = new ExtremeValues(parseFloat(dbFetch.threshold_co2), this.name + ": " + dbFetch.alert_message_co2, false, 0)
-        this.liveData.minHumidity = new ExtremeValues(parseFloat(dbFetch.threshold_humidity), this.name + ": " + dbFetch.alert_message_humidity, true, 100)
+        this.maxCo2 = new ExtremeValues(parseFloat(dbFetch.threshold_co2), this.name + ": " + dbFetch.alert_message_co2, false, 0)
+        this.minHumidity = new ExtremeValues(parseFloat(dbFetch.threshold_humidity), this.name + ": " + dbFetch.alert_message_humidity, true, 100)
 
         // creates navNode
         let stationsBox = document.getElementById("stations-box");
