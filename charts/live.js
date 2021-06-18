@@ -1,7 +1,10 @@
 class LiveInterval extends Interval {
 
     constructor() {
-        super("live", "Live", 10_000);
+        super("live", "Live", 10_000, time => {
+            time.setMinutes(time.getMinutes() - 5);
+            return time;
+        });
     }
 
     /**
@@ -118,29 +121,5 @@ class LiveInterval extends Interval {
                 station.maxCo2.update(entryTime, entry.co2);
             }
         }
-    }
-
-    /**
-     * Synchronizes the datasets of the stations with the labels in the charts
-     * @param station {Station} the station that should be synchronized
-     * @param actTime {Date} the time of the last entry
-     */
-    updateStation(station, actTime) {
-        let time = new Date(actTime);
-        time.setMinutes(actTime.getMinutes() - 5);
-
-        let shiftLeft = false;
-
-        if (station.liveData.timestampOfNewestDatasetEntry !== null && station.loadedInterval === "live") {
-            time = station.liveData.timestampOfNewestDatasetEntry;
-            shiftLeft = true;
-        } else {
-            station.clearDatasets();
-        }
-
-        station.pushDatasets(Math.floor((actTime.getTime() - time.getTime()) / this.intervalPeriod), shiftLeft);
-
-        station.liveData.timestampOfNewestDatasetEntry = new Date(actTime);
-        station.loadedInterval = "live";
     }
 }

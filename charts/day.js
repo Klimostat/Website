@@ -1,6 +1,9 @@
 class DayInterval extends Interval {
     constructor() {
-        super("day", "Last 24 hours", 30 * 60_000);
+        super("day", "Last 24 hours", 30 * 60_000, time => {
+            time.setHours(time.getHours() - 24);
+            return time;
+        });
     }
 
     /**
@@ -117,29 +120,5 @@ class DayInterval extends Interval {
                 }
             }
         }
-    }
-
-    /**
-     * Synchronizes the datasets of the stations with the labels in the charts
-     * @param station {Station} the station that should be synchronized
-     * @param actTime {Date} the time of the last entry
-     */
-    updateStation(station, actTime) {
-        let time = new Date(actTime);
-        time.setHours(actTime.getHours() - 24);
-
-        let shiftLeft = false;
-
-        if (station.liveData.timestampOfNewestDatasetEntry !== null && station.loadedInterval === this.name) {
-            time = station.liveData.timestampOfNewestDatasetEntry;
-            shiftLeft = true;
-        } else {
-            station.clearDatasets();
-        }
-
-        station.pushDatasets(Math.floor((actTime.getTime() - time.getTime()) / this.intervalPeriod), shiftLeft);
-
-        station.liveData.timestampOfNewestDatasetEntry = new Date(actTime);
-        station.loadedInterval = this.name;
     }
 }

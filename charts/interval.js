@@ -20,15 +20,47 @@ class Interval {
     intervalPeriod;
 
     /**
+     * modifies the time for the first entry
+     * @param date {Date} the actual Date
+     * @returns {Date}
+     */
+    subTimeForFirstEntry;
+
+    /**
      *
      * @param name {string}
      * @param fullName {string}
      * @param intervalPeriod {number}
+     * @param subTimeForFirstEntry {function(Date): Date}
      */
-    constructor(name, fullName, intervalPeriod) {
+    constructor(name, fullName, intervalPeriod, subTimeForFirstEntry) {
         this.name = name;
         this.fullName = fullName;
         this.intervalPeriod = intervalPeriod;
+        this.subTimeForFirstEntry = subTimeForFirstEntry;
+    }
+
+    /**
+     * Synchronizes the datasets of the stations with the labels in the charts
+     * @param station {Station} the station that should be synchronized
+     * @param actTime {Date} the time of the last entry
+     */
+    updateStation(station, actTime) {
+        let time = this.subTimeForFirstEntry(new Date(actTime));
+
+        let shiftLeft = false;
+
+        if (station.liveData.timestampOfNewestDatasetEntry !== null && station.loadedInterval === this.name) {
+            time = station.liveData.timestampOfNewestDatasetEntry;
+            shiftLeft = true;
+        } else {
+            station.clearDatasets();
+        }
+
+        station.pushDatasets(Math.floor((actTime.getTime() - time.getTime()) / this.intervalPeriod), shiftLeft);
+
+        station.liveData.timestampOfNewestDatasetEntry = new Date(actTime);
+        station.loadedInterval = this.name;
     }
 }
 

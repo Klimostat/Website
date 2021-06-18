@@ -1,6 +1,9 @@
 class HourInterval extends Interval {
     constructor() {
-        super("hour", "Last hour", 60_000);
+        super("hour", "Last hour", 60_000, time => {
+            time.setMinutes(time.getMinutes() - 60);
+            return time;
+        });
     }
 
     /**
@@ -115,42 +118,7 @@ class HourInterval extends Interval {
                         station.datasets.maxTemperature[index] = Math.max(station.datasets.maxTemperature[index], entry.maxTemperature);
                     }
                 }
-
-                station.liveData.minHumidity = Math.min(entry.minHumidity, station.liveData.minHumidity);
-                station.liveData.maxCo2 = Math.max(entry.maxCo2, station.liveData.maxCo2);
-            }
-
-            if (station.liveData.maxCo2 >= station.thresholdCo2) {
-                klimostat.sendAlert(station.alertMessageCO2);
-            }
-            if (station.liveData.minHumidity < station.thresholdHumidity) {
-                klimostat.sendAlert(station.alertMessageHumidity);
             }
         }
-    }
-
-    /**
-     * Synchronizes the datasets of the stations with the labels in the charts
-     * @param station {Station} the station that should be synchronized
-     * @param actTime {Date} the time of the last entry
-     */
-    updateStation(station, actTime) {
-        let time = new Date(actTime);
-        time.setMinutes(actTime.getMinutes() - 60);
-
-        let shiftLeft = false;
-
-        // console.log(station.loadedInterval + " === " + this.name)
-        if (station.liveData.timestampOfNewestDatasetEntry !== null && station.loadedInterval === this.name) {
-            time = station.liveData.timestampOfNewestDatasetEntry;
-            shiftLeft = true;
-        } else {
-            station.clearDatasets();
-        }
-
-        station.pushDatasets(Math.floor((actTime.getTime() - time.getTime()) / this.intervalPeriod), shiftLeft);
-
-        station.liveData.timestampOfNewestDatasetEntry = new Date(actTime);
-        station.loadedInterval = this.name;
     }
 }
