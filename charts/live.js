@@ -1,7 +1,8 @@
 class LiveInterval extends Interval {
 
     constructor() {
-        super("live", "Live", 10_000, time => {
+        super("live", "Live", 10_000,
+            time => {
                 time.setMinutes(time.getMinutes() - 5);
                 return time;
             },
@@ -10,6 +11,11 @@ class LiveInterval extends Interval {
                 actTime.setMilliseconds(0);
                 actTime.setSeconds(Math.floor(actTime.getSeconds() / 10) * 10);
                 return actTime;
+            },
+            time => {
+                return ('00' + time.getHours()).slice(-2) + ':' +
+                    ('00' + time.getMinutes()).slice(-2) + ':' +
+                    Math.floor(time.getSeconds() / 10) + 'x';
             });
     }
 
@@ -51,30 +57,8 @@ class LiveInterval extends Interval {
      * @param sensorChart {SensorChart}
      */
     updateChartValues(data, sensorChart) {
-
-        //update labels
         let actTime = this.getActTime();
-
-        let time = this.subTimeForFirstEntry(new Date(actTime));
-
-        let shiftLeft = false;
-
-        if (sensorChart.lastLabelUpdate !== null && sensorChart.loadedInterval === this.name) {
-            time = sensorChart.lastLabelUpdate;
-            shiftLeft = true;
-        } else {
-            sensorChart.clearChartContents();
-        }
-
-        let labels = [];
-        while (time < actTime) {
-            time.setTime(time.getTime() + this.intervalPeriod);
-            labels.push(date.toIntervalLocalReadableString(time, "10sec"));
-        }
-        sensorChart.pushTimestampRight(labels, shiftLeft);
-
-        sensorChart.lastLabelUpdate = time;
-        sensorChart.loadedInterval = this.name;
+        this.updateLabels(sensorChart, actTime);
 
         // append data
         for (let dataOfStation of data) {

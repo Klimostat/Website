@@ -1,6 +1,7 @@
 class HourInterval extends Interval {
     constructor() {
-        super("hour", "Last hour", 60_000, time => {
+        super("hour", "Last hour", 60_000,
+            time => {
                 time.setMinutes(time.getMinutes() - 60);
                 return time;
             },
@@ -9,6 +10,10 @@ class HourInterval extends Interval {
                 actTime.setMilliseconds(0);
                 actTime.setSeconds(0);
                 return actTime;
+            },
+            time => {
+                return ('00' + time.getHours()).slice(-2) + ':' +
+                    ('00' + time.getMinutes()).slice(-2);
             });
     }
 
@@ -49,30 +54,8 @@ class HourInterval extends Interval {
      * @param sensorChart {SensorChart}
      */
     updateChartValues(data, sensorChart) {
-
-        //update labels
         let actTime = this.getActTime();
-
-        let time = this.subTimeForFirstEntry(new Date(actTime));
-
-        let shiftLeft = false;
-
-        if (sensorChart.lastLabelUpdate !== null && sensorChart.loadedInterval === this.name) {
-            time = sensorChart.lastLabelUpdate;
-            shiftLeft = true;
-        } else {
-            sensorChart.clearChartContents();
-        }
-
-        let labels = [];
-        while (time < actTime) {
-            time.setTime(time.getTime() + this.intervalPeriod);
-            labels.push(date.toIntervalLocalReadableString(time, "min"));
-        }
-        sensorChart.pushTimestampRight(labels, shiftLeft);
-
-        sensorChart.lastLabelUpdate = time;
-        sensorChart.loadedInterval = this.name;
+        this.updateLabels(sensorChart, actTime);
 
         // append data
         for (let dataOfStation of data) {

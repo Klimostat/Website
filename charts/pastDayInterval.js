@@ -32,6 +32,10 @@ class PastDayInterval extends Interval {
                 actTime.setHours(0);
                 actTime.setDate(actTime.getDate() - this.daysAgo + 1);
                 return actTime;
+            },
+            time => {
+                return ('00' + time.getHours()).slice(-2) + ':' +
+                    Math.floor(time.getMinutes() / 30) * 30;
             });
         this.daysAgo = daysAgo;
     }
@@ -73,30 +77,8 @@ class PastDayInterval extends Interval {
      * @param sensorChart {SensorChart}
      */
     updateChartValues(data, sensorChart) {
-
-        //update labels
         let actTime = this.getActTime();
-
-        let time = this.subTimeForFirstEntry(new Date(actTime));
-
-        let shiftLeft = false;
-
-        if (sensorChart.lastLabelUpdate !== null && sensorChart.loadedInterval === this.name) {
-            time = sensorChart.lastLabelUpdate;
-            shiftLeft = true;
-        } else {
-            sensorChart.clearChartContents();
-        }
-
-        let labels = [];
-        while (time < actTime) {
-            time.setTime(time.getTime() + this.intervalPeriod);
-            labels.push(date.toIntervalLocalReadableString(time, "30min"));
-        }
-        sensorChart.pushTimestampRight(labels, shiftLeft);
-
-        sensorChart.lastLabelUpdate = time;
-        sensorChart.loadedInterval = this.name;
+        this.updateLabels(sensorChart, actTime);
 
         // append data
         for (let dataOfStation of data) {

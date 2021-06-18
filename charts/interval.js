@@ -21,16 +21,23 @@ class Interval {
 
     /**
      * modifies the time for the first entry
-     * @param date {Date} the actual Date
-     * @returns {Date}
+     * @param time {Date} the actual Date
+     * @return {Date}
      */
     subTimeForFirstEntry;
 
     /**
      * adjusts a Date and removes milliseconds etc.
-     * @returns {Date}
+     * @return {Date}
      */
     getActTime;
+
+    /**
+     * formats a time to be displayed in the label
+     * @param time {Date}
+     * @return {string}
+     */
+    formatTime;
 
     /**
      *
@@ -39,13 +46,15 @@ class Interval {
      * @param intervalPeriod {number}
      * @param subTimeForFirstEntry {function(Date): Date}
      * @param getActTime {function: Date}
+     * @param formatTime {function(Date): string}
      */
-    constructor(name, fullName, intervalPeriod, subTimeForFirstEntry, getActTime) {
+    constructor(name, fullName, intervalPeriod, subTimeForFirstEntry, getActTime, formatTime) {
         this.name = name;
         this.fullName = fullName;
         this.intervalPeriod = intervalPeriod;
         this.subTimeForFirstEntry = subTimeForFirstEntry;
         this.getActTime = getActTime;
+        this.formatTime = formatTime;
     }
 
     /**
@@ -69,6 +78,34 @@ class Interval {
 
         station.liveData.timestampOfNewestDatasetEntry = new Date(actTime);
         station.loadedInterval = this.name;
+    }
+
+    /**
+     * updates the labels of the sensor chart
+     * @param sensorChart {SensorChart} the sensorChart to update
+     * @param actTime {Date} the time of the last entry
+     */
+    updateLabels(sensorChart, actTime) {
+        let time = this.subTimeForFirstEntry(new Date(actTime));
+
+        let shiftLeft = false;
+
+        if (sensorChart.lastLabelUpdate !== null && sensorChart.loadedInterval === this.name) {
+            time = sensorChart.lastLabelUpdate;
+            shiftLeft = true;
+        } else {
+            sensorChart.clearChartContents();
+        }
+
+        let labels = [];
+        while (time < actTime) {
+            time.setTime(time.getTime() + this.intervalPeriod);
+            labels.push(this.formatTime(time));
+        }
+        sensorChart.pushTimestampRight(labels, shiftLeft);
+
+        sensorChart.lastLabelUpdate = time;
+        sensorChart.loadedInterval = this.name;
     }
 }
 

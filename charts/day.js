@@ -10,6 +10,10 @@ class DayInterval extends Interval {
                 actTime.setSeconds(0);
                 actTime.setMinutes(Math.floor(actTime.getMinutes() / 30) * 30);
                 return actTime;
+            },
+            time => {
+                return ('00' + time.getHours()).slice(-2) + ':' +
+                    Math.floor(time.getMinutes() / 30) * 30;
             });
     }
 
@@ -50,30 +54,8 @@ class DayInterval extends Interval {
      * @param sensorChart {SensorChart}
      */
     updateChartValues(data, sensorChart) {
-
-        //update labels
         let actTime = this.getActTime();
-
-        let time = this.subTimeForFirstEntry(new Date(actTime));
-
-        let shiftLeft = false;
-
-        if (sensorChart.lastLabelUpdate !== null && sensorChart.loadedInterval === this.name) {
-            time = sensorChart.lastLabelUpdate;
-            shiftLeft = true;
-        } else {
-            sensorChart.clearChartContents();
-        }
-
-        let labels = [];
-        while (time < actTime) {
-            time.setTime(time.getTime() + this.intervalPeriod);
-            labels.push(date.toIntervalLocalReadableString(time, "30min"));
-        }
-        sensorChart.pushTimestampRight(labels, shiftLeft);
-
-        sensorChart.lastLabelUpdate = time;
-        sensorChart.loadedInterval = this.name;
+        this.updateLabels(sensorChart, actTime);
 
         // append data
         for (let dataOfStation of data) {
