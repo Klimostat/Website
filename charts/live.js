@@ -2,9 +2,15 @@ class LiveInterval extends Interval {
 
     constructor() {
         super("live", "Live", 10_000, time => {
-            time.setMinutes(time.getMinutes() - 5);
-            return time;
-        });
+                time.setMinutes(time.getMinutes() - 5);
+                return time;
+            },
+            () => {
+                let actTime = new Date();
+                actTime.setMilliseconds(0);
+                actTime.setSeconds(Math.floor(actTime.getSeconds() / 10) * 10);
+                return actTime;
+            });
     }
 
     /**
@@ -47,16 +53,13 @@ class LiveInterval extends Interval {
     updateChartValues(data, sensorChart) {
 
         //update labels
-        let actTime = new Date();
-        actTime.setMilliseconds(0);
-        actTime.setSeconds(Math.floor(actTime.getSeconds() / 10) * 10);
+        let actTime = this.getActTime();
 
-        let time = new Date(actTime);
-        time.setMinutes(actTime.getMinutes() - 5);
+        let time = this.subTimeForFirstEntry(new Date(actTime));
 
         let shiftLeft = false;
 
-        if (sensorChart.lastLabelUpdate !== null && sensorChart.loadedInterval === "live") {
+        if (sensorChart.lastLabelUpdate !== null && sensorChart.loadedInterval === this.name) {
             time = sensorChart.lastLabelUpdate;
             shiftLeft = true;
         } else {
@@ -65,13 +68,13 @@ class LiveInterval extends Interval {
 
         let labels = [];
         while (time < actTime) {
-            time.setSeconds(time.getSeconds() + 10)
+            time.setTime(time.getTime() + this.intervalPeriod);
             labels.push(date.toIntervalLocalReadableString(time, "10sec"));
         }
         sensorChart.pushTimestampRight(labels, shiftLeft);
 
         sensorChart.lastLabelUpdate = time;
-        sensorChart.loadedInterval = "live";
+        sensorChart.loadedInterval = this.name;
 
         // append data
         for (let dataOfStation of data) {

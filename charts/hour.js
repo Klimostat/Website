@@ -1,9 +1,15 @@
 class HourInterval extends Interval {
     constructor() {
         super("hour", "Last hour", 60_000, time => {
-            time.setMinutes(time.getMinutes() - 60);
-            return time;
-        });
+                time.setMinutes(time.getMinutes() - 60);
+                return time;
+            },
+            () => {
+                let actTime = new Date();
+                actTime.setMilliseconds(0);
+                actTime.setSeconds(0);
+                return actTime;
+            });
     }
 
     /**
@@ -45,12 +51,9 @@ class HourInterval extends Interval {
     updateChartValues(data, sensorChart) {
 
         //update labels
-        let actTime = new Date();
-        actTime.setMilliseconds(0);
-        actTime.setSeconds(0);
+        let actTime = this.getActTime();
 
-        let time = new Date(actTime);
-        time.setMinutes(actTime.getMinutes() - 60);
+        let time = this.subTimeForFirstEntry(new Date(actTime));
 
         let shiftLeft = false;
 
@@ -63,7 +66,7 @@ class HourInterval extends Interval {
 
         let labels = [];
         while (time < actTime) {
-            time.setMinutes(time.getMinutes() + 1)
+            time.setTime(time.getTime() + this.intervalPeriod);
             labels.push(date.toIntervalLocalReadableString(time, "min"));
         }
         sensorChart.pushTimestampRight(labels, shiftLeft);

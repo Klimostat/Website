@@ -27,17 +27,25 @@ class Interval {
     subTimeForFirstEntry;
 
     /**
+     * adjusts a Date and removes milliseconds etc.
+     * @returns {Date}
+     */
+    getActTime;
+
+    /**
      *
      * @param name {string}
      * @param fullName {string}
      * @param intervalPeriod {number}
      * @param subTimeForFirstEntry {function(Date): Date}
+     * @param getActTime {function: Date}
      */
-    constructor(name, fullName, intervalPeriod, subTimeForFirstEntry) {
+    constructor(name, fullName, intervalPeriod, subTimeForFirstEntry, getActTime) {
         this.name = name;
         this.fullName = fullName;
         this.intervalPeriod = intervalPeriod;
         this.subTimeForFirstEntry = subTimeForFirstEntry;
+        this.getActTime = getActTime;
     }
 
     /**

@@ -1,9 +1,16 @@
 class DayInterval extends Interval {
     constructor() {
         super("day", "Last 24 hours", 30 * 60_000, time => {
-            time.setHours(time.getHours() - 24);
-            return time;
-        });
+                time.setHours(time.getHours() - 24);
+                return time;
+            },
+            () => {
+                let actTime = new Date();
+                actTime.setMilliseconds(0);
+                actTime.setSeconds(0);
+                actTime.setMinutes(Math.floor(actTime.getMinutes() / 30) * 30);
+                return actTime;
+            });
     }
 
     /**
@@ -45,13 +52,9 @@ class DayInterval extends Interval {
     updateChartValues(data, sensorChart) {
 
         //update labels
-        let actTime = new Date();
-        actTime.setMilliseconds(0);
-        actTime.setSeconds(0);
-        actTime.setMinutes(Math.floor(actTime.getMinutes() / 30) * 30);
+        let actTime = this.getActTime();
 
-        let time = new Date(actTime);
-        time.setHours(actTime.getHours() - 24);
+        let time = this.subTimeForFirstEntry(new Date(actTime));
 
         let shiftLeft = false;
 
@@ -64,7 +67,7 @@ class DayInterval extends Interval {
 
         let labels = [];
         while (time < actTime) {
-            time.setMinutes(time.getMinutes() + 30)
+            time.setTime(time.getTime() + this.intervalPeriod);
             labels.push(date.toIntervalLocalReadableString(time, "30min"));
         }
         sensorChart.pushTimestampRight(labels, shiftLeft);
