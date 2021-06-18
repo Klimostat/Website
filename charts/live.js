@@ -1,15 +1,27 @@
 /**
- *
+ * selectable interval that represents 5min live data
  * @type {Object}
  */
 klimostat.intervals.live = {
+    /**
+     * the key name of the interval
+     * @type {string}
+     */
     name: "live",
 
+    /**
+     * the name to be displayed as option in the select
+     * @type {string}
+     */
     fullName: "Live",
 
-    intervalPeriod: 10_000,
     /**
-     *
+     * the period in milliseconds of a timestamp
+     */
+    intervalPeriod: 10_000,
+
+    /**
+     * prepares a JSON to be sent to the server to fetch only the data needed
      * @return {{data: FormData, method: string, callback: callback, refresh: boolean, url: string}}
      */
     fetch: function () {
@@ -40,8 +52,8 @@ klimostat.intervals.live = {
     },
 
     /**
-     *
-     * @param data {Object}
+     * updates the charts, its labels and the values in it by updating the datasets in {@link Station}
+     * @param data {{id: number, data: {time: string, minCo2: string, maxCo2: string, minHumidity: string, maxHumidity: string, minTemperature: string, maxTemperature: string}[]}[]} the data to be appended
      * @param sensorChart {SensorChart}
      */
     updateChartValues: function (data, sensorChart) {
@@ -91,7 +103,7 @@ klimostat.intervals.live = {
                 // sets last the time when the station last sent data, to show offline stations
                 if (station.liveData.timestampOfNewestData === null || entryTime > station.liveData.timestampOfNewestData) {
                     station.liveData.timestampOfNewestData = entryTime;
-                    station.liveData.station.navNode.updateNewestData();
+                    station.navNode.updateNewestData();
                 }
 
                 if (typeof station.datasets.minHumidity[index] === "number") {
@@ -124,9 +136,9 @@ klimostat.intervals.live = {
     },
 
     /**
-     *
-     * @param station {Station}
-     * @param actTime {Date}
+     * Synchronizes the datasets of the stations with the labels in the charts
+     * @param station {Station} the station that should be synchronized
+     * @param actTime {Date} the time of the last entry
      */
     updateStation: function(station, actTime) {
         let time = new Date(actTime);

@@ -1,15 +1,27 @@
 /**
- *
+ * selectable interval that represents a day (24hr) history
  * @type {Object}
  */
 klimostat.intervals.day = {
+    /**
+     * the key name of the interval
+     * @type {string}
+     */
     name: "day",
 
+    /**
+     * the name to be displayed as option in the select
+     * @type {string}
+     */
     fullName: "Last 24 hours",
 
-    intervalPeriod: 30 * 60_000,
     /**
-     *
+     * the period in milliseconds of a timestamp
+     */
+    intervalPeriod: 30 * 60_000,
+
+    /**
+     * prepares a JSON to be sent to the server to fetch only the data needed
      * @return {{data: FormData, method: string, callback: callback, refresh: boolean, url: string}}
      */
     fetch: function () {
@@ -30,17 +42,18 @@ klimostat.intervals.day = {
         data.append('stations', JSON.stringify(stationsToLoad));
         data.append('interval', this.name);
 
+        let thisInterval = this;
         // function to work with return values
         let callback = function (data, sensorChart) {
-            klimostat.intervals.day.updateChartValues(data, sensorChart);
+            thisInterval.updateChartValues(data, sensorChart);
         }
 
         return {data: data, method: "POST", url: "PHP/getDataTimewise.php", callback: callback, refresh: false};
     },
 
     /**
-     *
-     * @param data {Object}
+     * updates the charts, its labels and the values in it by updating the datasets in {@link Station}
+     * @param data {{id: number, data: {time: string, minCo2: string, maxCo2: string, minHumidity: string, maxHumidity: string, minTemperature: string, maxTemperature: string}[]}[]} the data to be appended
      * @param sensorChart {SensorChart}
      */
     updateChartValues: function (data, sensorChart) {
@@ -119,24 +132,14 @@ klimostat.intervals.day = {
                         station.datasets.maxTemperature[index] = Math.max(station.datasets.maxTemperature[index], entry.maxTemperature);
                     }
                 }
-
-                station.liveData.minHumidity = Math.min(entry.minHumidity, station.liveData.minHumidity);
-                station.liveData.maxCo2 = Math.max(entry.maxCo2, station.liveData.maxCo2);
-            }
-
-            if (station.liveData.maxCo2 >= station.thresholdCo2) {
-                klimostat.sendAlert(station.alertMessageCO2);
-            }
-            if (station.liveData.minHumidity < station.thresholdHumidity) {
-                klimostat.sendAlert(station.alertMessageHumidity);
             }
         }
     },
 
     /**
-     *
-     * @param station {Station}
-     * @param actTime {Date}
+     * Synchronizes the datasets of the stations with the labels in the charts
+     * @param station {Station} the station that should be synchronized
+     * @param actTime {Date} the time of the last entry
      */
     updateStation: function(station, actTime) {
         let time = new Date(actTime);

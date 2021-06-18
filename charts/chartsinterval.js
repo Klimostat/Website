@@ -1,5 +1,8 @@
+/**
+ * Object for the interval view, initiated with {@link init}
+ * @type {Object}
+ */
 const interval = {
-
     /**
      * The interval in seconds in which the data should be updated.
      * @type {number}
@@ -7,19 +10,24 @@ const interval = {
     UPDATE_INTERVAL: 10,
 
     /**
+     * The SensorChart for the displayed stations
      * @type {SensorChart}
      */
     sensorCharts: null,
 
     /**
+     * contains all intervals
      * @type {Object}
      */
     intervals: {},
 
+    /**
+     * the name of the loaded interval
+     */
     loadedInterval: "",
 
     /**
-     * initializes live charts and sets interval
+     * initializes interval charts, displays selected stations out of the cookie and starts first fetch
      */
     init: function () {
         klimostat.charts = {
@@ -107,7 +115,7 @@ const interval = {
     },
 
     /**
-     *
+     * destroys all initialized variables
      */
     destroy: function () {
         klimostat.charts.temperature.destroy();
@@ -121,7 +129,7 @@ const interval = {
     },
 
     /**
-     *
+     * starts a new fetch after given amount of seconds
      * @param secs {number}
      */
     startFetch: function (secs) {
@@ -129,7 +137,7 @@ const interval = {
     },
 
     /**
-     *
+     * prepares the data to fetch, fetches and starts a new fetch after the UPDATE_INTERVAL
      */
     fetchDataAndRestartCountdown: function () {
 
@@ -147,7 +155,7 @@ const interval = {
             interval.sensorCharts.updateCharts();
 
             if (refresh) {
-                interval.startFetch(10);
+                interval.startFetch(interval.UPDATE_INTERVAL);
             } else {
                 countdown.stop();
             }
@@ -157,16 +165,21 @@ const interval = {
     }
 }
 
+/**
+ * api for the select-HTML-node that gives the user the ability to choose the interval to display
+ * @type {Object}
+ */
 const intervals = {
     /**
+     * The select-HTML-node where the user can select the interval
      * @type {?HTMLElement}
      */
     _node: null,
 
     /**
-     *
-     * @param key {string}
-     * @param fullName {string}
+     * Adds an interval to the select-HTML-node
+     * @param key {string} the value of the option
+     * @param fullName {string} the displayed name
      */
     push: function (key, fullName) {
         let node = this.getNode();
@@ -177,7 +190,7 @@ const intervals = {
     },
 
     /**
-     *
+     * returns the HTMLElement of the select-HTML-node
      * @return {HTMLElement}
      */
     getNode: function () {
@@ -188,7 +201,7 @@ const intervals = {
     },
 
     /**
-     *
+     * returns the key of the selected option
      * @return {String}
      */
     getSelected: function () {
@@ -196,9 +209,9 @@ const intervals = {
     },
 
     /**
-     *
-     * @param interval {?String}
-     * @param updateCharts {boolean}
+     * sets the selected interval in the node to the key
+     * @param interval {?string} the key of the interval that should be selected, if null the cookie-value
+     * @param updateCharts {boolean} whether or not the charts should be updated
      */
     setSelected: function (interval = null, updateCharts = true) {
         if (interval !== null) {
@@ -211,15 +224,19 @@ const intervals = {
     }
 }
 
+/**
+ * api for the cookie for {@link intervals}
+ * @type {Object}
+ */
 const selectedIntervalCookie = {
     /**
-     *
+     * the key of the selected interval
      */
     _interval: null,
 
     /**
-     *
-     * @return {null}
+     * returns the interval saved in the cookie
+     * @return {?string} the key of the interval or null if not set
      */
     getInterval: function () {
         if (this._interval === null) {
@@ -233,8 +250,8 @@ const selectedIntervalCookie = {
     },
 
     /**
-     *
-     * @param interval {String}
+     * sets the interval to be saved in the cookie and updates the cookie
+     * @param interval {String} the key of the interval to be saved in the cookie
      */
     update: function (interval) {
         this._interval = interval;

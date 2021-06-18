@@ -1,11 +1,15 @@
+/**
+ * api for the selected station cookie
+ * @type {Object}
+ */
 const selectedStationsCookie = {
     /**
-     *
+     * the ids of the stations selected (cache)
      */
     _ids: null,
 
     /**
-     *
+     * returns the ids of the stations that are saved in the cookie or in the cache
      * @return {null}
      */
     getIds: function () {
@@ -24,7 +28,7 @@ const selectedStationsCookie = {
     },
 
     /**
-     *
+     * updates the cache and the cookie
      * @param ids {number[]}
      */
     update: function (ids) {
@@ -38,19 +42,25 @@ const selectedStationsCookie = {
     },
 }
 
+/**
+ * api for station selection
+ * @type {Object}
+ */
 const selectedStations = {
     /**
+     * the ids of the station that are currently displayed in the charts
      * @type {number[]}
      */
     _idsDisplayed: [],
 
     /**
+     * the ids of the stations that are selected by teh user
      * @type {number[]}
      */
     _idsSelected: [],
 
     /**
-     *
+     * returns the selected station objects
      * @return {Station[]}
      */
     get: function () {
@@ -62,8 +72,8 @@ const selectedStations = {
     },
 
     /**
-     *
-     * @param id {number}
+     * toggles a station, pushes or removes depending on the selection state, updates cookie
+     * @param id {number} the id of the station
      */
     toggle: function (id) {
         // checks on wrong loaded charts
@@ -89,7 +99,7 @@ const selectedStations = {
     },
 
     /**
-     *
+     * removes all stations from selection, updates cookie
      */
     clear: function () {
         // clears list
@@ -105,8 +115,8 @@ const selectedStations = {
     },
 
     /**
-     *
-     * @param id {number}
+     * removes the station with the given id, updates cookie
+     * @param id {number} the id of the station to remove
      */
     remove: function (id) {
         // checks for already displayed
@@ -125,7 +135,7 @@ const selectedStations = {
     },
 
     /**
-     *
+     * adds the station with the given id, updates cookie
      * @param id {number}
      */
     push: function (id) {
@@ -145,8 +155,8 @@ const selectedStations = {
     },
 
     /**
-     *
-     * @param fn {function(Station)}
+     * executes the given function for all selected stations
+     * @param fn {function(Station)} the function
      */
     forEach: function (fn) {
         this._idsSelected.forEach(id => {
@@ -155,8 +165,8 @@ const selectedStations = {
     },
 
     /**
-     *
-     * @param id {number}
+     * whether the station with the given id is selected or not
+     * @param id {number} the id of the station
      * @return {boolean}
      */
     includes: function (id) {
@@ -164,16 +174,16 @@ const selectedStations = {
     },
 
     /**
-     *
+     * calls {@link selectedStationsCookie.update} with the selected stations
      */
     updateCookie: function () {
         selectedStationsCookie.update(this._idsSelected);
     },
 
     /**
-     *
-     * @param sensorCharts {SensorChart}
-     * @param interval {String}
+     * displays all selected stations, pushes new ones to the chart and removes unselected ones
+     * @param sensorCharts {SensorChart} the sensorChart object where the stations should be displayed
+     * @param interval {String} the interval that is displayed
      */
     updateAndDisplay: function (sensorCharts, interval) {
         //removes unselected

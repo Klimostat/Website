@@ -1,38 +1,40 @@
+/**
+ * api for chartjs charts, allows modifying datasets and keep consistency over some charts
+ */
 class SensorChart {
     /**
-     *
+     * the ids of the stations that are displayed
      * @type {number[]}
-     * @private
      */
     _ids = [];
 
     /**
-     *
+     * the charts with names
      * @type {{name: string, chart: Chart}[]}
      * @private
      */
     _charts;
 
     /**
-     *
+     * the labels of all charts, direct reference, do not change
      * @type {string[]}
+     * @const
      */
     labels = [];
 
     /**
-     *
+     * the loaded interval as string
      * @type {string}
      */
     loadedInterval = "";
 
     /**
-     *
+     * the timestamp of the last update of the labels, used for appending timestamps
      * @type {?Date}
      */
     lastLabelUpdate = null;
 
     /**
-     *
      * @param charts {{name: string, chart: Chart}[]}
      */
     constructor(charts) {
@@ -45,8 +47,8 @@ class SensorChart {
     };
 
     /**
-     *
-     * @param id {number}
+     * removes a station from the charts
+     * @param id {number} the id of the station
      */
     remove(id) {
         if (this._ids.includes(id)) {
@@ -63,10 +65,10 @@ class SensorChart {
     };
 
     /**
-     *
-     * @param id {number}
-     * @param datasets {Object}
-     * @param datasetsDashed {?Object}
+     * adds a station to the charts
+     * @param id {number} the id of the station
+     * @param datasets {Object} the dataset of the values, this is a reference, so if the original dataset is pushed, the charts also get pushed
+     * @param datasetsDashed {?Object} a second dataset, like above but dashed displayed
      */
     push(id, datasets, datasetsDashed=null) {
         if (!this._ids.includes(id)) {
@@ -102,7 +104,7 @@ class SensorChart {
     };
 
     /**
-     *
+     * empties the charts, removes all stations
      */
     clear() {
         this._charts.forEach(chart => {
@@ -114,8 +116,8 @@ class SensorChart {
     };
 
     /**
-     *
-     * @param id {number}
+     * checks whether a station is displayed
+     * @param id {number} the id of the station
      * @return {boolean}
      */
     includes(id) {
@@ -123,6 +125,7 @@ class SensorChart {
     };
 
     /**
+     * returns the number of stations displayed
      * @return {number}
      */
     size() {
@@ -130,8 +133,8 @@ class SensorChart {
     };
 
     /**
-     *
-     * @param index {number}
+     * returns the station at the given index
+     * @param index {number} the index of the station in the chart (this is not the station id)
      * @return {Station}
      */
     get(index) {
@@ -139,7 +142,7 @@ class SensorChart {
     };
 
     /**
-     *
+     * updates all charts
      */
     updateCharts() {
         this._charts.forEach(chart => {
@@ -148,9 +151,9 @@ class SensorChart {
     }
 
     /**
-     *
-     * @param labels {string|string[]}
-     * @param shiftLeft {boolean}
+     * updates the labels by pushing data to the end, if shiftLeft is true then the first elements are shifted
+     * @param labels {string|string[]} the labels to add
+     * @param shiftLeft {boolean} whether the oldest labels from left should be shifted
      */
     pushTimestampRight(labels, shiftLeft=true) {
         if (labels.constructor !== Array) {
@@ -165,7 +168,7 @@ class SensorChart {
     }
 
     /**
-     *
+     * empties the labels
      */
     clearChartContents() {
         let length = this.labels.length;

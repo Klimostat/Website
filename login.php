@@ -51,9 +51,9 @@ if (isset($_GET["action"]) && $_GET["action"] !== "") {
         <link rel="stylesheet" href="style_login.css">
         <link rel="preconnect" href="https://fonts.gstatic.com">
         <link href="https://fonts.googleapis.com/css2?family=Karla:ital,wght@1,700&display=swap" rel="stylesheet">
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
-              integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1"
-              crossorigin="anonymous">
+
+        <!--        <link crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" rel="stylesheet">-->
+        <link href="cache/http_cdn.jsdelivr.net_npm_bootstrap@5.0.0-beta1_dist_css_bootstrap.css" rel="stylesheet">
     </head>
     <body>
 
@@ -62,7 +62,7 @@ if (isset($_GET["action"]) && $_GET["action"] !== "") {
             <div id = "logincard" class="card text-center">
                 <form class = "card-body" action="PHP/login.php" method="post">
                     <h1 class = "card-title">
-                        <img src="res/Logo.png" alt="" width="40px" height="40px" class="d-inline-block align-center">
+                        <img src="res/logo2.png" alt="" width="40px" height="40px" class="d-inline-block align-center">
                         Klimostat
                     </h1>
                     <p id="infotext">  <?= $note ?> </p>

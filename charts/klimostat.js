@@ -1,13 +1,12 @@
 document.addEventListener("DOMContentLoaded", () => klimostat.init(), false);
 
 /**
- *
+ * Main object for the klimostat project, contains many other objects needed
  */
 const klimostat = {
     /**
      * Array of all sensors with all parameters as they are in the database.
      * Is initialized with the init() call.
-     * ATTENTION!! The index is not equivalent to the sensor id.
      * @type {Station[]}
      */
     stations: [],
@@ -34,27 +33,29 @@ const klimostat = {
     },
 
     /**
+     *
      * @type {Object}
      */
     chartNodes: {},
 
 
     /**
+     * object of all intervals
      * @type {Object}
      */
     intervals: {},
 
     /**
-     * dashboard, interval
+     * the loaded view, either dashboard or interval
      * @type {string}
      */
     loadedView: "",
 
     /**
-     * @type {boolean}
+     * array of functions that is executed when the environment is loaded.
+     * useful for accessing variables that are no yet initialized.
+     * @type {function[]}
      */
-    alertSent: false,
-
     initFunctions: [],
 
     /**
@@ -84,6 +85,14 @@ const klimostat = {
                     let stationId = parseInt(json[i].pk_station_id);
                     klimostat.stations[stationId] = new Station(json[i]);
                 }
+
+                setInterval(() => {
+                    // feeds db
+                    let xhr = new XMLHttpRequest();
+                    xhr.open("GET", "PHP/feeddb.php", true);
+                    xhr.send();
+                }, 1000);
+
                 klimostat.determineView();
             }
         };
@@ -92,10 +101,7 @@ const klimostat = {
 
         Notification.requestPermission();
 
-        Chart.defaults.interaction = {
-            mode: 'nearest',
-            axis: 'x'
-        }
+        Chart.defaults.interaction = {mode: 'nearest', axis: 'x'}
         Chart.defaults.plugins.tooltip.itemSort = (x, y) => {return y.raw - x.raw}
         Chart.defaults.plugins.legend.position = 'left';
         Chart.defaults.plugins.title.display = true;
@@ -104,7 +110,7 @@ const klimostat = {
     },
 
     /**
-     *
+     * determines the view based on the cookie of selected stations, when it is null then dashboard is loaded, else interval
      */
     determineView: function () {
         let viewToLoad = "interval";
@@ -134,7 +140,7 @@ const klimostat = {
     },
 
     /**
-     *
+     * updates the charts based on the loaded view
      */
     updateCharts: function () {
         switch (this.loadedView) {
@@ -154,21 +160,25 @@ const klimostat = {
      * @param message {String}
      */
     sendAlert: function (message = "Achtung! Ein Grenzwert wurde überschritten!") {
-        if (!this.alertSent && Notification.permission === "granted") {
+        if (Notification.permission === "granted") {
             new Notification(message);
-            this.alertSent = true;
-            setTimeout(() => klimostat.alertSent = false, 1000);
         }
     }
 }
 
+/**
+ * api for fetching data from a website, uses xhr
+ * @type {Object}
+ */
 const fetcher = {
     /**
+     * array of active xhr request, used for queueing
      * @type {XMLHttpRequest[]}
      */
     active: [],
 
     /**
+     * the que of xhr requests ready for sending
      * @type {XMLHttpRequest[]}
      */
     que: [],
@@ -220,7 +230,7 @@ const fetcher = {
     },
 
     /**
-     *
+     * sends the next xhr out of queue
      * @param xhr
      */
     next: function (xhr) {
@@ -236,14 +246,14 @@ const fetcher = {
 }
 
 /**
- *
+ * changes styling in case of being offline
  */
 let onConnectionLost = function () {
     document.body.classList.toggle("timeout", true);
 }
 
 /**
- *
+ * changes styling in case of being online again
  */
 let onUpdate = function () {
     document.body.classList.toggle("timeout", false);
@@ -251,54 +261,56 @@ let onUpdate = function () {
 }
 
 /**
- *
+ * api for the countdown
  */
-let countdown = {
+const countdown = {
     /**
-     *
+     * function that is called when the countdown finishes
      * @type {?Function}
-     * @private
      */
     _fnOnEnd: null,
 
     /**
-     *
+     * the js-interval-object that triggers the functions
      * @type {?number}
-     * @private
      */
     _interval: null,
 
     /**
-     *
-     * @type {number}
+     * the amount of seconds left until the countdown finishes
+     * @type {number}-
      */
     _secsLeft: 0,
 
     /**
+     * the node where the countdown text is being displayed
      * @type {HTMLElement | null}
      */
     _node: null,
 
     /**
+     * the timeout: starts to count after the countdown finished until the countdown is set again
      * @type {number}
      */
     _timeout: 10,
 
     /**
+     * function that is called when the timeout is over
      * @type {Function}
      */
     _fnOnTimeout: null,
 
     /**
+     * function that is called when the timeout has passed and the countdown is started again
      * @type {Function}
      */
     _fnOnReconnect: null,
 
     /**
-     *
-     * @param timeout {number}
-     * @param callbackFnOnTimeout {Function}
-     * @param callbackFnOnReconnect {Function}
+     * initializes the countdown
+     * @param timeout {number} the duration until timeout
+     * @param callbackFnOnTimeout {Function} the function that is called at timeout
+     * @param callbackFnOnReconnect {Function} the funciton that is called when the countdown is started again on timeout
      */
     init: function (timeout, callbackFnOnTimeout, callbackFnOnReconnect) {
         this._timeout = timeout;
@@ -309,9 +321,9 @@ let countdown = {
     },
 
     /**
-     *
-     * @param secs {number}
-     * @param callbackFnOnEnd {Function}
+     * used to start or reset the countdown
+     * @param secs {number} the number of seconds when the countdown ends
+     * @param callbackFnOnEnd {Function} the function that is called after the countdown ends
      */
     start: function (secs, callbackFnOnEnd) {
         this._fnOnReconnect();
@@ -323,7 +335,7 @@ let countdown = {
     },
 
     /**
-     *
+     * stops the countdown and writes loaded
      */
     stop: function () {
         this._fnOnReconnect();
@@ -332,7 +344,8 @@ let countdown = {
     },
 
     /**
-     *
+     * updates the countdown.
+     * decreases the seconds left and calls callbacks
      */
     _update: function () {
         if (this._secsLeft === 0) {
@@ -349,19 +362,13 @@ let countdown = {
             this._node.innerHTML = "next update in " + (this._secsLeft) + " seconds";
         }
         this._secsLeft--;
-
-        // feeds db
-        let xhttp = new XMLHttpRequest();
-        xhttp.open("GET", "PHP/feeddb.php", true);
-        xhttp.send();
     }
 }
 
 /**
- *
+ * helper function for date operations
  */
 const date = {
-
     /**
      * convert a mySQL datetime string to a Date object
      * @param mysqlDatetimeStr the mySQL datetime string
@@ -400,9 +407,9 @@ const date = {
     },
 
     /**
-     *
-     * @param dateObj
-     * @param interval
+     * converts a Date object to a custom string depending on the interval given
+     * @param dateObj {Date} the date
+     * @param interval {string} the interval
      * @return {string}
      */
     toIntervalLocalReadableString: function (dateObj, interval) {

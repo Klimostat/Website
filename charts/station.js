@@ -13,17 +13,24 @@ let colors = [
     "#ff00b0"
 ]
 
+/**
+ * represents a station, also controls the navNode at the left
+ */
 class Station {
     /**
-     *
+     * object for the navNode
      * @type {Object}
      */
     navNode = {
         /**
+         * the station the nav node belongs to
          * @type {Station}
          */
         station: this,
 
+        /**
+         * the different parts of the navNode
+         */
         _nodes: {
             nav: null,
             lastUpdate: null,
@@ -31,7 +38,7 @@ class Station {
         },
 
         /**
-         *
+         * used for styling of the navNode
          */
         styles: {
             selected: false,
@@ -40,12 +47,10 @@ class Station {
         },
 
         /**
-         *
+         * used for changing the style of the navNode
          * @param style {string}
          */
         setStyle: function (style) {
-            // console.log(style);
-
             // selected
             this._nodes.nav.classList.toggle("selected", style === "selected");
 
@@ -54,12 +59,17 @@ class Station {
         },
 
         /**
-         *
+         * updates the timestamp displayed in the popup
          */
         updateNewestData: function () {
             this._nodes.lastUpdate.innerHTML = date.toLocalReadableString(this.station.liveData.timestampOfNewestData);
         },
 
+        /**
+         * changes the style of the navNode to appear alerting
+         * @param alerting whether it is alerting or not
+         * @param message the message to be displayed
+         */
         setAlerting: function (alerting=true, message) {
             this.styles.alerting = alerting;
             this._nodes.nav.classList.toggle("alerting", alerting);
@@ -68,7 +78,7 @@ class Station {
     };
 
     /**
-     *
+     * the datasets of the station
      * @type {{maxTemperature: [], minTemperature: [], maxHumidity: [], maxCo2: [], minCo2: [], minHumidity: []}}
      */
     datasets = {
@@ -81,37 +91,61 @@ class Station {
         maxHumidity: []
     };
 
-    // lastDataPrepared = null;
+    /**
+     * the interval that is in the datasets
+     * @type {string}
+     */
+    loadedInterval;
 
-    loadedInterval = "";
+    /**
+     * the color of the station
+     * @type {string}
+     */
     color;
+
+    /**
+     * the id of the station
+     * @type {number}
+     */
     id;
+
+    /**
+     * the name of the station that should be displayed in the navNode
+     * @type {string}
+     */
     name;
+
+    /**
+     * the location of the station
+     * @type {string}
+     */
     location;
 
     /**
+     * the lowest humidity values of the station
      * @type {ExtremeValues}
      */
     minHumidity;
 
     /**
+     * the highest co2 values of the station
      * @type {ExtremeValues}
      */
     maxCo2;
 
     /**
-     *
+     * object used for liveData
      * @type {Object}
      */
     liveData = {
-        station: this,
-
         /**
+         * the timestamp of the newest measure loaded locally
          * @type {Date}
          */
         timestampOfNewestData: null,
 
         /**
+         * the timestamp of the last visible entry, can be empty
          * @type {Date}
          */
         timestampOfNewestDatasetEntry: null,
@@ -119,15 +153,16 @@ class Station {
 
     /**
      *
-     * @param dbFetch {Object}
+     * @param dbFetch {Object} parameters of the station fetched from the database
      */
     constructor(dbFetch) {
+        this.loadedInterval = "";
         this.id = parseInt(dbFetch.pk_station_id);
         this.name = dbFetch.name;
         this.location = dbFetch.location;
         this.color = colors[klimostat.stations.length % 12];
-        this.maxCo2 = new ExtremeValues(this, parseFloat(dbFetch.threshold_co2), dbFetch.alert_message_co2, false, 0)
-        this.minHumidity = new ExtremeValues(this, parseFloat(dbFetch.threshold_humidity), dbFetch.alert_message_humidity, true, 100)
+        this.maxCo2 = new ExtremeValues(this, parseFloat(dbFetch.threshold_co2), dbFetch.alert_message_co2, false, 0);
+        this.minHumidity = new ExtremeValues(this, parseFloat(dbFetch.threshold_humidity), dbFetch.alert_message_humidity, true, 100);
 
         // creates navNode
         let stationsBox = document.getElementById("stations-box");
@@ -175,7 +210,7 @@ class Station {
     }
 
     /**
-     *
+     * returns whether the station is offline (the timestamp of the newest data is older than 5min)
      * @return {boolean}
      */
     isOffline() {
@@ -187,7 +222,7 @@ class Station {
     }
 
     /**
-     *
+     * empties all datasets
      */
     clearDatasets() {
         // console.log("cleared data: " + this.id);
@@ -202,9 +237,9 @@ class Station {
     }
 
     /**
-     *
-     * @param count {number}
-     * @param shiftLeft {boolean}
+     * pushes empty slots to the end of the dataset in order to make place for newer data, if shiftLeft is true then the first elements are shifted
+     * @param count {number} the number of elements to push
+     * @param shiftLeft {boolean} whether the oldest labels from left should be shifted
      */
     pushDatasets(count, shiftLeft=true) {
         // console.log("count to push: " + count);
@@ -229,20 +264,48 @@ class Station {
     }
 }
 
+/**
+ * handles extreme (max/min) values of a station and sends an alert when a threshold is reached
+ */
 class ExtremeValues {
+    /**
+     * whether the alert is already sent or not
+     * @type {boolean}
+     */
     alertSent = false;
 
+    /**
+     * the station the extreme values belong to
+     * @type {Station}
+     */
     station;
 
+    /**
+     * the message that should be sent
+     * @type {string}
+     */
     alertMessage;
 
+    /**
+     * the threshold
+     * @type {number}
+     */
     threshold;
 
+    /**
+     * the default value if no data is given
+     * @type {number}
+     */
     defaultValue;
 
+    /**
+     * whether it reports min or max values
+     * @type {boolean}
+     */
     minNotMax;
 
     /**
+     * the extreme values with timestamps, only peaks are saved so that this list is as short as possible
      * @type {{time: Date, value: number}[]}
      */
     _values = [];
@@ -263,6 +326,11 @@ class ExtremeValues {
         this.minNotMax = minNotMax;
     }
 
+    /**
+     * updates the extreme values by adding the value at the timestamp
+     * @param time {Date} the timestamp
+     * @param value {number} the value
+     */
     update(time, value) {
         let lastEntryDate = new Date(time);
         lastEntryDate.setMinutes(lastEntryDate.getMinutes() - 5);
@@ -279,10 +347,18 @@ class ExtremeValues {
         }
     }
 
+    /**
+     * returns the most extreme value
+     * @return {number}
+     */
     get() {
         return this._values.length === 0 ? this.defaultValue : this._values[0].value;
     }
 
+    /**
+     * sends an alert
+     * @private
+     */
     _sendAlert() {
         if (!this.alertSent) {
             klimostat.sendAlert(this.station.name + ": " + this.alertMessage);

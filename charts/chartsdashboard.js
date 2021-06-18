@@ -1,38 +1,46 @@
-let dashboard = {
+/**
+ * Object for the dashboard view, initiated with {@link init}
+ * @type {{DISPLAYED_STATION_COUNT: number, init: dashboard.init, co2Chart: SensorChart, humidityChart: SensorChart, UPDATE_INTERVAL: number, destroy: dashboard.destroy, minHumidityIds: number[], startFetch: dashboard.startFetch, fetchDataAndRestartCountdown: dashboard.fetchDataAndRestartCountdown, maxCo2Ids: number[], updateAndDisplay: dashboard.updateAndDisplay}}
+ */
+const dashboard = {
 
     /**
-     * The interval in seconds in which the data should be updated.
+     * The interval in seconds in which the data should be updated
      * @type {number}
      */
     UPDATE_INTERVAL: 10,
+
+    /**
+     * The count of Stations to be displayed
+     */
     DISPLAYED_STATION_COUNT: 5,
 
     /**
-     *
+     * The SensorChart for the humidity
      * @type {SensorChart}
      */
     humidityChart: null,
 
     /**
-     *
+     * The SensorChart for the co2
      * @type {SensorChart}
      */
     co2Chart: null,
 
     /**
-     *
+     * The ids of the stations that are displayed in the co2Chart
      * @type {number[]}
      */
     maxCo2Ids: null,
 
     /**
-     *
+     * The ids of the stations that are displayed in the humidityChart
      * @type {number[]}
      */
     minHumidityIds: null,
 
     /**
-     * initializes live charts and sets interval
+     * initializes dashboard charts and starts first fetch
      */
     init: function () {
         klimostat.charts = {
@@ -90,7 +98,7 @@ let dashboard = {
     },
 
     /**
-     *
+     * destroys all initialized variables
      */
     destroy: function () {
         klimostat.charts.humidity.destroy();
@@ -105,15 +113,15 @@ let dashboard = {
     },
 
     /**
-     *
-     * @param secs {number}
+     * starts a new fetch after given amount of seconds
+     * @param secs {number} the amount of seconds to wait
      */
     startFetch: function (secs) {
         countdown.start(secs, function () {dashboard.fetchDataAndRestartCountdown()});
     },
 
     /**
-     *
+     * prepares the data to fetch, fetches and starts a new fetch after the UPDATE_INTERVAL
      */
     fetchDataAndRestartCountdown: function () {
         let stationsToLoad = [];
@@ -137,17 +145,17 @@ let dashboard = {
          */
         let update_fn = function (xhr) {
             let dataPerStation = JSON.parse(xhr.responseText);
-            klimostat.intervals.live.updateChartValues(dataPerStation, dashboard.co2Chart, true);
-            klimostat.intervals.live.updateChartValues(dataPerStation, dashboard.humidityChart, true);
+            klimostat.intervals.live.updateChartValues(dataPerStation, dashboard.co2Chart);
+            klimostat.intervals.live.updateChartValues(dataPerStation, dashboard.humidityChart);
             dashboard.updateAndDisplay();
-            dashboard.startFetch(10);
+            dashboard.startFetch(dashboard.UPDATE_INTERVAL);
         }
 
         fetcher.fetch(data, "POST", "PHP/getDataLive.php", update_fn, true);
     },
 
     /**
-     *
+     * Checks the stations for new max values and updates the charts in case there are stations that are not displayed and have higher values than the stations displayed.
      */
     updateAndDisplay: function () {
         /**
