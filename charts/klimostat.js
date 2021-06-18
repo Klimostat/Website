@@ -38,13 +38,6 @@ const klimostat = {
      */
     chartNodes: {},
 
-
-    /**
-     * object of all intervals
-     * @type {Object}
-     */
-    intervals: {},
-
     /**
      * the loaded view, either dashboard or interval
      * @type {string}
@@ -52,28 +45,26 @@ const klimostat = {
     loadedView: "",
 
     /**
-     * array of functions that is executed when the environment is loaded.
-     * useful for accessing variables that are no yet initialized.
-     * @type {function[]}
-     */
-    initFunctions: [],
-
-    /**
      * initializes environment at the start
      */
     init: function () {
+        intervals.push(new LiveInterval());
+        intervals.push(new HourInterval());
+        intervals.push(new DayInterval());
+        intervals.push(new PastDayInterval("-1day", null, 1));
+        intervals.push(new PastDayInterval("-2day", null, 2));
+        intervals.push(new PastDayInterval("-3day", null, 3));
+        intervals.push(new PastDayInterval("-4day", null, 4));
+        intervals.push(new PastDayInterval("-5day", null, 5));
+        intervals.push(new PastDayInterval("-6day", null, 6));
+
+        this.chartNodes = {
+            temperature: document.getElementById('chart-temperature'),
+            humidity: document.getElementById('chart-humidity'),
+            co2: document.getElementById('chart-co2'),
+        }
+
         let onSuccess = function(xhr) {
-            klimostat.initFunctions.forEach(fn => fn());
-
-            for (let intervalsKey in klimostat.intervals) {
-                intervals.push(intervalsKey, klimostat.intervals[intervalsKey].fullName);
-            }
-
-            klimostat.chartNodes = {
-                temperature: document.getElementById('chart-temperature'),
-                humidity: document.getElementById('chart-humidity'),
-                co2: document.getElementById('chart-co2'),
-            }
 
             // console.log("init: stations loaded: " + this.responseText);
             let json = JSON.parse(xhr.responseText);

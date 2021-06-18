@@ -183,7 +183,7 @@ const selectedStations = {
     /**
      * displays all selected stations, pushes new ones to the chart and removes unselected ones
      * @param sensorCharts {SensorChart} the sensorChart object where the stations should be displayed
-     * @param interval {String} the interval that is displayed
+     * @param interval {Interval} the interval that is displayed
      */
     updateAndDisplay: function (sensorCharts, interval) {
         //removes unselected
@@ -203,7 +203,7 @@ const selectedStations = {
         for (let i = 0; i < this._idsSelected.length; i++) {
             const station = klimostat.stations[this._idsSelected[i]];
             if (!this._idsDisplayed.includes(station.id)) {
-                if (station.isOffline() && interval === "live") {
+                if (station.isOffline() && interval.constructor === LiveInterval) {
                     station.navNode.setStyle("offline");
                 } else {
                     this._idsDisplayed.push(station.id);

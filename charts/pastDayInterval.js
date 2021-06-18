@@ -1,34 +1,12 @@
-// add functions to be called on init
-klimostat.initFunctions.push(() => {
-    klimostat.intervals.dayMinus1 = new pastDayInterval("-1day", null, 1);
-    klimostat.intervals.dayMinus2 = new pastDayInterval("-2day", null, 2);
-    klimostat.intervals.dayMinus3 = new pastDayInterval("-3day", null, 3);
-    klimostat.intervals.dayMinus4 = new pastDayInterval("-4day", null, 4);
-    klimostat.intervals.dayMinus5 = new pastDayInterval("-5day", null, 5);
-    klimostat.intervals.dayMinus6 = new pastDayInterval("-6day", null, 6);
-});
-
 /**
  * creates selectable intervals that represent a day from 0 to 24h
  * @type {Object}
  */
-class pastDayInterval {
+class PastDayInterval extends Interval {
     /**
-     * the key name of the interval
-     * @type {string}
+     * the amount of days in the past
      */
-    name;
-
-    /**
-     * the name to be displayed as option in the select
-     * @type {string}
-     */
-    fullName;
-
-    /**
-     * the period in milliseconds of a timestamp
-     */
-    intervalPeriod = 30 * 60_000;
+    daysAgo;
 
     /**
      * creates a new day interval
@@ -37,15 +15,13 @@ class pastDayInterval {
      * @param daysAgo the count of days in the past
      */
     constructor(name, fullName, daysAgo) {
-        this.name = name;
-        this.daysAgo = daysAgo;
         if (typeof fullName !== "string") {
             let date = new Date();
             date.setDate(date.getDate() - daysAgo);
-            this.fullName = date.getDate() + "." + (date.getMonth() + 1) + "." + date.getFullYear();
-        } else {
-            this.fullName = fullName;
+            fullName = date.getDate() + "." + (date.getMonth() + 1) + "." + date.getFullYear();
         }
+        super(name, fullName, 30 * 60_000);
+        this.daysAgo = daysAgo;
     }
 
     /**
@@ -137,7 +113,7 @@ class pastDayInterval {
                 // sets last the time when the station last sent data, to show offline stations
                 if (station.liveData.timestampOfNewestData === null || entryTime > station.liveData.timestampOfNewestData) {
                     station.liveData.timestampOfNewestData = entryTime;
-                    station.liveData.station.navNode.updateNewestData();
+                    station.navNode.updateNewestData();
                 }
 
                 if (typeof station.datasets.minHumidity[index] === "number") {

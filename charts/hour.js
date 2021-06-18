@@ -1,30 +1,13 @@
-/**
- * selectable interval that represents an hour history
- * @type {Object}
- */
-klimostat.intervals.hour = {
-    /**
-     * the key name of the interval
-     * @type {string}
-     */
-    name: "hour",
-
-    /**
-     * the name to be displayed as option in the select
-     * @type {string}
-     */
-    fullName: "Last hour",
-
-    /**
-     * the period in milliseconds of a timestamp
-     */
-    intervalPeriod: 60_000,
+class HourInterval extends Interval {
+    constructor() {
+        super("hour", "Last hour", 60_000);
+    }
 
     /**
      * prepares a JSON to be sent to the server to fetch only the data needed
      * @return {{data: FormData, method: string, callback: callback, refresh: boolean, url: string}}
      */
-    fetch: function () {
+    fetch() {
         // prepares data to fetch
         /**
          * @type {{id: number}[]}
@@ -49,14 +32,14 @@ klimostat.intervals.hour = {
         }
 
         return {data: data, method: "POST", url: "PHP/getDataTimewise.php", callback: callback, refresh: false};
-    },
+    }
 
     /**
      * updates the charts, its labels and the values in it by updating the datasets in {@link Station}
      * @param data {{id: number, data: {time: string, minCo2: string, maxCo2: string, minHumidity: string, maxHumidity: string, minTemperature: string, maxTemperature: string}[]}[]} the data to be appended
      * @param sensorChart {SensorChart}
      */
-    updateChartValues: function (data, sensorChart) {
+    updateChartValues(data, sensorChart) {
 
         //update labels
         let actTime = new Date();
@@ -106,7 +89,7 @@ klimostat.intervals.hour = {
                 // sets last the time when the station last sent data, to show offline stations
                 if (station.liveData.timestampOfNewestData === null || entryTime > station.liveData.timestampOfNewestData) {
                     station.liveData.timestampOfNewestData = entryTime;
-                    station.liveData.station.navNode.updateNewestData();
+                    station.navNode.updateNewestData();
                 }
 
                 if (typeof station.datasets.dummy[index] === "number") {
@@ -144,14 +127,14 @@ klimostat.intervals.hour = {
                 klimostat.sendAlert(station.alertMessageHumidity);
             }
         }
-    },
+    }
 
     /**
      * Synchronizes the datasets of the stations with the labels in the charts
      * @param station {Station} the station that should be synchronized
      * @param actTime {Date} the time of the last entry
      */
-    updateStation: function(station, actTime) {
+    updateStation(station, actTime) {
         let time = new Date(actTime);
         time.setMinutes(actTime.getMinutes() - 60);
 
@@ -169,4 +152,5 @@ klimostat.intervals.hour = {
 
         station.liveData.timestampOfNewestDatasetEntry = new Date(actTime);
         station.loadedInterval = this.name;
-    }};
+    }
+}

@@ -145,8 +145,8 @@ const dashboard = {
          */
         let update_fn = function (xhr) {
             let dataPerStation = JSON.parse(xhr.responseText);
-            klimostat.intervals.live.updateChartValues(dataPerStation, dashboard.co2Chart);
-            klimostat.intervals.live.updateChartValues(dataPerStation, dashboard.humidityChart);
+            intervals.get("live").updateChartValues(dataPerStation, dashboard.co2Chart);
+            intervals.get("live").updateChartValues(dataPerStation, dashboard.humidityChart);
             dashboard.updateAndDisplay();
             dashboard.startFetch(dashboard.UPDATE_INTERVAL);
         }

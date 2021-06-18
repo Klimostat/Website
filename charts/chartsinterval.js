@@ -141,7 +141,7 @@ const interval = {
      */
     fetchDataAndRestartCountdown: function () {
 
-        let {data: data, method: method, url: url, callback: callback, refresh: refresh=false} = klimostat.intervals[intervals.getSelected()].fetch();
+        let {data: data, method: method, url: url, callback: callback, refresh: refresh=false} = intervals.getSelected().fetch();
 
         /**
          *
@@ -163,102 +163,4 @@ const interval = {
 
         fetcher.fetch(data, method, url, update_fn, true);
     }
-}
-
-/**
- * api for the select-HTML-node that gives the user the ability to choose the interval to display
- * @type {Object}
- */
-const intervals = {
-    /**
-     * The select-HTML-node where the user can select the interval
-     * @type {?HTMLElement}
-     */
-    _node: null,
-
-    /**
-     * Adds an interval to the select-HTML-node
-     * @param key {string} the value of the option
-     * @param fullName {string} the displayed name
-     */
-    push: function (key, fullName) {
-        let node = this.getNode();
-        let option = document.createElement("option");
-        option.innerHTML = fullName;
-        option.value = key;
-        node.appendChild(option);
-    },
-
-    /**
-     * returns the HTMLElement of the select-HTML-node
-     * @return {HTMLElement}
-     */
-    getNode: function () {
-        if (this._node === null || this._node.constructor !== HTMLElement) {
-            this._node = document.getElementById("interval");
-        }
-        return this._node;
-    },
-
-    /**
-     * returns the key of the selected option
-     * @return {String}
-     */
-    getSelected: function () {
-        return this.getNode().value;
-    },
-
-    /**
-     * sets the selected interval in the node to the key
-     * @param interval {?string} the key of the interval that should be selected, if null the cookie-value
-     * @param updateCharts {boolean} whether or not the charts should be updated
-     */
-    setSelected: function (interval = null, updateCharts = true) {
-        if (interval !== null) {
-            this._node.value = interval;
-        }
-        selectedIntervalCookie.update(this._node.value);
-        if (updateCharts) {
-            klimostat.updateCharts();
-        }
-    }
-}
-
-/**
- * api for the cookie for {@link intervals}
- * @type {Object}
- */
-const selectedIntervalCookie = {
-    /**
-     * the key of the selected interval
-     */
-    _interval: null,
-
-    /**
-     * returns the interval saved in the cookie
-     * @return {?string} the key of the interval or null if not set
-     */
-    getInterval: function () {
-        if (this._interval === null) {
-            let cookie = document.cookie.split('; ')
-                .find(cookie => cookie.startsWith("interval="));
-            if (cookie !== undefined) {
-                this._interval = cookie.split("=")[1];
-            }
-        }
-        return this._interval;
-    },
-
-    /**
-     * sets the interval to be saved in the cookie and updates the cookie
-     * @param interval {String} the key of the interval to be saved in the cookie
-     */
-    update: function (interval) {
-        this._interval = interval;
-        if (this._interval === null) {
-            document.cookie = "interval=null; SameSite=Strict; Secure; expires=Thu, 01 Jan 1970 00:00:00 UTC";
-        } else {
-            document.cookie = "interval=" + this._interval + "; SameSite=Strict; Secure";
-        }
-    },
 }

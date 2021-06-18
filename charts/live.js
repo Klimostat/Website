@@ -1,30 +1,14 @@
-/**
- * selectable interval that represents 5min live data
- * @type {Object}
- */
-klimostat.intervals.live = {
-    /**
-     * the key name of the interval
-     * @type {string}
-     */
-    name: "live",
+class LiveInterval extends Interval {
 
-    /**
-     * the name to be displayed as option in the select
-     * @type {string}
-     */
-    fullName: "Live",
-
-    /**
-     * the period in milliseconds of a timestamp
-     */
-    intervalPeriod: 10_000,
+    constructor() {
+        super("live", "Live", 10_000);
+    }
 
     /**
      * prepares a JSON to be sent to the server to fetch only the data needed
      * @return {{data: FormData, method: string, callback: callback, refresh: boolean, url: string}}
      */
-    fetch: function () {
+    fetch() {
         // prepares data to fetch
         /**
          * @type {{id: number, since: Date}[]}
@@ -43,20 +27,21 @@ klimostat.intervals.live = {
         let data = new FormData();
         data.append('stations', JSON.stringify(stationsToLoad));
 
+        let live = this;
         // function to work with return values
         let callback = function (data, sensorChart) {
-            klimostat.intervals.live.updateChartValues(data, sensorChart);
+            live.updateChartValues(data, sensorChart);
         }
 
         return {data: data, method: "POST", url: "PHP/getDataLive.php", callback: callback, refresh: true};
-    },
+    }
 
     /**
      * updates the charts, its labels and the values in it by updating the datasets in {@link Station}
      * @param data {{id: number, data: {time: string, minCo2: string, maxCo2: string, minHumidity: string, maxHumidity: string, minTemperature: string, maxTemperature: string}[]}[]} the data to be appended
      * @param sensorChart {SensorChart}
      */
-    updateChartValues: function (data, sensorChart) {
+    updateChartValues(data, sensorChart) {
 
         //update labels
         let actTime = new Date();
@@ -133,14 +118,14 @@ klimostat.intervals.live = {
                 station.maxCo2.update(entryTime, entry.co2);
             }
         }
-    },
+    }
 
     /**
      * Synchronizes the datasets of the stations with the labels in the charts
      * @param station {Station} the station that should be synchronized
      * @param actTime {Date} the time of the last entry
      */
-    updateStation: function(station, actTime) {
+    updateStation(station, actTime) {
         let time = new Date(actTime);
         time.setMinutes(actTime.getMinutes() - 5);
 
@@ -158,4 +143,4 @@ klimostat.intervals.live = {
         station.liveData.timestampOfNewestDatasetEntry = new Date(actTime);
         station.loadedInterval = "live";
     }
-};
+}
