@@ -62,42 +62,37 @@ const klimostat = {
      * initializes environment at the start
      */
     init: function () {
-        let xhttp = new XMLHttpRequest();
+        let onSuccess = function(xhr) {
+            klimostat.initFunctions.forEach(fn => fn());
 
-        xhttp.onreadystatechange = function () {
-            if (this.readyState === 4 && this.status === 200) {
-
-                klimostat.initFunctions.forEach(fn => fn());
-
-                for (let intervalsKey in klimostat.intervals) {
-                    intervals.push(intervalsKey, klimostat.intervals[intervalsKey].fullName);
-                }
-
-                klimostat.chartNodes = {
-                    temperature: document.getElementById('chart-temperature'),
-                    humidity: document.getElementById('chart-humidity'),
-                    co2: document.getElementById('chart-co2'),
-                }
-
-                // console.log("init: stations loaded: " + this.responseText);
-                let json = JSON.parse(this.responseText);
-                for (let i = 0; i < json.length; i++) {
-                    let stationId = parseInt(json[i].pk_station_id);
-                    klimostat.stations[stationId] = new Station(json[i]);
-                }
-
-                setInterval(() => {
-                    // feeds db
-                    let xhr = new XMLHttpRequest();
-                    xhr.open("GET", "PHP/feeddb.php", true);
-                    xhr.send();
-                }, 1000);
-
-                klimostat.determineView();
+            for (let intervalsKey in klimostat.intervals) {
+                intervals.push(intervalsKey, klimostat.intervals[intervalsKey].fullName);
             }
-        };
-        xhttp.open("POST", "PHP/getStations.php", true);
-        xhttp.send();
+
+            klimostat.chartNodes = {
+                temperature: document.getElementById('chart-temperature'),
+                humidity: document.getElementById('chart-humidity'),
+                co2: document.getElementById('chart-co2'),
+            }
+
+            // console.log("init: stations loaded: " + this.responseText);
+            let json = JSON.parse(xhr.responseText);
+            for (let i = 0; i < json.length; i++) {
+                let stationId = parseInt(json[i].pk_station_id);
+                klimostat.stations[stationId] = new Station(json[i]);
+            }
+
+            setInterval(() => {
+                // feeds db
+                let xhr = new XMLHttpRequest();
+                xhr.open("GET", "PHP/feeddb.php", true);
+                xhr.send();
+            }, 1000);
+
+            klimostat.determineView();
+        }
+
+        fetcher.fetch(undefined, "POST", "PHP/getStations.php", onSuccess, false)
 
         Notification.requestPermission();
 
