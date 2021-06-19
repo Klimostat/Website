@@ -391,26 +391,4 @@ const date = {
             ('00' + dateObj.getMinutes()).slice(-2) + ':' +
             ('00' + dateObj.getSeconds()).slice(-2);
     },
-
-    /**
-     * converts a Date object to a custom string depending on the interval given
-     * @param dateObj {Date} the date
-     * @param interval {string} the interval
-     * @return {string}
-     */
-    toIntervalLocalReadableString: function (dateObj, interval) {
-        switch (interval) {
-            case "live":
-            case "10sec":
-                return ('00' + dateObj.getHours()).slice(-2) + ':' +
-                    ('00' + dateObj.getMinutes()).slice(-2) + ':' +
-                    Math.floor(dateObj.getSeconds() / 10) + 'x';
-            case "min":
-                return ('00' + dateObj.getHours()).slice(-2) + ':' +
-                    ('00' + dateObj.getMinutes()).slice(-2);
-            case "30min":
-                return ('00' + dateObj.getHours()).slice(-2) + ':' +
-                    Math.floor(dateObj.getMinutes() / 30) * 3 + 'x';
-        }
-    },
 }

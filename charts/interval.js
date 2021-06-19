@@ -1,4 +1,6 @@
-
+/**
+ *
+ */
 class Interval {
 
     /**
@@ -20,17 +22,23 @@ class Interval {
     intervalPeriod;
 
     /**
-     * modifies the time for the first entry
-     * @param time {Date} the actual Date
-     * @return {Date}
+     * the period in milliseconds of the whole chart, used to determine the first entry and the count of entries
+     * @type {number}
      */
-    subTimeForFirstEntry;
+    overallPeriod;
 
     /**
      * adjusts a Date and removes milliseconds etc.
      * @return {Date}
      */
     getActTime;
+
+    /**
+     * modifies the time of an entry for correct placing in the charts
+     * @param time {Date}
+     * @return {Date}
+     */
+    modifyEntryTime;
 
     /**
      * formats a time to be displayed in the label
@@ -44,17 +52,20 @@ class Interval {
      * @param name {string}
      * @param fullName {string}
      * @param intervalPeriod {number}
-     * @param subTimeForFirstEntry {function(Date): Date}
+     * @param overallPeriod {number}
      * @param getActTime {function: Date}
+     * @param modifyEntryTime {function(Date): Date}
      * @param formatTime {function(Date): string}
      */
-    constructor(name, fullName, intervalPeriod, subTimeForFirstEntry, getActTime, formatTime) {
+    constructor({name: name, fullName: fullName, intervalPeriod: intervalPeriod, overallPeriod: overallPeriod, getActTime: getActTime, modifyEntryTime: modifyEntryTime, formatTime: formatTime}) {
         this.name = name;
         this.fullName = fullName;
         this.intervalPeriod = intervalPeriod;
-        this.subTimeForFirstEntry = subTimeForFirstEntry;
+        this.overallPeriod = overallPeriod;
         this.getActTime = getActTime;
+        this.modifyEntryTime = modifyEntryTime;
         this.formatTime = formatTime;
+        console.log({name: name, fullName: fullName, intervalPeriod: intervalPeriod, overallPeriod: overallPeriod, getActTime: getActTime, modifyEntryTime: modifyEntryTime, formatTime: formatTime})
     }
 
     /**
@@ -63,7 +74,8 @@ class Interval {
      * @param actTime {Date} the time of the last entry
      */
     updateStation(station, actTime) {
-        let time = this.subTimeForFirstEntry(new Date(actTime));
+        let time = new Date(actTime);
+        time.setTime(time.getTime() - this.overallPeriod);
 
         let shiftLeft = false;
 
@@ -86,7 +98,8 @@ class Interval {
      * @param actTime {Date} the time of the last entry
      */
     updateLabels(sensorChart, actTime) {
-        let time = this.subTimeForFirstEntry(new Date(actTime));
+        let time = new Date(actTime);
+        time.setTime(time.getTime() - this.overallPeriod);
 
         let shiftLeft = false;
 
@@ -99,13 +112,40 @@ class Interval {
 
         let labels = [];
         while (time < actTime) {
-            time.setTime(time.getTime() + this.intervalPeriod);
             labels.push(this.formatTime(time));
+            time.setTime(time.getTime() + this.intervalPeriod);
         }
         sensorChart.pushTimestampRight(labels, shiftLeft);
 
         sensorChart.lastLabelUpdate = time;
         sensorChart.loadedInterval = this.name;
+    }
+
+    /**
+     *
+     */
+    pushDataToStation(station, {minCo2, maxCo2, minHumidity, maxHumidity, minTemperature, maxTemperature}, actTime, entryTime) {
+        let index = station.datasets.dummy.length - Math.floor((actTime.getTime() - entryTime.getTime()) / this.intervalPeriod);
+        console.log("insert at index " + index + "[+1]/" + station.datasets.dummy.length + ", actTime: " + actTime + ", entryTime:" + entryTime);
+
+        if (typeof station.datasets.dummy[index] === "number") {
+            if (isNaN(station.datasets.dummy[index])) {
+                station.datasets.dummy[index] = 0;
+                station.datasets.minCo2[index] = minCo2;
+                station.datasets.maxCo2[index] = maxCo2;
+                station.datasets.minHumidity[index] = minHumidity;
+                station.datasets.maxHumidity[index] = maxHumidity;
+                station.datasets.minTemperature[index] = minTemperature;
+                station.datasets.maxTemperature[index] = maxTemperature;
+            } else {
+                station.datasets.minCo2[index] = Math.min(station.datasets.minCo2[index], minCo2);
+                station.datasets.maxCo2[index] = Math.max(station.datasets.maxCo2[index], maxCo2);
+                station.datasets.minHumidity[index] = Math.min(station.datasets.minHumidity[index], minHumidity);
+                station.datasets.maxHumidity[index] = Math.max(station.datasets.maxHumidity[index], maxHumidity);
+                station.datasets.minTemperature[index] = Math.min(station.datasets.minTemperature[index], minTemperature);
+                station.datasets.maxTemperature[index] = Math.max(station.datasets.maxTemperature[index], maxTemperature);
+            }
+        }
     }
 }
 

@@ -1,22 +1,28 @@
 class LiveInterval extends Interval {
 
     constructor() {
-        super("live", "Live", 10_000,
-            time => {
-                time.setMinutes(time.getMinutes() - 5);
-                return time;
-            },
-            () => {
+        super({
+            name: "live",
+            fullName: "Live",
+            intervalPeriod: 10_000,
+            overallPeriod: 5 * 60_000,
+            getActTime: () => {
                 let actTime = new Date();
                 actTime.setMilliseconds(0);
-                actTime.setSeconds(Math.floor(actTime.getSeconds() / 10) * 10);
+                actTime.setSeconds(Math.ceil(actTime.getSeconds() / 10) * 10);
                 return actTime;
             },
-            time => {
+            modifyEntryTime: time => {
+                time.setMilliseconds(0);
+                time.setSeconds(Math.floor(time.getSeconds() / 10) * 10);
+                return time;
+            },
+            formatTime: time => {
                 return ('00' + time.getHours()).slice(-2) + ':' +
                     ('00' + time.getMinutes()).slice(-2) + ':' +
                     Math.floor(time.getSeconds() / 10) + 'x';
-            });
+            }
+        });
     }
 
     /**
@@ -53,7 +59,7 @@ class LiveInterval extends Interval {
 
     /**
      * updates the charts, its labels and the values in it by updating the datasets in {@link Station}
-     * @param data {{id: number, data: {time: string, minCo2: string, maxCo2: string, minHumidity: string, maxHumidity: string, minTemperature: string, maxTemperature: string}[]}[]} the data to be appended
+     * @param data {{id: number, data: {time: string, co2: string, humidity: string, temperature: string}[]}[]} the data to be appended
      * @param sensorChart {SensorChart}
      */
     updateChartValues(data, sensorChart) {
@@ -66,14 +72,10 @@ class LiveInterval extends Interval {
             this.updateStation(station, actTime);
 
             for (const entry of dataOfStation.data) {
-                let entryTime = date.parseMySQL(entry.time);
-                entry.temperature = parseFloat(entry.temperature);
-                entry.humidity = parseFloat(entry.humidity);
-                entry.co2 = parseFloat(entry.co2);
-                entryTime.setSeconds(Math.floor(entryTime.getSeconds() / 10) * 10);
-                // let entryTimeString = date.toIntervalLocalReadableString(entryTime, "live");
-                let index = sensorChart.labels.length - Math.floor((sensorChart.lastLabelUpdate.getTime() - entryTime.getTime()) / this.intervalPeriod) - 1;
-                // console.log(date.toIntervalLocalReadableString(entryTime, "live") + " index " + index + ", " + station.datasets.minHumidity.length);
+                let entryTime = this.modifyEntryTime(date.parseMySQL(entry.time));
+                let temperature = parseFloat(entry.temperature);
+                let humidity = parseFloat(entry.humidity);
+                let co2 = parseFloat(entry.co2);
 
                 // sets last the time when the station last sent data, to show offline stations
                 if (station.liveData.timestampOfNewestData === null || entryTime > station.liveData.timestampOfNewestData) {
@@ -81,31 +83,17 @@ class LiveInterval extends Interval {
                     station.navNode.updateNewestData();
                 }
 
-                if (typeof station.datasets.minHumidity[index] === "number") {
-                    // console.log("outer " + station.id)
-                    if (isNaN(station.datasets.minHumidity[index])) {
-                        // console.log("first " + station.id)
-                        station.datasets.minCo2[index] = entry.co2;
-                        station.datasets.maxCo2[index] = entry.co2;
-                        station.datasets.minHumidity[index] = entry.humidity;
-                        station.datasets.maxHumidity[index] = entry.humidity;
-                        station.datasets.minTemperature[index] = entry.temperature;
-                        station.datasets.maxTemperature[index] = entry.temperature;
-                    } else {
-                        // console.log(entry)
-                        // console.log(station.datasets.minHumidity[index]);
-                        // console.log("second " + station.id)
-                        station.datasets.minCo2[index] = Math.min(station.datasets.minCo2[index], entry.co2);
-                        station.datasets.maxCo2[index] = Math.max(station.datasets.maxCo2[index], entry.co2);
-                        station.datasets.minHumidity[index] = Math.min(station.datasets.minHumidity[index], entry.humidity);
-                        station.datasets.maxHumidity[index] = Math.max(station.datasets.maxHumidity[index], entry.humidity);
-                        station.datasets.minTemperature[index] = Math.min(station.datasets.minTemperature[index], entry.temperature);
-                        station.datasets.maxTemperature[index] = Math.max(station.datasets.maxTemperature[index], entry.temperature);
-                    }
-                }
+                this.pushDataToStation(station, {
+                    minCo2: co2,
+                    maxCo2: co2,
+                    minHumidity: humidity,
+                    maxHumidity: humidity,
+                    minTemperature: temperature,
+                    maxTemperature: temperature
+                }, actTime, entryTime);
 
-                station.minHumidity.update(entryTime, entry.humidity);
-                station.maxCo2.update(entryTime, entry.co2);
+                station.minHumidity.update(entryTime, humidity);
+                station.maxCo2.update(entryTime, co2);
             }
         }
     }
