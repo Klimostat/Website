@@ -10,10 +10,10 @@ error_reporting(E_ALL);
 */
 
 try {
-    $rootDomain = "/klimostat";
-    $conn = new PDO("mysql:host=localhost;dbname=klimostat", "root", "passwd");
-//    $rootDomain = "https://kls.letusflow.xyz";
-//    $conn = new PDO("mysql:host=localhost;dbname=klimostat", "mysqladmin", "");
+//    $rootDomain = "/klimostat";
+//    $conn = new PDO("mysql:host=localhost;dbname=klimostat", "root", "passwd");
+    $rootDomain = "https://kls.letusflow.xyz";
+    $conn = new PDO("mysql:host=localhost;dbname=klimostat", "mysqladmin", "");
 
     $MAX_SESSION_AGE = 3600*24;
     $conn -> setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
