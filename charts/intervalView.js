@@ -1,35 +1,30 @@
 /**
  * Object for the interval view, initiated with {@link init}
- * @type {Object}
  */
-const interval = {
+class IntervalView extends View {
     /**
      * The interval in seconds in which the data should be updated.
      * @type {number}
      */
-    UPDATE_INTERVAL: 10,
+    UPDATE_INTERVAL = 10;
 
     /**
      * The SensorChart for the displayed stations
      * @type {SensorChart}
      */
-    sensorCharts: null,
+    sensorCharts;
 
     /**
      * contains all intervals
      * @type {Object}
      */
-    intervals: {},
-
-    /**
-     * the name of the loaded interval
-     */
-    loadedInterval: "",
+    intervals;
 
     /**
      * initializes interval charts, displays selected stations out of the cookie and starts first fetch
      */
-    init: function () {
+    constructor() {
+        super("interval");
         klimostat.charts = {
             temperature: new Chart(klimostat.chartNodes.temperature, {
                 type: 'line',
@@ -112,12 +107,13 @@ const interval = {
         intervals.setSelected(selectedIntervalCookie.getInterval(), false);
 
         this.startFetch(-10);
-    },
+    }
 
     /**
      * destroys all initialized variables
+     * @override
      */
-    destroy: function () {
+    destroy() {
         klimostat.charts.temperature.destroy();
         klimostat.charts.humidity.destroy();
         klimostat.charts.co2.destroy();
@@ -126,36 +122,45 @@ const interval = {
             klimostat.chartNodes[chartNodesKey].parentElement.style.display = "none";
         }
         selectedStations.updateAndDisplay(this.sensorCharts, "");
-    },
+    }
+
+    /**
+     * @override
+     */
+    update() {
+        this.startFetch(0);
+    }
 
     /**
      * starts a new fetch after given amount of seconds
      * @param secs {number}
      */
-    startFetch: function (secs) {
-        countdown.start(secs, function () {interval.fetchDataAndRestartCountdown()});
-    },
+    startFetch(secs) {
+        let intervalView = this;
+        countdown.start(secs, function () {intervalView.fetchDataAndRestartCountdown()});
+    }
 
     /**
      * prepares the data to fetch, fetches and starts a new fetch after the UPDATE_INTERVAL
      */
-    fetchDataAndRestartCountdown: function () {
+    fetchDataAndRestartCountdown() {
 
         let {data: data, method: method, url: url, callback: callback, refresh: refresh=false} = intervals.getSelected().fetch();
 
+        let intervalView = this;
         /**
          *
          * @param xhr {XMLHttpRequest}
          */
         let update_fn = function (xhr) {
 
-            callback(JSON.parse(xhr.responseText), interval.sensorCharts);
+            callback(JSON.parse(xhr.responseText), intervalView.sensorCharts);
 
-            selectedStations.updateAndDisplay(interval.sensorCharts, intervals.getSelected());
-            interval.sensorCharts.updateCharts();
+            selectedStations.updateAndDisplay(intervalView.sensorCharts, intervals.getSelected());
+            intervalView.sensorCharts.updateCharts();
 
             if (refresh) {
-                interval.startFetch(interval.UPDATE_INTERVAL);
+                intervalView.startFetch(interval.UPDATE_INTERVAL);
             } else {
                 countdown.stop();
             }

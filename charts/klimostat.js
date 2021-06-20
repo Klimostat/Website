@@ -13,24 +13,9 @@ const klimostat = {
 
     /**
      * Object of all ChartJS charts, initialized with the init() call.
-     * @type {Object}
+     * @type {?{temperature: Chart, humidity: Chart, co2: Chart}}
      */
-    charts: {
-        /**
-         * @type {Chart}
-         */
-        temperature: null,
-
-        /**
-         * @type {Chart}
-         */
-        humidity: null,
-
-        /**
-         * @type {Chart}
-         */
-        co2: null
-    },
+    charts: null,
 
     /**
      *
@@ -40,14 +25,21 @@ const klimostat = {
 
     /**
      * the loaded view, either dashboard or interval
-     * @type {string}
+     * @type {View}
      */
-    loadedView: "",
+    loadedView: null,
+
+    /**
+     * @type {?{dashboard: View, interval: View}}
+     */
+    views: null,
 
     /**
      * initializes environment at the start
      */
     init: function () {
+        this.loadedView = new View("init");
+
         intervals.push(new LiveInterval());
         intervals.push(new HourInterval());
         intervals.push(new DayInterval());
@@ -104,24 +96,16 @@ const klimostat = {
             viewToLoad = "dashboard";
         }
 
-        if (viewToLoad !== this.loadedView) {
-            switch (this.loadedView) {
-                case "dashboard":
-                    dashboard.destroy();
-                    break;
-                case "interval":
-                    interval.destroy();
-                    break;
-            }
+        if (viewToLoad !== this.loadedView.name) {
+            this.loadedView.destroy();
             switch (viewToLoad) {
                 case "dashboard":
-                    dashboard.init();
+                    this.loadedView = new DashboardView();
                     break;
                 case "interval":
-                    interval.init();
+                    this.loadedView = new IntervalView();
                     break;
             }
-            this.loadedView = viewToLoad;
         }
     },
 
@@ -129,16 +113,7 @@ const klimostat = {
      * updates the charts based on the loaded view
      */
     updateCharts: function () {
-        switch (this.loadedView) {
-            case "dashboard":
-                dashboard.startFetch(0);
-                return;
-            case "interval":
-                interval.startFetch(0);
-                return;
-            default:
-                throw new Error("no view loaded" + this.loadedView);
-        }
+        this.loadedView.update();
     },
 
     /**

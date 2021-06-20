@@ -1,48 +1,48 @@
 /**
  * Object for the dashboard view, initiated with {@link init}
- * @type {{DISPLAYED_STATION_COUNT: number, init: dashboard.init, co2Chart: SensorChart, humidityChart: SensorChart, UPDATE_INTERVAL: number, destroy: dashboard.destroy, minHumidityIds: number[], startFetch: dashboard.startFetch, fetchDataAndRestartCountdown: dashboard.fetchDataAndRestartCountdown, maxCo2Ids: number[], updateAndDisplay: dashboard.updateAndDisplay}}
  */
-const dashboard = {
+class DashboardView extends View {
 
     /**
      * The interval in seconds in which the data should be updated
      * @type {number}
      */
-    UPDATE_INTERVAL: 10,
+    UPDATE_INTERVAL = 10;
 
     /**
      * The count of Stations to be displayed
      */
-    DISPLAYED_STATION_COUNT: 5,
+    DISPLAYED_STATION_COUNT = 5;
 
     /**
      * The SensorChart for the humidity
      * @type {SensorChart}
      */
-    humidityChart: null,
+    humidityChart;
 
     /**
      * The SensorChart for the co2
      * @type {SensorChart}
      */
-    co2Chart: null,
+    co2Chart;
 
     /**
      * The ids of the stations that are displayed in the co2Chart
      * @type {number[]}
      */
-    maxCo2Ids: null,
+    maxCo2Ids;
 
     /**
      * The ids of the stations that are displayed in the humidityChart
      * @type {number[]}
      */
-    minHumidityIds: null,
+    minHumidityIds;
 
     /**
      * initializes dashboard charts and starts first fetch
      */
-    init: function () {
+    constructor() {
+        super("dashoard")
         klimostat.charts = {
             humidity: new Chart(klimostat.chartNodes.humidity, {
                 type: 'line',
@@ -95,12 +95,13 @@ const dashboard = {
         this.humidityChart = new SensorChart([{name: "humidity", chart: klimostat.charts.humidity}]);
         this.co2Chart = new SensorChart([{name: "co2", chart: klimostat.charts.co2}]);
         this.startFetch(-10);
-    },
+    }
 
     /**
      * destroys all initialized variables
+     * @override
      */
-    destroy: function () {
+    destroy() {
         klimostat.charts.humidity.destroy();
         this.humidityChart.clear();
         klimostat.charts.co2.destroy();
@@ -110,20 +111,28 @@ const dashboard = {
         }
         this.maxCo2Ids = null;
         this.minHumidityIds = null;
-    },
+    }
+
+    /**
+     * @override
+     */
+    update() {
+        this.startFetch(0);
+    }
 
     /**
      * starts a new fetch after given amount of seconds
      * @param secs {number} the amount of seconds to wait
      */
-    startFetch: function (secs) {
-        countdown.start(secs, function () {dashboard.fetchDataAndRestartCountdown()});
-    },
+    startFetch(secs) {
+        let dashboardView = this;
+        countdown.start(secs, function () {dashboardView.fetchDataAndRestartCountdown()});
+    }
 
     /**
      * prepares the data to fetch, fetches and starts a new fetch after the UPDATE_INTERVAL
      */
-    fetchDataAndRestartCountdown: function () {
+    fetchDataAndRestartCountdown() {
         let stationsToLoad = [];
         let time = new Date();
         klimostat.stations.forEach(station => {
@@ -139,25 +148,26 @@ const dashboard = {
         let data = new FormData();
         data.append('stations', JSON.stringify(stationsToLoad));
 
+        let dashboardView = this;
         /**
          *
          * @param xhr {XMLHttpRequest}
          */
         let update_fn = function (xhr) {
             let dataPerStation = JSON.parse(xhr.responseText);
-            intervals.get("live").updateChartValues(dataPerStation, dashboard.co2Chart);
-            intervals.get("live").updateChartValues(dataPerStation, dashboard.humidityChart);
-            dashboard.updateAndDisplay();
-            dashboard.startFetch(dashboard.UPDATE_INTERVAL);
+            intervals.get("live").updateChartValues(dataPerStation, dashboardView.co2Chart);
+            intervals.get("live").updateChartValues(dataPerStation, dashboardView.humidityChart);
+            dashboardView.updateAndDisplay();
+            dashboardView.startFetch(dashboardView.UPDATE_INTERVAL);
         }
 
         fetcher.fetch(data, "POST", "PHP/getDataLive.php", update_fn, true);
-    },
+    }
 
     /**
      * Checks the stations for new max values and updates the charts in case there are stations that are not displayed and have higher values than the stations displayed.
      */
-    updateAndDisplay: function () {
+    updateAndDisplay() {
         /**
          *
          * @type {number[]}
@@ -248,5 +258,5 @@ const dashboard = {
 
         this.co2Chart.updateCharts();
         this.humidityChart.updateCharts();
-    },
+    }
 }

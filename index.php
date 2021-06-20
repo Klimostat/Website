@@ -103,15 +103,16 @@ verifySession();
         <script src="cache/http_cdn.jsdelivr.net_npm_chart.js@3.2.1_dist_chart.js"></script>
 
         <script src="charts/klimostat.js"></script>
+        <script src="charts/view.js"></script>
+        <script src="charts/intervalView.js"></script>
+        <script src="charts/dashboardView.js"></script>
         <script src="charts/selectedStations.js"></script>
-        <script src="charts/chartsinterval.js"></script>
-        <script src="charts/chartsdashboard.js"></script>
         <script src="charts/station.js"></script>
         <script src="charts/sensorChart.js"></script>
         <script src="charts/interval.js"></script>
-        <script src="charts/live.js"></script>
-        <script src="charts/hour.js"></script>
-        <script src="charts/day.js"></script>
+        <script src="charts/liveInterval.js"></script>
+        <script src="charts/hourInterval.js"></script>
+        <script src="charts/dayInterval.js"></script>
         <script src="charts/pastDayInterval.js"></script>
     </body>
 </html>

@@ -65,7 +65,7 @@ class Interval {
         this.getActTime = getActTime;
         this.modifyEntryTime = modifyEntryTime;
         this.formatTime = formatTime;
-        console.log({name: name, fullName: fullName, intervalPeriod: intervalPeriod, overallPeriod: overallPeriod, getActTime: getActTime, modifyEntryTime: modifyEntryTime, formatTime: formatTime})
+        // console.log({name: name, fullName: fullName, intervalPeriod: intervalPeriod, overallPeriod: overallPeriod, getActTime: getActTime, modifyEntryTime: modifyEntryTime, formatTime: formatTime})
     }
 
     /**
@@ -135,7 +135,7 @@ class Interval {
      */
     pushDataToStation(station, {minCo2, maxCo2, minHumidity, maxHumidity, minTemperature, maxTemperature}, actTime, entryTime) {
         let index = station.datasets.dummy.length - Math.floor((actTime.getTime() - entryTime.getTime()) / this.intervalPeriod);
-        console.log("insert at index " + index + "[+1]/" + station.datasets.dummy.length + ", actTime: " + actTime + ", entryTime:" + entryTime);
+        // console.log("insert at index " + index + "[+1]/" + station.datasets.dummy.length + ", actTime: " + actTime + ", entryTime:" + entryTime);
 
         if (typeof station.datasets.dummy[index] === "number") {
             if (isNaN(station.datasets.dummy[index])) {

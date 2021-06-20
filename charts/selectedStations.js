@@ -77,7 +77,7 @@ const selectedStations = {
      */
     toggle: function (id) {
         // checks on wrong loaded charts
-        if (this._idsSelected.length === 0 && klimostat.loadedView === "dashboard") {
+        if (klimostat.loadedView.name !== "interval") {
             selectedStationsCookie.update([id]);
             klimostat.determineView();
             return;
