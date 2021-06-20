@@ -158,7 +158,7 @@ class Interval {
     }
 
     /**
-     * inserts a given dataset to the station at the given timestamp, updates live-timers and checks for thresholds
+     * inserts a given raw live-dataset to the station at the given timestamp, updates live-timers and checks for thresholds
      * @param station {Station}
      * @param dataTime {string}
      * @param dataCo2 {string}
@@ -189,6 +189,37 @@ class Interval {
 
         station.minHumidity.update(entryTime, humidity);
         station.maxCo2.update(entryTime, co2);
+    }
+
+    /**
+     * inserts a given raw summarized-dataset to the station at the given timestamp
+     * @param station {Station}
+     * @param dataTime {string}
+     * @param dataMinCo2 {string}
+     * @param dataMaxCo2 {string}
+     * @param dataMinHumidity {string}
+     * @param dataMaxHumidity {string}
+     * @param dataMinTemperature {string}
+     * @param dataMaxTemperature {string}
+     * @param actTime {Date}
+     */
+    pushSummarizedDataToStation(station, {time: dataTime, minCo2: dataMinCo2, maxCo2: dataMaxCo2, minHumidity: dataMinHumidity, maxHumidity: dataMaxHumidity, minTemperature: dataMinTemperature, maxTemperature: dataMaxTemperature}, actTime) {
+        let entryTime = this.modifyEntryTime(date.parseMySQL(dataTime));
+        let minCo2 = parseFloat(dataMinCo2);
+        let maxCo2 = parseFloat(dataMaxCo2);
+        let minHumidity = parseFloat(dataMinHumidity);
+        let maxHumidity = parseFloat(dataMaxHumidity);
+        let minTemperature = parseFloat(dataMinTemperature);
+        let maxTemperature = parseFloat(dataMaxTemperature);
+
+        this.pushDataToStation(station, {
+            minCo2: minCo2,
+            maxCo2: maxCo2,
+            minHumidity: minHumidity,
+            maxHumidity: maxHumidity,
+            minTemperature: minTemperature,
+            maxTemperature: maxTemperature
+        }, actTime, entryTime);
     }
 }
 

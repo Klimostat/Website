@@ -71,28 +71,7 @@ class DayInterval extends Interval {
             this.updateStation(station, actTime);
 
             for (const entry of dataOfStation.data) {
-                let entryTime = this.modifyEntryTime(date.parseMySQL(entry.time));
-                let minCo2 = parseFloat(entry.minCo2);
-                let maxCo2 = parseFloat(entry.maxCo2);
-                let minHumidity = parseFloat(entry.minHumidity);
-                let maxHumidity = parseFloat(entry.maxHumidity);
-                let minTemperature = parseFloat(entry.minTemperature);
-                let maxTemperature = parseFloat(entry.maxTemperature);
-
-                // sets last the time when the station last sent data, to show offline stations
-                if (station.liveData.timestampOfNewestData === null || entryTime > station.liveData.timestampOfNewestData) {
-                    station.liveData.timestampOfNewestData = entryTime;
-                    station.navNode.updateNewestData();
-                }
-
-                this.pushDataToStation(station, {
-                    minCo2: minCo2,
-                    maxCo2: maxCo2,
-                    minHumidity: minHumidity,
-                    maxHumidity: maxHumidity,
-                    minTemperature: minTemperature,
-                    maxTemperature: maxTemperature
-                }, actTime, entryTime);
+                this.pushSummarizedDataToStation(station, entry, actTime);
             }
         }
     }
