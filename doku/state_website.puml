@@ -1,9 +1,0 @@
-@startuml
-dashboard: the dashboard is being displayed
-live: live-charts are being displayed
-determine: determines
-
-[*] --> determine
-determine --> dashboard: no station selected \n load dashboard charts
-determine --> live: station(s) selected
-@enduml
