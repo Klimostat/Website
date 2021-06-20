@@ -122,7 +122,16 @@ class Interval {
     }
 
     /**
-     *
+     * inserts the given dataset to the station at the given timestamp
+     * @param station {Station}
+     * @param minCo2 {number}
+     * @param maxCo2 {number}
+     * @param minHumidity {number}
+     * @param maxHumidity {number}
+     * @param minTemperature {number}
+     * @param maxTemperature {number}
+     * @param actTime {Date}
+     * @param entryTime {Date}
      */
     pushDataToStation(station, {minCo2, maxCo2, minHumidity, maxHumidity, minTemperature, maxTemperature}, actTime, entryTime) {
         let index = station.datasets.dummy.length - Math.floor((actTime.getTime() - entryTime.getTime()) / this.intervalPeriod);
@@ -146,6 +155,40 @@ class Interval {
                 station.datasets.maxTemperature[index] = Math.max(station.datasets.maxTemperature[index], maxTemperature);
             }
         }
+    }
+
+    /**
+     * inserts a given dataset to the station at the given timestamp, updates live-timers and checks for thresholds
+     * @param station {Station}
+     * @param dataTime {string}
+     * @param dataCo2 {string}
+     * @param dataHumidity {string}
+     * @param dataTemperature {string}
+     * @param actTime {Date}
+     */
+    pushLiveDataToStation(station, {time: dataTime, co2: dataCo2, humidity: dataHumidity, temperature: dataTemperature}, actTime) {
+        let entryTime = this.modifyEntryTime(date.parseMySQL(dataTime));
+        let temperature = parseFloat(dataTemperature);
+        let humidity = parseFloat(dataHumidity);
+        let co2 = parseFloat(dataCo2);
+
+        // sets last the time when the station last sent data, to show offline stations
+        if (station.liveData.timestampOfNewestData === null || entryTime > station.liveData.timestampOfNewestData) {
+            station.liveData.timestampOfNewestData = entryTime;
+            station.navNode.updateNewestData();
+        }
+
+        this.pushDataToStation(station, {
+            minCo2: co2,
+            maxCo2: co2,
+            minHumidity: humidity,
+            maxHumidity: humidity,
+            minTemperature: temperature,
+            maxTemperature: temperature
+        }, actTime, entryTime);
+
+        station.minHumidity.update(entryTime, humidity);
+        station.maxCo2.update(entryTime, co2);
     }
 }
 

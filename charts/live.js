@@ -18,7 +18,7 @@ class LiveInterval extends Interval {
                 return time;
             },
             formatTime: time => {
-                return ('00' + time.getHours()).slice(-2) + ':' +
+                return time.getHours() + ':' +
                     ('00' + time.getMinutes()).slice(-2) + ':' +
                     Math.floor(time.getSeconds() / 10) + 'x';
             }
@@ -72,28 +72,7 @@ class LiveInterval extends Interval {
             this.updateStation(station, actTime);
 
             for (const entry of dataOfStation.data) {
-                let entryTime = this.modifyEntryTime(date.parseMySQL(entry.time));
-                let temperature = parseFloat(entry.temperature);
-                let humidity = parseFloat(entry.humidity);
-                let co2 = parseFloat(entry.co2);
-
-                // sets last the time when the station last sent data, to show offline stations
-                if (station.liveData.timestampOfNewestData === null || entryTime > station.liveData.timestampOfNewestData) {
-                    station.liveData.timestampOfNewestData = entryTime;
-                    station.navNode.updateNewestData();
-                }
-
-                this.pushDataToStation(station, {
-                    minCo2: co2,
-                    maxCo2: co2,
-                    minHumidity: humidity,
-                    maxHumidity: humidity,
-                    minTemperature: temperature,
-                    maxTemperature: temperature
-                }, actTime, entryTime);
-
-                station.minHumidity.update(entryTime, humidity);
-                station.maxCo2.update(entryTime, co2);
+                this.pushLiveDataToStation(station, entry, actTime);
             }
         }
     }
