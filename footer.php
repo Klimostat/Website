@@ -21,7 +21,7 @@
             <a href = "https://www.htl.rennweg.at" class="col">
                 Ein Projekt der HTL Rennweg
             </a>
-            <a href = "Impressum.php" class="col">
+            <a href = "impressum.php" class="col">
                 Impressum
             </a>
         </div>
