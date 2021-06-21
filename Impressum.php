@@ -8,14 +8,23 @@
         <link href="style_index.css" rel="stylesheet">
         <title>Impressum</title>
         <style>
+	        .footer {
+		        position: absolute;
+		        bottom: 0;
+                width: 100%;
+	        }
             .mail {
                 color: blue !important;
+            }
+            .back {
+                color: #DBFF78;
+	            text-decoration: underline;
             }
         </style>
     </head>
     <body class="font-sans-serif">
         <div class ="mt-5 ms-5">
-            <h1 class="fs-1 fw-bold" > Impressum </h1>
+            <h1 class="fs-1 fw-bold"> Impressum </h1>
                 <ul class="list-unstyled">
                     <li class="fs-3 mt-5 mb-5 ms-5"> Verantwortlich für Inhalte: Jakob Jakwerth</li>
                     <li class="fs-3 mt-5 mb-5 ms-5"> Kontakt: <a href="mailto:jakob.jakwerth@htl.rennweg.at" class="mail">jakob.jakwerth@htl.rennweg.at</a></li>
@@ -24,11 +33,12 @@
                         Rennweg 89B<br>
                         1030 Wien
                     </li>
+	                <li class="fs-3 mt-5 mb-5 ms-5"><a href="index.php" class="back">Back</a></li>
                 </ul>
         </div>
-
-        <!-- Footer -->
-        <?php include "footer.php" ?>
-
+		<div class="footer">
+	        <!-- Footer -->
+	        <?php include "footer.php" ?>
+		</div>
     </body>
 </html>
