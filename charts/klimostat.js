@@ -65,12 +65,12 @@ const klimostat = {
                 klimostat.stations[stationId] = new Station(json[i]);
             }
 
-            // setInterval(() => {
-            //     feeds db
-                // let xhr = new XMLHttpRequest();
-                // xhr.open("GET", "PHP/feeddb.php", true);
-                // xhr.send();
-            // }, 1000);
+            setInterval(() => {
+                feeds db
+                let xhr = new XMLHttpRequest();
+                xhr.open("GET", "PHP/feeddb.php", true);
+                xhr.send();
+            }, 1000);
 
             klimostat.determineView();
         }
