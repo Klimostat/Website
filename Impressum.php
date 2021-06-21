@@ -12,11 +12,13 @@
         <div class ="mt-5 ms-5">
             <h1 class="fs-1 fw-bold" > Impressum </h1>
                 <ul class="list-unstyled">
-                    <li class="fs-3 mt-5 mb-5 ms-5"> Verantwortlich für Inhalte: </li>
-                    <li class="fs-3 mt-5 mb-5 ms-5"> Kontakt: </li>
-                    <li class="fs-3 mt-5 mb-5 ms-5"> Standort: </li>
-                    <li class="fs-3 mt-5 mb-5 ms-5"> Datenschutz: </li>
-                    <li class="fs-3 mt-5 mb-5 ms-5"> Zuständige Aufsichtsbehörde: </li>
+                    <li class="fs-3 mt-5 mb-5 ms-5"> Verantwortlich für Inhalte: Jakob Jakwerth</li>
+                    <li class="fs-3 mt-5 mb-5 ms-5"> Kontakt: <a href="mailto:jakob.jakwerth@htl.rennweg.at">jakob.jakwerth@htl.rennweg.at</a></li>
+                    <li class="fs-3 mt-5 mb-5 ms-5"> Standort:<br>
+                        HTL Wien 3 Rennweg<br>
+                        Rennweg 89B<br>
+                        1030 Wien
+                    </li>
                 </ul>
         </div>
 
