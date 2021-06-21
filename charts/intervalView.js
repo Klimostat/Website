@@ -148,10 +148,7 @@ class IntervalView extends View {
         let {data: data, method: method, url: url, callback: callback, refresh: refresh=false} = intervals.getSelected().fetch();
 
         let intervalView = this;
-        /**
-         *
-         * @param xhr {XMLHttpRequest}
-         */
+
         let update_fn = function (xhr) {
 
             callback(JSON.parse(xhr.responseText), intervalView.sensorCharts);
@@ -160,7 +157,7 @@ class IntervalView extends View {
             intervalView.sensorCharts.updateCharts();
 
             if (refresh) {
-                intervalView.startFetch(interval.UPDATE_INTERVAL);
+                intervalView.startFetch(intervalView.UPDATE_INTERVAL);
             } else {
                 countdown.stop();
             }

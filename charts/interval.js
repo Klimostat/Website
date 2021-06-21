@@ -167,7 +167,8 @@ class Interval {
      * @param actTime {Date}
      */
     pushLiveDataToStation(station, {time: dataTime, co2: dataCo2, humidity: dataHumidity, temperature: dataTemperature}, actTime) {
-        let entryTime = this.modifyEntryTime(date.parseMySQL(dataTime));
+        let originalEntryTime = date.parseMySQL(dataTime);
+        let entryTime = this.modifyEntryTime(new Date(originalEntryTime));
         let temperature = parseFloat(dataTemperature);
         let humidity = parseFloat(dataHumidity);
         let co2 = parseFloat(dataCo2);
@@ -175,7 +176,9 @@ class Interval {
         // sets last the time when the station last sent data, to show offline stations
         if (station.liveData.timestampOfNewestData === null || entryTime > station.liveData.timestampOfNewestData) {
             station.liveData.timestampOfNewestData = entryTime;
-            station.navNode.updateNewestData();
+            station.navNode.setNewestData(entryTime.getHours() + ':' +
+                ('00' + entryTime.getMinutes()).slice(-2) + ':' +
+                ('00' + entryTime.getSeconds()).slice(-2));
         }
 
         this.pushDataToStation(station, {

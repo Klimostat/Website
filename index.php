@@ -108,6 +108,7 @@ verifySession();
         <script src="charts/dashboardView.js"></script>
         <script src="charts/selectedStations.js"></script>
         <script src="charts/station.js"></script>
+        <script src="charts/navNode.js"></script>
         <script src="charts/sensorChart.js"></script>
         <script src="charts/interval.js"></script>
         <script src="charts/liveInterval.js"></script>

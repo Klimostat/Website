@@ -65,12 +65,12 @@ const klimostat = {
                 klimostat.stations[stationId] = new Station(json[i]);
             }
 
-            setInterval(() => {
-                // feeds db
-                let xhr = new XMLHttpRequest();
-                xhr.open("GET", "PHP/feeddb.php", true);
-                xhr.send();
-            }, 1000);
+            // setInterval(() => {
+            //     feeds db
+                // let xhr = new XMLHttpRequest();
+                // xhr.open("GET", "PHP/feeddb.php", true);
+                // xhr.send();
+            // }, 1000);
 
             klimostat.determineView();
         }
@@ -158,8 +158,8 @@ const fetcher = {
         xhr.onreadystatechange = function () {
             if (this.readyState === 4) {
                 if (this.status === 200) {
-                    console.log("db response:")
-                    console.log(JSON.parse(this.responseText));
+                    // console.log("db response:")
+                    // console.log(JSON.parse(this.responseText));
                     callbackFnOn200(this);
                 } else {
                     onConnectionLost();
